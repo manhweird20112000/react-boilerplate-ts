@@ -40,6 +40,9 @@
   },
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint","react", "react-hooks", "prettier","simple-import-sort"],
+  "ignorePatterns": [
+    "vite.config.ts"
+  ],
   "rules": {
     "react/jsx-no-undef": "off",
     "no-undef": "off",

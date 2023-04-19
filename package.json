@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint --fix",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -35,6 +34,10 @@
     "vite": "^4.2.0"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.{ts, tsx}": [
+      "prettier --write --ignore-unknown",
+      "eslint --fix",
+      "git add ."
+    ]
   }
 }

@@ -7,14 +7,29 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "./"
+        ]
+      }
     }
   },
   "extends": [
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/jsx-runtime",
     "standard-with-typescript",
     "eslint:recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:react/jsx-runtime"
+    "prettier"
   ],
   "overrides": [],
   "parserOptions": {
@@ -23,7 +38,8 @@
     "sourceType": "module",
     "parser": "@typescript-eslint/parser"
   },
-  "plugins": ["react", "@typescript-eslint", "react-hooks"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint","react", "react-hooks", "prettier","simple-import-sort"],
   "rules": {
     "react/no-array-index-key": "error",
     "vue/max-attributes-per-line": "off",
@@ -40,6 +56,27 @@
       }
     ],
     "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [
+      2,
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
     "comma-dangle": ["error", "never"],
     "no-cond-assign": "error",
     "no-constant-condition": "warn",
@@ -130,6 +167,43 @@
     "space-in-parens": "error",
     "spaced-comment": "error",
     "no-undefined": "error",
-    "semi": [2, "never"]
+    "semi": [2, "never"],
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // Packages `react` related packages come first.
+          ["^react", "^@?\\w"],
+          // Internal packages.
+          ["^(@|src)(/.*|$)"],
+          // Side effect imports.
+          ["^\\u0000"],
+          // Parent imports. Put `..` last.
+          ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+          // Other relative imports. Put same-folder imports and `.` last.
+          ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+          // Style imports.
+          ["^.+\\.?(css)$"]
+        ]
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "es5",
+        "tabWidth": 2,
+        "semi": false,
+        "singleQuote": true,
+        "jsxSingleQuote": true,
+        "bracketSpacing": true,
+        "bracketSameLine": false,
+        "arrowParens": "avoid",
+        "requirePragma": true,
+        "proseWrap": "always",
+        "singleAttributePerLine": true,
+        "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+        "no-unused-vars": ["error"]
+      }
+    ]
   }
 }

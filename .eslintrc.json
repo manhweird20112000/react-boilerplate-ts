@@ -12,7 +12,9 @@
   "extends": [
     "plugin:react/recommended",
     "standard-with-typescript",
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/jsx-runtime"
   ],
   "overrides": [],
   "parserOptions": {
@@ -21,8 +23,13 @@
     "sourceType": "module",
     "parser": "@typescript-eslint/parser"
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "react-hooks"],
   "rules": {
+    "react/no-array-index-key": "error",
+    "vue/max-attributes-per-line": "off",
+    "react/prop-types": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
@@ -123,14 +130,6 @@
     "space-in-parens": "error",
     "spaced-comment": "error",
     "no-undefined": "error",
-    "vue/max-attributes-per-line": [2, {
-      "singleline": {
-        "max": 1
-      },
-      "multiline": {
-        "max": 1
-      }
-    }],
     "semi": [2, "never"]
   }
 }

@@ -41,7 +41,7 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint","react", "react-hooks", "prettier","simple-import-sort"],
   "ignorePatterns": [
-    "vite.config.ts"
+    "vite.config.ts", "tailwind.config.js", "postcss.config.js"
   ],
   "rules": {
     "react/jsx-no-undef": "off",
@@ -72,14 +72,15 @@
         ]
       }
     ],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
+    "import/extensions": [ "warn",
       {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
+        "extensions": [
+          ".js",
+          ".mjs",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     ],
     "comma-dangle": ["error", "never"],

@@ -21,7 +21,7 @@
     "sourceType": "module",
     "parser": "@typescript-eslint/parser"
   },
-  "plugins": ["react", " '@typescript-eslint'"],
+  "plugins": ["react", "@typescript-eslint"],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": [
       "error",

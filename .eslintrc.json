@@ -41,6 +41,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint","react", "react-hooks", "prettier","simple-import-sort"],
   "rules": {
+    "react/jsx-no-undef": "off",
+    "no-undef": "off",
     "react/no-array-index-key": "error",
     "vue/max-attributes-per-line": "off",
     "react/prop-types": "error",

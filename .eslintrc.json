@@ -81,6 +81,7 @@
         ]
       }
     ],
+    "object-curly-spacing": "error",
     "comma-dangle": ["error", "never"],
     "no-cond-assign": "error",
     "no-constant-condition": "warn",

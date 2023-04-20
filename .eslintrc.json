@@ -26,10 +26,12 @@
   "extends": [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:react/jsx-runtime",
     "standard-with-typescript",
     "eslint:recommended",
-    "prettier"
+    "prettier",
+    "react-app"
   ],
   "overrides": [],
   "parserOptions": {
@@ -39,7 +41,7 @@
     "parser": "@typescript-eslint/parser"
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint","react", "react-hooks", "prettier","simple-import-sort"],
+  "plugins": ["@typescript-eslint","react", "react-hooks", "import", "prettier","simple-import-sort"],
   "rules": {
     "react/jsx-no-undef": "off",
     "no-undef": "off",

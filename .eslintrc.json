@@ -41,8 +41,18 @@
     "parser": "@typescript-eslint/parser"
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint","react", "react-hooks", "import", "prettier","simple-import-sort"],
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "import",
+    "prettier",
+    "simple-import-sort"
+  ],
   "rules": {
+    "no-tabs": ["error", {"allowIndentationTabs": true}],
+    "indent": "off",
+    "@typescript-eslint/indent": ["error"],
     "react/jsx-max-props-per-line": [
       "error",
       {

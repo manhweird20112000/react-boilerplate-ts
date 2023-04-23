@@ -3,6 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from 'tailwindcss'
 import dotenv from 'dotenv'
+import { resolve } from 'path'
 
 dotenv.config()
 
@@ -10,7 +11,22 @@ dotenv.config()
 export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
   return defineConfig({
-    plugins: [react(), tsconfigPaths()],
+    plugins: [
+      react(),
+      tsconfigPaths(),
+    ],
+    build: {
+      minify: false,
+      sourcemap: false
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, 'src'),
+        '~': resolve(__dirname, 'src'),
+      },
+      dedupe: ['tsx', 'ts'],
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    },
     css: {
       postcss: {
         plugins: [tailwindcss],

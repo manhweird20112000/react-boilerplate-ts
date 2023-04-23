@@ -1,31 +1,16 @@
-import { useTranslation } from 'react-i18next'
-import { Button, Dropdown, type MenuProps } from 'antd'
-import i18n from 'i18next'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import { SignIn } from '@/pages'
 
 function App () {
-  const { t } = useTranslation()
-
-  const handleChangeLanguage = (lang: string) : void => {
-    void i18n.changeLanguage(lang)
-  }
-
-  const menu: MenuProps['items'] = [
-    { key: '1', label: 'English', onClick: () => { handleChangeLanguage('en-EN') } },
-    { key: '2', label: 'Vietnamese', onClick: () => { handleChangeLanguage('vi-VN') } },
-    { key: '3', label: 'Japanese', onClick: () => {handleChangeLanguage('jp-JP')} }
-  ]
-
   return (
-    <div className="w-screen h-screen">
-      <Button type='link'> {t('welcome')} </Button>
-      <Dropdown menu={{ items: menu }}>
-        <Button
-          type='primary'
-          title='Change Language'>
-          Change Language
-        </Button>
-      </Dropdown>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path={'/login'}
+          element={<SignIn />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

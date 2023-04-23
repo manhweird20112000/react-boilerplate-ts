@@ -1,16 +1,16 @@
 import { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
+import { Provider } from 'react-redux'
 import { ConfigProvider } from 'antd'
 
 import App from '@/App'
 import i18n from '@/lang'
+import { store } from '@/store'
 
 import 'antd/dist/reset.css'
 // eslint-disable-next-line import/extensions
 import "@/assets/styles/index.scss"
-import { Provider } from 'react-redux'
-import { store } from '@/store'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <Suspense>

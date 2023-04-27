@@ -3,7 +3,7 @@ export function setStorage (key: string, value: string, options?: CookieAttribut
   Cookie.set(key, value, options)
 }
 
-export function getStorage (key: string):string | undefined {
+export function getStorage (key: string) : string | undefined {
   return Cookie.get(key)
 }
 

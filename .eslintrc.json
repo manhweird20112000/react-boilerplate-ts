@@ -10,16 +10,8 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx"
-        ],
-        "moduleDirectory": [
-          "node_modules",
-          "./"
-        ]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "./"]
       }
     }
   },
@@ -27,13 +19,19 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:tailwindcss/recommended",
     "plugin:react/jsx-runtime",
     "standard-with-typescript",
     "eslint:recommended",
     "prettier",
     "react-app"
   ],
-  "overrides": [],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js"],
+      "parser": "@typescript-eslint/parser"
+    }
+  ],
   "parserOptions": {
     "project": "./tsconfig.json",
     "ecmaVersion": "latest",
@@ -50,7 +48,7 @@
     "simple-import-sort"
   ],
   "rules": {
-    "no-tabs": ["error", {"allowIndentationTabs": true}],
+    "no-tabs": ["error", { "allowIndentationTabs": true }],
     "indent": "off",
     "@typescript-eslint/indent": ["error"],
     "react/jsx-max-props-per-line": [
@@ -80,24 +78,13 @@
     "react/jsx-filename-extension": [
       2,
       {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx"
-        ]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     ],
-    "import/extensions": [ "warn",
+    "import/extensions": [
+      "warn",
       {
-        "extensions": [
-          ".js",
-          ".mjs",
-          ".jsx",
-          ".ts",
-          ".tsx",
-          ".scss"
-        ]
+        "extensions": [".js", ".mjs", ".jsx", ".ts", ".tsx", ".scss"]
       }
     ],
     "no-unexpected-multiline": 2,

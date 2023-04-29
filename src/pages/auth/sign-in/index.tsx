@@ -22,7 +22,7 @@ function SignIn () {
   return (
     <Form
       form={form}
-      className='bg-red-500 text-red-500'
+      className='bg-red-500'
     >
       <Form.Item name='email'
         label='Email'

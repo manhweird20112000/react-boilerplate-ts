@@ -7,14 +7,14 @@ import {
 } from 'react-router-dom'
 
 import { useAuthentication } from '@/hooks/use-authentication'
-import { MainLayout } from '@/layouts'
+import { AuthLayout, MainLayout } from '@/layouts'
 import { SignIn } from '@/pages'
 
 function Authentication ({ children } : { children: JSX.Element }) {
   const [isAuth] = useAuthentication()
   const location = useLocation()
 
-  if(isAuth) {
+  if(!isAuth) {
     return <Navigate
       to='/login'
       state={{ from: location }}
@@ -28,8 +28,11 @@ function App () {
     <BrowserRouter>
       <Routes>
         <Route
-          path={'/login'}
-          element={<SignIn />} />
+          element={<AuthLayout />}>
+          <Route
+            path='/login'
+            element={<SignIn />} />
+        </Route>
         <Route
           path={'/'}
           element={

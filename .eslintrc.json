@@ -48,6 +48,7 @@
     "simple-import-sort"
   ],
   "rules": {
+    "tailwindcss/no-custom-classname": 0,
     "no-tabs": ["error", { "allowIndentationTabs": true }],
     "indent": "off",
     "@typescript-eslint/indent": ["error"],

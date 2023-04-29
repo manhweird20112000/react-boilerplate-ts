@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react'
 import {
   BrowserRouter,
   Navigate,
@@ -6,15 +7,14 @@ import {
   useLocation
 } from 'react-router-dom'
 
-import { useAuthentication } from '@/hooks/use-authentication'
 import { AuthLayout, MainLayout } from '@/layouts'
-import { SignIn } from '@/pages'
+import { getStorage } from '@/utils'
+
+const SignIn = React.lazy(async () => await import('@/pages/auth/sign-in/index'))
 
 function Authentication ({ children } : { children: JSX.Element }) {
-  const [isAuth] = useAuthentication()
   const location = useLocation()
-
-  if(!isAuth) {
+  if(getStorage('access_token') == null) {
     return <Navigate
       to='/login'
       state={{ from: location }}
@@ -31,7 +31,11 @@ function App () {
           element={<AuthLayout />}>
           <Route
             path='/login'
-            element={<SignIn />} />
+            element={
+            <Suspense>
+              <SignIn />
+            </Suspense>
+            } />
         </Route>
         <Route
           path={'/'}

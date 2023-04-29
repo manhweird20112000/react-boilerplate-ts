@@ -3,7 +3,7 @@ import { Button, Form, Input } from 'antd'
 
 import { type FormRules } from '@/constants'
 
-export function SignIn () {
+function SignIn () {
   const [form] = Form.useForm()
 
   const rules: FormRules = useMemo(() => {
@@ -42,3 +42,6 @@ export function SignIn () {
     </Form>
   )
 }
+
+
+export default SignIn

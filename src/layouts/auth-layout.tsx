@@ -1,14 +1,13 @@
 import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
-import { useAuthentication } from '@/hooks/use-authentication'
+import { getStorage } from '@/utils'
 
 export function AuthLayout () {
-  const [isAuth] = useAuthentication()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if(isAuth) {
+    if(getStorage('access_token') != null) {
       navigate('/')
     }
   }, [])

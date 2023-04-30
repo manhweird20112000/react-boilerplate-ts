@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Space, Typography } from 'antd'
 
+import { TextField } from '@/components/common'
 import { type FormRules } from '@/constants'
 
 function SignIn () {
@@ -20,26 +21,53 @@ function SignIn () {
 
 
   return (
-    <Form
-      form={form}
-      className='bg-red-500'
-    >
-      <Form.Item name='email'
-        label='Email'
-        colon={false}
-        rules={rules.email}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item name='password'
-        label='Password'
-        colon={false}>
-        <Input type='password' />
-      </Form.Item>
-      <Form.Item>
-        <Button type='primary'>Sign In</Button>
-      </Form.Item>
-    </Form>
+    <div className='flex h-screen w-screen items-center justify-center bg-gray-100'>
+      <div className={`mx-auto w-[300px]`}>
+        <Form
+          form={form}
+          autoComplete='off'
+        >
+          <TextField
+            label={'Email'}
+            name={'email'}
+            rules={rules.email}
+            placeholder='Email address'
+            refForm={form}/>
+          <TextField
+            label={'Password'}
+            name={'password'}
+            refForm={form}
+            type='password'
+            placeholder='Password'
+            rules={rules.password}
+          />
+          <Form.Item>
+            <Button
+              className='w-full'
+              size='large'
+              type='primary'>Sign In</Button>
+          </Form.Item>
+        </Form>
+        <div className='flex flex-col items-center justify-center'>
+          <Space>
+            <Typography.Link>
+              Forgot your password?
+            </Typography.Link>
+          </Space>
+
+          <p className='my-4'>
+            {"Don't have column account?"}
+          </p>
+
+          <Button
+            size='large'
+            className='w-full'>
+            Create new account
+          </Button>
+        </div>
+
+      </div>
+    </div>
   )
 }
 

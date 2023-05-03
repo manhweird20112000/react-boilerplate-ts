@@ -2,7 +2,7 @@ import axios, { type AxiosResponse } from "axios"
 
 import { getStorage } from "./storage"
 
-const service = axios.create({
+export const service = axios.create({
   baseURL: process.env.API_URL,
   timeout: 30000,
   headers: {

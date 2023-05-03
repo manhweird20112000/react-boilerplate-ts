@@ -2,3 +2,12 @@
 .ant-form-item-explain-error{
   @apply text-xs;
 }
+
+:where(.css-dev-only-do-not-override-ezcu89).ant-menu-light.ant-menu-root.ant-menu-inline
+{
+  border-inline-end: none;
+}
+
+:where(.css-dev-only-do-not-override-ezcu89).ant-menu-light{
+  background-color: transparent;
+}

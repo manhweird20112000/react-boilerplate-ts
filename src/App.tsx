@@ -10,7 +10,8 @@ import {
 import { AuthLayout, MainLayout } from '@/layouts'
 import { getStorage } from '@/utils'
 
-const SignIn = React.lazy(async () => await import('@/pages/auth/sign-in/index'))
+const SignIn = React.lazy(async () => await import('@/pages/auth/sign-in'))
+const ForgotPassword = React.lazy(async () => await import('@/pages/auth/forgot-password'))
 
 function Authentication ({ children } : { children: JSX.Element }) {
   const location = useLocation()
@@ -36,6 +37,11 @@ function App () {
               <SignIn />
             </Suspense>
             } />
+            <Route
+              path='/forgot-password'
+              element={<Suspense>
+              <ForgotPassword />
+            </Suspense>} />
         </Route>
         <Route
           path={'/'}

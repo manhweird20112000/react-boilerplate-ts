@@ -30,8 +30,11 @@ function SignIn () {
   }
 
 
+  const handleRedirect = () => {
+    navigate('/forgot-password')
+  }
+
   return (
-    <div className='flex h-screen w-screen items-center justify-center bg-gray-100'>
       <div className={`mx-auto w-[300px]`}>
         <Form
           form={form}
@@ -62,12 +65,12 @@ function SignIn () {
         </Form>
         <div className='flex flex-col items-center justify-center'>
           <Space>
-            <Typography.Link>
-              <span className='font-medium text-gray-400'>Forgot your password?</span>
+            <Typography.Link onClick={handleRedirect}>
+              <span className='font-normal text-gray-400'>Forgot your password?</span>
             </Typography.Link>
           </Space>
 
-          <p className='my-4 font-medium text-gray-500'>
+          <p className='my-4 font-normal text-gray-500'>
             {"Don't have column account?"}
           </p>
 
@@ -79,7 +82,6 @@ function SignIn () {
         </div>
 
       </div>
-    </div>
   )
 }
 

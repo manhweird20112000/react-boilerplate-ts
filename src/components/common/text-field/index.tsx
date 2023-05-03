@@ -27,10 +27,13 @@ export function TextField (props: TextFieldProps) {
   return (
     <div>
       {
-        (isShowLabel) && <label htmlFor={id}>
-        <span>{label}</span>
-          {isRequired && <span>*</span>}
+        (isShowLabel) &&
+        (
+        <label htmlFor={id}>
+          <span className='text-base font-medium text-gray-600'>{label}</span>
+          {isRequired && <span className='ml-1 text-red-500'>*</span>}
         </label>
+        )
       }
       <Form.Item
         name={name}

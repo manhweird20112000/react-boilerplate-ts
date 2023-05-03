@@ -1,14 +1,29 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import axios, { type AxiosResponse } from "axios"
 
-import { getStorage } from './storage'
+import { getStorage } from "./storage"
 
-export const baseApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.API_URL,
-    timeout: 3000,
-    headers: {
-      Authorization: `Bearer ${getStorage('access_token') ?? ''}`
-    }
-  }),
-  endpoints: () => ({})
+const service = axios.create({
+  baseURL: process.env.API_URL,
+  timeout: 30000,
+  headers: {
+    Authorization: `Bearer ${getStorage('access_token') ?? ''}`
+  }
 })
+
+service.interceptors.request.use(
+  (request) => {
+    return request
+  },
+  (error) => {
+    return error
+  }
+)
+
+service.interceptors.response.use(
+  async (response : AxiosResponse) => {
+    return await Promise.resolve(response)
+  },
+  async (error) => {
+    return await Promise.reject(error)
+  }
+)

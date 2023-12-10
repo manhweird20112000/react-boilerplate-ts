@@ -27,3 +27,6 @@ dist-ssr
 .idea
 .vscode
 yarn.lock
+
+# Sentry Config File
+.env.sentry-build-plugin

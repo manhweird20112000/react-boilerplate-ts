@@ -1,14 +1,17 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Form, Space, Typography } from 'antd'
 
 import { TextField } from '@/components/common'
 import { type FormRules } from '@/constants'
+import { useAppDispatch } from '@/hooks/redux-hook'
+import { EExampleType } from '@/store/saga/example/types'
 import { setStorage } from '@/utils'
 
 function SignIn () {
   const [form] = Form.useForm()
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const rules: FormRules = useMemo(() => {
     return {
@@ -33,6 +36,10 @@ function SignIn () {
   const handleRedirect = () => {
     navigate('/forgot-password')
   }
+
+  useEffect(() => {
+    dispatch({ type: EExampleType.GET_POST })
+  }, [])
 
   return (
       <div className={`mx-auto w-[300px]`}>

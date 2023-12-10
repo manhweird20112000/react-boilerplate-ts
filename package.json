@@ -24,6 +24,7 @@
     "react-i18next": "^12.2.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",
+    "redux-saga": "^1.2.3",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

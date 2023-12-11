@@ -1,10 +1,17 @@
-import { delay, takeLatest } from "redux-saga/effects"
+import { type AxiosResponse } from 'axios'
+import { call, takeLatest } from "redux-saga/effects"
+
+import { getPostExample } from '@/services/example'
 
 import { EExampleType } from "./types"
 
 function * getPosts () {
-  yield delay(1)
-  console.log('get Posts')
+  try {
+    const response : AxiosResponse = yield call(getPostExample)
+    console.log(response)
+  }catch (error) {
+    console.log(error)
+  }
 }
 
 const example = () => [

@@ -1,7 +1,8 @@
 import { Empty } from "@arco-design/web-react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
-export function HomePage() {
+function HomePage() {
   const { t } = useTranslation();
   return (
     <div>
@@ -10,3 +11,5 @@ export function HomePage() {
     </div>
   );
 }
+
+export default memo(HomePage);

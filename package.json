@@ -2,12 +2,13 @@
   "name": "react-ts",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+ 
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pick-commit": "tsc scripts/pick-commit.ts --outDir ./scripts/build/ && node scripts/build/pick-commit.js"
   },
   "dependencies": {
     "@arco-design/web-react": "^2.66.6",

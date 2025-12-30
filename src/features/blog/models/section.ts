@@ -13,11 +13,6 @@ export class Section extends CompositeComponent {
   }
 
   render() {
-    return {
-      id: this.id,
-      type: this.type,
-      title: this.title,
-      children: this.getChildren().map((child) => child.render()),
-    };
+    throw new Error("Method not implemented.");
   }
 }

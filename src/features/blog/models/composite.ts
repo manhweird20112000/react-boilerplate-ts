@@ -79,6 +79,23 @@ export abstract class CompositeComponent implements Component {
     return this.children.length;
   }
 
+  /**
+   * Reorders children by their IDs according to the provided order.
+   */
+  reorderChildren(orderedIds: string[]): void {
+    const orderedComponents: Component[] = [];
+    const existingMap = new Map(
+      this.children.map((child) => [child.id, child])
+    );
+    for (const id of orderedIds) {
+      const component = existingMap.get(id);
+      if (component) {
+        orderedComponents.push(component);
+      }
+    }
+    this.children = orderedComponents;
+  }
+
   abstract render(): any;
 }
 

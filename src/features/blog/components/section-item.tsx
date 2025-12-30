@@ -97,10 +97,11 @@ export function SectionItemContentColumn({
           {items.map((id) => (
             <SortableItem key={id} id={id}>
               <Card
+                onClick={() => console.log("=======")}
                 style={{ cursor: "move" }}
                 bodyStyle={{ padding: 0 }}
                 headerStyle={{ border: 0 }}
-                title={id}
+                title={item.findById(id)?.render().title || ""}
               ></Card>
             </SortableItem>
           ))}

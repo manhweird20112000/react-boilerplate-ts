@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button as ButtonBlock, Page } from "../models";
 import { CompositeComponent } from "../models/composite";
 import { SectionColumn } from "../models/section-column";
@@ -30,7 +30,7 @@ export default function BlogPage() {
     );
     for (let i = 0; i < numberOfColumns; i++) {
       const sectionColumn = new SectionColumn(uuidv4(), "Section Column" + i);
-      sectionColumn.add(new ButtonBlock(uuidv4(), "Button 1"));
+      sectionColumn.add(new ButtonBlock(uuidv4(), "ボタン1"));
       block.add(sectionColumn);
     }
     page.current?.add(block);
@@ -46,7 +46,7 @@ export default function BlogPage() {
     if (section instanceof CompositeComponent) {
       const column = section.findById(columnId);
       if (column instanceof CompositeComponent) {
-        column.add(new ButtonBlock(uuidv4(), "Button 1"));
+        column.add(new ButtonBlock(uuidv4(), "ボタン1"));
         sync();
       }
     }
@@ -66,6 +66,14 @@ export default function BlogPage() {
     }
   };
 
+  const handleSave = () => {
+    localStorage.setItem("page", JSON.stringify(page.current?.render()));
+  };
+
+  useEffect(() => {
+    const page = JSON.parse(localStorage.getItem("page") || "{}");
+  }, []);
+
   return (
     <div>
       <Button.Group>
@@ -80,6 +88,9 @@ export default function BlogPage() {
         </Button>
         <Button type="primary">求人検索フォーム</Button>
         <Button type="primary">求人一覧</Button>
+        <Button type="primary" onClick={() => handleSave()}>
+          Save
+        </Button>
       </Button.Group>
       {sections.map((section) => (
         <SectionItem

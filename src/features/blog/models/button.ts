@@ -1,7 +1,7 @@
 import { LeafComponent } from "./composite";
 
 export class Button extends LeafComponent {
-  private readonly title: string;
+  private title: string;
   private href?: string;
   constructor(id: string, title: string, href?: string) {
     super(id, "button");
@@ -11,6 +11,10 @@ export class Button extends LeafComponent {
 
   setHref(href: string) {
     this.href = href;
+  }
+
+  setTitle(title: string) {
+    this.title = title;
   }
 
   render() {

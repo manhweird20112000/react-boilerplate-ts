@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button as ButtonBlock, Page } from "../models";
-import { CompositeComponent } from "../models/composite";
+import { CompositeComponent, type Component } from "../models/composite";
 import { SectionColumn } from "../models/section-column";
+import { Section } from "../models/section";
 import { Button } from "@arco-design/web-react";
 import SectionItem from "../components/section-item";
 import { v4 as uuidv4 } from "uuid";
+
+interface SerializedComponent {
+  id: string;
+  type: string;
+  title?: string;
+  href?: string;
+  children?: SerializedComponent[];
+}
 
 export default function BlogPage() {
   const page = useRef<Page>(new Page("page-1"));
@@ -29,7 +38,7 @@ export default function BlogPage() {
       isFullPage ? 1 : numberOfColumns
     );
     for (let i = 0; i < numberOfColumns; i++) {
-      const sectionColumn = new SectionColumn(uuidv4(), "Section Column" + i);
+      const sectionColumn = new Section(uuidv4(), "Section Column" + i);
       sectionColumn.add(new ButtonBlock(uuidv4(), "ボタン1"));
       block.add(sectionColumn);
     }
@@ -66,12 +75,73 @@ export default function BlogPage() {
     }
   };
 
+  const deserializeComponent = (data: SerializedComponent): Component => {
+    if (data.type === "button") {
+      return new ButtonBlock(data.id, data.title || "", data.href);
+    }
+    if (data.type === "section-column") {
+      const component = new SectionColumn(
+        data.id,
+        data.title,
+        data.children?.length
+      );
+      if (data.children) {
+        for (const child of data.children) {
+          const childComponent = deserializeComponent(child);
+          component.add(childComponent);
+        }
+      }
+      return component;
+    }
+    if (data.type === "section") {
+      const component = new Section(data.id, data.title);
+      if (data.children) {
+        for (const child of data.children) {
+          const childComponent = deserializeComponent(child);
+          component.add(childComponent);
+        }
+      }
+      return component;
+    }
+    if (data.type === "page") {
+      const component = new Page(data.id);
+      if (data.children) {
+        for (const child of data.children) {
+          const childComponent = deserializeComponent(child);
+          if (childComponent instanceof CompositeComponent) {
+            component.add(childComponent);
+          }
+        }
+      }
+      return component;
+    }
+    throw new Error(`Unknown component type: ${data.type}`);
+  };
+
   const handleSave = () => {
     localStorage.setItem("page", JSON.stringify(page.current?.render()));
   };
 
+  const handleLoad = () => {
+    const savedData = localStorage.getItem("page");
+    if (savedData) {
+      console.log(savedData)
+      try {
+        const parsedData: SerializedComponent = JSON.parse(savedData);
+        if (parsedData.type === "page") {
+          const loadedPage = deserializeComponent(parsedData) as Page;
+          page.current = loadedPage;
+          console.log(page.current)
+          sync();
+        }
+      } catch (error) {
+        console.error("Failed to load page from localStorage:", error);
+      }
+    }
+  };
+
   useEffect(() => {
-    const page = JSON.parse(localStorage.getItem("page") || "{}");
+    handleLoad();
   }, []);
 
   return (

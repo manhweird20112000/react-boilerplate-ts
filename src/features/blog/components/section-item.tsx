@@ -1,6 +1,6 @@
-import { type Section } from "../models";
+import { CompositeComponent, type Section } from "../models";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import classNames from "classnames";
 import { Button, Card } from "@arco-design/web-react";
@@ -12,17 +12,18 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
+import { PageContext, PageDispatchContext } from "./page.provider";
+import { Button as ButtonBlock } from "../models";
+import { v4 as uuidv4 } from "uuid";
 
 interface SectionItemColumnProps {
   item: SectionColumn;
-  version: number;
   onAddLeaf?: (sectionId: string, columnId: string) => void;
   onReorder?: (columnId: string, orderedIds: string[]) => void;
 }
 
 interface ColumnItemContentProps {
   item: Section;
-  version: number;
   parentId: string;
   onAddLeaf?: (sectionId: string, columnId: string) => void;
   onReorder?: (columnId: string, orderedIds: string[]) => void;
@@ -30,7 +31,6 @@ interface ColumnItemContentProps {
 
 export default function SectionItem({
   item,
-  version,
   onAddLeaf,
   onReorder,
 }: SectionItemColumnProps) {
@@ -45,7 +45,6 @@ export default function SectionItem({
         {item.getChildren().map((child: any, key: number) => (
           <div key={key}>
             <SectionItemContentColumn
-              version={version}
               item={child}
               parentId={item.id}
               onAddLeaf={onAddLeaf}
@@ -61,15 +60,29 @@ export default function SectionItem({
 export function SectionItemContentColumn({
   item,
   parentId,
-  version,
-  onAddLeaf,
   onReorder,
 }: ColumnItemContentProps) {
+  const { page, version } = useContext(PageContext);
+  const dispatch = useContext(PageDispatchContext);
+
   const [items, setItems] = useState<string[]>([]);
 
   useEffect(() => {
+    console.log(version);
+    console.log(page);
     setItems(item.getChildren().map((child) => child.id));
-  }, [version, item]);
+  }, [page, version, item.id]);
+
+  const addLeaf = () => {
+    const section = page?.findById(parentId);
+    if (section instanceof CompositeComponent) {
+      const column = section.findById(item.id);
+      if (column instanceof CompositeComponent) {
+        column.add(new ButtonBlock(uuidv4(), "ボタン1"));
+        dispatch({ type: "UPDATE_VERSION" });
+      }
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -84,27 +97,36 @@ export function SectionItemContentColumn({
 
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={() => {
-          onAddLeaf?.(parentId, item.id);
-        }}
-      >
+      <Button type="primary" onClick={addLeaf}>
         Add Leaf
       </Button>
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {items.map((id) => (
-            <SortableItem key={id} id={id}>
-              <Card
-                onClick={() => console.log("=======")}
-                style={{ cursor: "move" }}
-                bodyStyle={{ padding: 0 }}
-                headerStyle={{ border: 0 }}
-                title={item.findById(id)?.render().title || ""}
-              ></Card>
-            </SortableItem>
-          ))}
+          {items.map((id) => {
+            return (
+              <SortableItem key={id} id={id}>
+                {({
+                  attributes,
+                  listeners,
+                }: {
+                  attributes: any;
+                  listeners: any;
+                }) => (
+                  <div>
+                    <div {...attributes} {...listeners}>
+                      <Card
+                        style={{ cursor: "move" }}
+                        bodyStyle={{ padding: 0 }}
+                        headerStyle={{ border: 0 }}
+                        title={item.findById(id)?.render().title || ""}
+                      ></Card>
+                    </div>
+                    <Button onClick={() => console.log(id)}>set title</Button>
+                  </div>
+                )}
+              </SortableItem>
+            );
+          })}
         </SortableContext>
       </DndContext>
     </div>

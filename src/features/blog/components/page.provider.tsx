@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { Page } from "../models";
-import { PageContext } from "./page.context";
+import { createContext, useReducer, type Dispatch } from "react";
+import type { BlogState } from "../reducers/state";
+import { blogReducer, initialState } from "../reducers/reducer";
+
+export const PageContext = createContext<BlogState>(initialState);
+export const PageDispatchContext = createContext<Dispatch<any>>(() => {});
 
 export default function PageProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [version, setVersion] = useState<number>(0);
-  const [page, setPage] = useState<Page>(new Page("page-1"));
-
-  const sync = () => {
-    setVersion((v) => v + 1);
-  };
+  const [state, dispatch] = useReducer(blogReducer, initialState);
 
   return (
-    <PageContext.Provider value={{ page, version }}>
-      {children}
+    <PageContext.Provider value={state}>
+      <PageDispatchContext.Provider value={dispatch}>
+        {children}
+      </PageDispatchContext.Provider>
     </PageContext.Provider>
   );
 }

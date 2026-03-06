@@ -16,4 +16,10 @@ export default defineConfig({
   build: {
     minify: true,
   },
+
+  server: {
+    port: parseInt(process.env.VITE_PORT || "9000"),
+  },
+
+  
 });

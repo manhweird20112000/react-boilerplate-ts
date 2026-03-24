@@ -1,25 +1,63 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
-import * as path from "path";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+
+const projectRoot: string = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_DEV_PORT = 9000;
+
+/**
+ * Splits stable framework dependencies into separate chunks for caching.
+ * Ant Design is not split here to avoid circular chunk edges with React.
+ */
+function resolveManualChunk(moduleId: string): string | undefined {
+  if (!moduleId.includes("node_modules")) {
+    return undefined;
+  }
+  if (
+    moduleId.includes("@reduxjs") ||
+    moduleId.includes("redux-saga") ||
+    moduleId.includes("/react-redux/")
+  ) {
+    return "redux-vendor";
+  }
+  if (moduleId.includes("react-router")) {
+    return "router-vendor";
+  }
+  if (/node_modules\/react(?!-)/u.test(moduleId) || moduleId.includes("react-dom")) {
+    return "react-vendor";
+  }
+  return undefined;
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss({ optimize: true })],
-
   resolve: {
     alias: {
-      "~": path.resolve("./src"),
+      "~": path.resolve(projectRoot, "src"),
     },
   },
-
+  optimizeDeps: {
+    include: ["antd", "@reduxjs/toolkit", "react", "react-dom", "react-router-dom"],
+  },
   build: {
-    minify: true,
+    target: "es2022",
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: resolveManualChunk,
+      },
+    },
   },
-
   server: {
-    port: parseInt(process.env.VITE_PORT || "9000"),
+    port: Number.parseInt(process.env.VITE_PORT ?? String(DEFAULT_DEV_PORT), 10),
+    strictPort: true,
+    host: true,
   },
-
-  
+  preview: {
+    strictPort: true,
+    host: true,
+  },
 });

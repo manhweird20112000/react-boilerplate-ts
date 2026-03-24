@@ -15,7 +15,6 @@ createRoot(document.getElementById("root")!).render(
     locale={viVN}
     theme={{
       token: {
-        borderRadius: 0,
         colorPrimary: "#2C687B",
 
         colorError: "#E74C3C",

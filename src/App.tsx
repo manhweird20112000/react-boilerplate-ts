@@ -6,6 +6,7 @@ import { Spin } from "antd";
 const HomePage = lazy(() => import("~/features/home/pages"));
 const PostsPage = lazy(() => import("~/features/posts/pages"));
 const LoginPage = lazy(() => import("~/features/auth/pages/login"));
+const NotFoundPage = lazy(() => import("~/features/errors/pages"));
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
             <Route path="/posts" element={<PostsPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
+          <Route element={<LayoutDefault />}>
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>

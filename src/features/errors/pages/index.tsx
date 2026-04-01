@@ -1,4 +1,3 @@
-import { Button } from "antd";
 import { memo, type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
@@ -12,8 +11,11 @@ function NotFoundPage(): ReactElement {
       <div className="text-5xl font-bold text-gray-900">404</div>
       <div className="text-gray-600">Page not found</div>
       <div className="mt-4">
-        <Link to="/" className="inline-flex">
-          <Button type="primary">Back to Home</Button>
+        <Link
+          to="/"
+          className="inline-flex rounded-md bg-[#2C687B] px-4 py-2 text-sm font-medium text-white hover:bg-[#235a6b]"
+        >
+          Back to Home
         </Link>
       </div>
     </div>

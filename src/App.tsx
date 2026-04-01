@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { LayoutDefault } from "~/layouts/default";
 import { lazy, Suspense } from "react";
-import { Spin } from "antd";
 
 const HomePage = lazy(() => import("~/features/home/pages"));
 const PostsPage = lazy(() => import("~/features/posts/pages"));
@@ -13,8 +12,8 @@ function App() {
     <BrowserRouter>
       <Suspense
         fallback={
-          <div className="flex justify-center items-center h-screen">
-            <Spin size="large" />
+          <div className="flex h-screen items-center justify-center" role="status" aria-label="Loading">
+            <div className="size-10 animate-spin rounded-full border-4 border-[#2C687B] border-t-transparent" />
           </div>
         }
       >

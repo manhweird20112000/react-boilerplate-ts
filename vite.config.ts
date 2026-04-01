@@ -9,7 +9,6 @@ const DEFAULT_DEV_PORT = 9000;
 
 /**
  * Splits stable framework dependencies into separate chunks for caching.
- * Ant Design is not split here to avoid circular chunk edges with React.
  */
 function resolveManualChunk(moduleId: string): string | undefined {
   if (!moduleId.includes("node_modules")) {
@@ -36,11 +35,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss({ optimize: true })],
   resolve: {
     alias: {
+      "@": path.resolve(projectRoot, "src"),
       "~": path.resolve(projectRoot, "src"),
     },
   },
   optimizeDeps: {
-    include: ["antd", "@reduxjs/toolkit", "react", "react-dom", "react-router-dom"],
+    include: ["@reduxjs/toolkit", "react", "react-dom", "react-router-dom"],
   },
   build: {
     target: "es2022",

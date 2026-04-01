@@ -1,6 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
 
-import authReducer from "~/features/auth/store/slice";
 import postsReducer from "~/features/posts/store/slice";
 
 /**
@@ -8,7 +7,6 @@ import postsReducer from "~/features/posts/store/slice";
  */
 export const rootReducer = combineReducers({
   posts: postsReducer,
-  auth: authReducer,
 });
 
 export type RootReducerState = ReturnType<typeof rootReducer>;

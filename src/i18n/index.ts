@@ -6,8 +6,8 @@ i18n
   .use(HttpBackend)
   .use(initReactI18next)
   .init({
-    fallbackLng: "en",
-    supportedLngs: ["en", "vi"],
+    fallbackLng: "ja",
+    supportedLngs: ["ja"],
     interpolation: { escapeValue: false },
   });
 

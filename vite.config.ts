@@ -32,6 +32,7 @@ function resolveManualChunk(moduleId: string): string | undefined {
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/admin/',
   plugins: [react(), tailwindcss({ optimize: true })],
   resolve: {
     alias: {

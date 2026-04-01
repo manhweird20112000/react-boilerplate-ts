@@ -2,10 +2,12 @@ import { lazy, type ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { LayoutDefault } from "~/shared/layouts/default";
+import { LayoutAdmin } from "~/shared/layouts/admin";
 
-const HomePage = lazy(() => import("~/features/home/pages"));
-const PostsPage = lazy(() => import("~/features/posts/pages"));
 const NotFoundPage = lazy(() => import("~/features/errors/pages"));
+const AuthorListPage = lazy(
+  () => import("~/features/author/pages/author-list-page"),
+);
 
 /**
  * Application route tree; lazy-loaded feature pages stay in their modules.
@@ -13,9 +15,8 @@ const NotFoundPage = lazy(() => import("~/features/errors/pages"));
 export function AppRoutes(): ReactElement {
   return (
     <Routes>
-      <Route path="/" element={<LayoutDefault />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/posts" element={<PostsPage />} />
+      <Route path="/admin" element={<LayoutAdmin />}>
+        <Route path="authors" element={<AuthorListPage />} />
       </Route>
       <Route element={<LayoutDefault />}>
         <Route path="*" element={<NotFoundPage />} />

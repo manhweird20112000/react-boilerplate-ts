@@ -2,6 +2,7 @@ import { Suspense, type ReactElement } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 import { AppRoutes } from "./routes";
+import { Toaster } from "sonner";
 
 function App(): ReactElement {
   return (
@@ -18,6 +19,7 @@ function App(): ReactElement {
         }
       >
         <AppRoutes />
+        <Toaster />
       </Suspense>
     </BrowserRouter>
   );

@@ -1,4 +1,0 @@
-export const StorageKey = {
-  AUTH: "AUTH_USER_TOKEN",
-  BREAD_CRUMB_HISTORY: "BREAD_CRUMB_HISTORY",
-};

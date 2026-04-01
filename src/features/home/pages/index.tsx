@@ -1,13 +1,16 @@
+import { Button } from "@/shared/components/ui/button";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { useHead } from "~/hooks/use-head";
+import { useHead } from "~/shared/hooks/use-head";
 
 function HomePage() {
   useHead({ title: "Home" });
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  return <div>{t("welcome", { name: "weird" })} </div>;
+  return (
+    <div>
+      {t("welcome", { name: "weird" })} <Button>Click me</Button>{" "}
+    </div>
+  );
 }
 
 export default memo(HomePage);

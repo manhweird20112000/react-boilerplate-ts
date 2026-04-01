@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useHead } from "~/hooks/use-head";
+import { useHead } from "~/shared/hooks/use-head";
 import { postsActions } from "~/features/posts/store/slice";
 import type { RootState } from "~/app/store";
 

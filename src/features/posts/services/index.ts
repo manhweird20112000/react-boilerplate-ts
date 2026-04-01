@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
 
-import { HttpService } from "~/core/utils/api";
+import { HttpService } from "~/infra/api/http-service";
 import type { CreatePostPayload, Post } from "~/features/posts/types";
 
 const POSTS_ENDPOINT = "/posts";

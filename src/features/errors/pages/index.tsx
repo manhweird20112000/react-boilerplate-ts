@@ -1,7 +1,7 @@
 import { memo, type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { useHead } from "~/hooks/use-head";
+import { useHead } from "~/shared/hooks/use-head";
 
 function NotFoundPage(): ReactElement {
   useHead({ title: "404" });

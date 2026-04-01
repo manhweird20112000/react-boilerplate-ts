@@ -1,8 +1,29 @@
 ---
-description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n validation, store/services, UI)
+description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n validation, services, UI; store slice/saga only when explicitly requested)
 ---
 
 ## Workflow: Implement a CRUD feature (in order)
+
+## Required Inputs (gating)
+- **At least ONE of**:
+  - **UI design** (Figma / images)
+  - **Text requirements**
+- **Strongly recommended**:
+  - **API documentation** (OpenAPI / Swagger / MD)
+- **If missing**:
+  - **STOP and ask for clarification**
+
+## Form behavior (required)
+- **Reset form after success (create)**
+- **Keep values (edit)**
+- **Disable submit when submitting**
+- **Show server errors inline if available**
+
+## Do NOT (required)
+- **Do NOT hardcode API field names**
+- **Do NOT duplicate UI components**
+- **Do NOT bypass shared components**
+- **Do NOT inline form inside page**
 
 ### 1) Analyze requirements (input)
 - **CRUD scope**: what is the entity, which operations are required (Create / Read list / Read detail / Update / Delete).
@@ -27,7 +48,7 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **Edge cases**: empty, error, retry, concurrent edits.
   - **Definition of Done**: UI, validation, i18n, route/sidebar, tests (if applicable).
 - **Execution plan (recommended)**:
-  - **Types + contracts** → **Services** → **Store (slice/saga)** → **Pages** → **Components/Form** → **i18n messages** → **Routes + Sidebar** → **Smoke test**.
+  - **Types + contracts** → **Services** → **State management (hooks/local state by default; slice/saga only when explicitly requested)** → **Pages** → **Components/Form** → **i18n messages** → **Routes + Sidebar** → **Smoke test**.
 
 ### 3) Define required components (form must be separate)
 - **Feature structure (recommended for this template)**:
@@ -35,7 +56,9 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
     - **Entity/DTO types**: `.../types/*.ts`
   - `src/features/<feature-name>/services/`:
     - **API client**: `.../services/*.ts`
-  - `src/features/<feature-name>/store/`:
+  - `src/features/<feature-name>/hooks/` (recommended):
+    - **Feature hooks** (data loading/mutations, derived UI state): `.../hooks/*.ts`
+  - `src/features/<feature-name>/store/` (optional; only when explicitly requested):
     - **slice + saga + selectors**: `.../store/*.ts`
   - `src/features/<feature-name>/pages/`:
     - **List page**: `.../pages/<feature>-list-page.tsx`
@@ -122,7 +145,12 @@ const FeatureListPage = lazy(
   - **Implement** `createX`, `getXList`, `getXById`, `updateX`, `deleteX`.
   - **Return type**: all service methods should return `Future<T>` (or the appropriate `Future<PagedResult<T>>` for list).
   - **Map errors** into a consistent shape for UI/store.
-- **Store (slice/saga)**:
+- **State management (default)**:
+  - **Do not implement Redux `slice` + `saga` by default**. Only add them when explicitly requested for the feature.
+  - **Default approach**: keep async calls inside feature hooks/pages using the feature services; model loading/error states locally (or via a dedicated feature hook).
+  - **State shape (recommended)**: data + pagination + `isLoading`/`isSubmitting` + `error` + `lastMutation`.
+  - **Error handling**: add context (operation name), and prefer API-provided message when available.
+- **Store (slice/saga) (optional; only when explicitly requested)**:
   - **Actions**: request/success/failure for list/create/update/delete.
   - **State**: data, pagination, isLoading flags, error, lastMutation.
   - **Saga**: call service, dispatch success/failure, invalidate/refetch list when needed.

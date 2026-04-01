@@ -19,7 +19,7 @@ description: >-
 
 | Path | Role |
 |------|------|
-| `app/` | Application shell: root component, Redux store, sagas, route tree |
+| `app/` | Application shell: root component, route tree, app-wide wiring (Redux/sagas only when explicitly requested) |
 | `features/` | Domain slices: each folder is one product area (auth, posts, …) |
 | `shared/` | Cross-feature UI, hooks, layouts, utilities used by multiple features |
 | `infra/` | Technical adapters (HTTP client, external APIs) — not business UI |
@@ -32,7 +32,7 @@ description: >-
 
 - `App.tsx` — providers, router outlet, top-level composition
 - `routes.tsx` — `Route` definitions; **lazy-load** feature pages from `~/features/.../pages`
-- `store.ts`, `root-reducer.ts`, `root-saga.ts` — global Redux wiring
+- `store.ts`, `root-reducer.ts`, `root-saga.ts` — global Redux wiring (only when explicitly requested)
 
 Do **not** put feature-specific business components or API logic here.
 
@@ -44,15 +44,16 @@ Standard shape (extend only when needed):
 features/posts/
 ├── index.ts           # public exports for this feature (barrel)
 ├── pages/             # route-level screens (often lazy-imported)
-├── store/             # slice, saga, selectors for this feature
 ├── services/          # feature API calls (uses infra/http)
+├── hooks/             # feature hooks (data loading/mutations, derived UI state)
 └── types/             # feature-specific types
 ```
 
 **Rules**
 
 - **New screen** → `features/<name>/pages/` (or a subpath if multiple screens).
-- **Redux for this feature only** → `features/<name>/store/`.
+- **Feature state (default)** → `features/<name>/hooks/` + local state in pages/components.
+- **Redux slice/saga for this feature (optional; only when explicitly requested)** → `features/<name>/store/`.
 - **HTTP calls for this domain** → `features/<name>/services/` calling `~/infra/api/...`.
 - **Types only this feature needs** → `features/<name>/types/`.
 - Export what other layers may import through `features/<name>/index.ts` when appropriate.
@@ -86,7 +87,8 @@ Feature `services/` compose **domain** calls; `infra` holds **transport** and co
 |------|----------|
 | New page for a domain | `features/<domain>/pages/` |
 | New global route | `app/routes.tsx` + lazy import |
-| Redux slice/saga for domain | `features/<domain>/store/` |
+| Feature hooks (default) | `features/<domain>/hooks/` |
+| Redux slice/saga for domain (optional; only when explicitly requested) | `features/<domain>/store/` |
 | REST call for domain | `features/<domain>/services/` |
 | Button, input, dialog primitive | `shared/components/ui/` |
 | Layout used by several routes | `shared/layouts/` |
@@ -102,5 +104,5 @@ Feature `services/` compose **domain** calls; `infra` holds **transport** and co
 
 ## Related
 
-- Redux wiring: `app/store.ts`, `app/root-reducer.ts`, `app/root-saga.ts`
+- Redux wiring (optional): `app/store.ts`, `app/root-reducer.ts`, `app/root-saga.ts`
 - Example route wiring: `app/routes.tsx`

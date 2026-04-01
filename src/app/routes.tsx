@@ -5,7 +5,6 @@ import { LayoutDefault } from "~/shared/layouts/default";
 
 const HomePage = lazy(() => import("~/features/home/pages"));
 const PostsPage = lazy(() => import("~/features/posts/pages"));
-const LoginPage = lazy(() => import("~/features/auth/pages/login"));
 const NotFoundPage = lazy(() => import("~/features/errors/pages"));
 
 /**
@@ -18,7 +17,6 @@ export function AppRoutes(): ReactElement {
         <Route path="/" element={<HomePage />} />
         <Route path="/posts" element={<PostsPage />} />
       </Route>
-      <Route path="/login" element={<LoginPage />} />
       <Route element={<LayoutDefault />}>
         <Route path="*" element={<NotFoundPage />} />
       </Route>

@@ -204,9 +204,26 @@ export default function* featureSaga() {
 import { memo } from "react";
 
 import { Button } from "@/shared/components/ui/button";
+import DataTable, { DataTableColumnHeader } from "@/shared/components/data-table/data-table";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/shared/components/ui/empty";
 import { LayoutPage } from "@/shared/layouts/page-layout";
 
 const FeatureListPage = () => {
+  const items: readonly Feature[] = [];
+  const columns: readonly import("@tanstack/react-table").ColumnDef<Feature>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      cell: ({ row }) => row.original.name,
+    },
+  ];
+
   return (
     <LayoutPage
       heading="Feature"
@@ -214,13 +231,29 @@ const FeatureListPage = () => {
       filter={<div>Filters go here</div>}
       paginationBarProps={{ currentPage: 1, totalPages: 10 }}
     >
-      <div>Table goes here</div>
+      {items.length === 0 ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>No data</EmptyTitle>
+            <EmptyDescription>Try adjusting filters or create a new item.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button>Create</Button>
+          </EmptyContent>
+        </Empty>
+      ) : (
+        <DataTable columns={columns} data={items} />
+      )}
     </LayoutPage>
   );
 };
 
 export default memo(FeatureListPage);
 ```
+    - **Table/empty state rule (required)**:
+      - **Table data must render with** `src/shared/components/data-table/data-table.tsx` (`DataTable`).
+      - **Empty state must render with** `src/shared/components/ui/empty.tsx` (use the `Empty` component family).
+      - **Do not rely on `DataTable`'s `emptyText`** for feature empty states; use `Empty` to keep consistent layout/CTA and allow richer content.
   - **Create/Edit page**: load detail (edit), wire submit → dispatch create/update.
   - **Confirm actions (required)**:
     - **All confirm flows** (delete, destructive update, discard changes, etc.) must use `src/shared/components/ui/alert-dialog.tsx`.

@@ -1,5 +1,5 @@
-import { type ReactElement } from "react"
-import { NavLink, Outlet, useLocation } from "react-router-dom"
+import { type ReactElement } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
   Sidebar,
@@ -16,16 +16,16 @@ import {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-} from "@/shared/components/ui/sidebar"
-import { cn } from "@/shared/lib/utils"
-import { LayoutDashboardIcon, NewspaperIcon, ShieldIcon } from "lucide-react"
+} from "@/shared/components/ui/sidebar";
+import { cn } from "@/shared/lib/utils";
+import { LayoutDashboardIcon, NewspaperIcon, ShieldIcon } from "lucide-react";
 
 type AdminNavItem = {
-  readonly to: string
-  readonly label: string
-  readonly icon: ReactElement
-  readonly isActive: (pathname: string) => boolean
-}
+  readonly to: string;
+  readonly label: string;
+  readonly icon: ReactElement;
+  readonly isActive: (pathname: string) => boolean;
+};
 
 const ADMIN_NAV_ITEMS: readonly AdminNavItem[] = [
   {
@@ -40,10 +40,16 @@ const ADMIN_NAV_ITEMS: readonly AdminNavItem[] = [
     icon: <NewspaperIcon />,
     isActive: (pathname: string) => pathname.startsWith("/admin/posts"),
   },
-] as const
+  {
+    to: "/admin/accounts",
+    label: "アカウント管理",
+    icon: <ShieldIcon />,
+    isActive: (pathname: string) => pathname.startsWith("/admin/accounts"),
+  },
+] as const;
 
 function AdminSidebarNav(): ReactElement {
-  const { pathname } = useLocation()
+  const { pathname } = useLocation();
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader className="p-0">
@@ -73,7 +79,7 @@ function AdminSidebarNav(): ReactElement {
                     isActive={item.isActive(pathname)}
                     render={<NavLink to={item.to} end />}
                     className={cn(
-                      "data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground"
+                      "data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground",
                     )}
                     tooltip={item.label}
                   >
@@ -88,7 +94,7 @@ function AdminSidebarNav(): ReactElement {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
 
 function AdminHeader(): ReactElement {
@@ -111,7 +117,7 @@ function AdminHeader(): ReactElement {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 export function LayoutAdmin(): ReactElement {
@@ -125,6 +131,5 @@ export function LayoutAdmin(): ReactElement {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
-

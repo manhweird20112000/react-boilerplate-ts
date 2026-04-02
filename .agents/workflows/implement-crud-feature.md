@@ -1,5 +1,5 @@
 ---
-description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n validation, services, UI; store slice/saga only when explicitly requested)
+description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n validation, services, UI; hooks/local state by default)
 ---
 
 ## Workflow: Implement a CRUD feature (in order)
@@ -24,6 +24,7 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
 - **Do NOT duplicate UI components**
 - **Do NOT bypass shared components**
 - **Do NOT inline form inside page**
+- **Do NOT match wireframe colors pixel-perfect** — **always base colors on the existing UI library tokens/variants** to keep the app visually consistent.
 
 ### 1) Analyze requirements (input)
 - **CRUD scope**: what is the entity, which operations are required (Create / Read list / Read detail / Update / Delete).
@@ -48,7 +49,7 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **Edge cases**: empty, error, retry, concurrent edits.
   - **Definition of Done**: UI, validation, i18n, route/sidebar, tests (if applicable).
 - **Execution plan (recommended)**:
-  - **Types + contracts** → **Services** → **State management (hooks/local state by default; slice/saga only when explicitly requested)** → **Pages** → **Components/Form** → **i18n messages** → **Routes + Sidebar** → **Smoke test**.
+  - **Types + contracts** → **Services** → **State management (hooks/local state by default)** → **Pages** → **Components/Form** → **i18n messages** → **Routes + Sidebar** → **Smoke test**.
 
 ### 3) Define required components (form must be separate)
 - **Feature structure (recommended for this template)**:
@@ -58,8 +59,6 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
     - **API client**: `.../services/*.ts`
   - `src/features/<feature-name>/hooks/` (recommended):
     - **Feature hooks** (data loading/mutations, derived UI state): `.../hooks/*.ts`
-  - `src/features/<feature-name>/store/` (optional; only when explicitly requested):
-    - **slice + saga + selectors**: `.../store/*.ts`
   - `src/features/<feature-name>/pages/`:
     - **List page**: `.../pages/<feature>-list-page.tsx`
     - **Create page** (if routed): `.../pages/<feature>-create-page.tsx`
@@ -72,8 +71,13 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **Do not keep the form inside the page**; the page should only wire data + handlers.
   - **The form is a separate component** with RO-RO props: initialValues, onSubmit, isSubmitting, mode.
   - **Separate the validation schema** (zod) from UI so it can be reused for create/update.
+  - **Required field marker (JP projects) (required)**:
+    - **Convention**: `* = (必須)` for required fields.
+    - **UI rule**: required fields must show `* (必須)` next to the field label (hardcoded).
+    - **Scope reminder**: only validation messages are i18n-based; this required marker is **not** a validation message.
   - **Field width consistency (required)**:
     - **All fields must use consistent width** (prefer `w-full`).
+    - **Inputs/selects/textareas must be 100% width by default** (`w-full`).
     - **Use a consistent layout wrapper** (prefer a `grid` container) so label/input/error blocks align across fields.
     - **Avoid per-field width styling** (e.g. mixing `w-1/2`, `max-w-*`, custom margins) unless a design spec explicitly requires it.
 
@@ -81,6 +85,9 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
 - **Scope note**:
   - **Only validation messages must be i18n-based**. Other UI text can be hardcoded unless there is a requirement to localize it.
   - **Toasts after API calls** should prefer the message returned by the API (available via `ResponseData.message` from `@/shared/types/common.d.ts`); only use hardcoded/i18n fallback when the API does not provide a message.
+- **Locale-safe formatting (required)**:
+  - **Dates/times**: do **not** hardcode formats (e.g. `YYYY-MM-DD`). Use `Intl.DateTimeFormat`.
+  - **Numbers/currency**: use `Intl.NumberFormat` (do not hardcode separators/suffixes).
 - **Current locale setup**: only `ja` exists (`public/locales/ja/translation.json`). Do not add other locale files unless explicitly required.
 - **Interpolation syntax**: this project uses `{_placeholder_}` (e.g. `{_field_}`, `{_length_}`, `{_max_}`). Do **not** use the i18next default `{{placeholder}}`.
 - **Key conventions (recommended)**:
@@ -146,75 +153,9 @@ const FeatureListPage = lazy(
   - **Return type**: all service methods should return `Future<T>` (or the appropriate `Future<PagedResult<T>>` for list).
   - **Map errors** into a consistent shape for UI/store.
 - **State management (default)**:
-  - **Do not implement Redux `slice` + `saga` by default**. Only add them when explicitly requested for the feature.
   - **Default approach**: keep async calls inside feature hooks/pages using the feature services; model loading/error states locally (or via a dedicated feature hook).
   - **State shape (recommended)**: data + pagination + `isLoading`/`isSubmitting` + `error` + `lastMutation`.
   - **Error handling**: add context (operation name), and prefer API-provided message when available.
-- **Store (slice/saga) (optional; only when explicitly requested)**:
-  - **Actions**: request/success/failure for list/create/update/delete.
-  - **State**: data, pagination, isLoading flags, error, lastMutation.
-  - **Saga**: call service, dispatch success/failure, invalidate/refetch list when needed.
-  - **Register the saga** in `src/app/root-saga.ts` (add it to the `all([...])` array).
-  - **Minimal slice + saga example**:
-
-```ts
-// store/<feature>.slice.ts
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-type FeatureState = {
-  readonly items: readonly Feature[];
-  readonly isLoading: boolean;
-  readonly error: string | null;
-};
-
-const initialState: FeatureState = {
-  items: [],
-  isLoading: false,
-  error: null,
-};
-
-const featureSlice = createSlice({
-  name: "feature",
-  initialState,
-  reducers: {
-    fetchListRequest(state) {
-      state.isLoading = true;
-      state.error = null;
-    },
-    fetchListSuccess(state, action: PayloadAction<Feature[]>) {
-      state.items = action.payload;
-      state.isLoading = false;
-    },
-    fetchListFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-  },
-});
-
-export const featureActions = featureSlice.actions;
-export default featureSlice.reducer;
-```
-
-```ts
-// store/<feature>.saga.ts
-import { call, put, takeLatest } from "redux-saga/effects";
-import { featureActions } from "./<feature>.slice";
-import { getFeatureList } from "../services/<feature>.service";
-
-function* fetchListSaga() {
-  try {
-    const response = yield call(getFeatureList);
-    yield put(featureActions.fetchListSuccess(response.data.data));
-  } catch (err) {
-    yield put(featureActions.fetchListFailure(err instanceof Error ? err.message : "Unknown error"));
-  }
-}
-
-export default function* featureSaga() {
-  yield takeLatest(featureActions.fetchListRequest.type, fetchListSaga);
-}
-```
 - **Pages**:
   - **List page (required layout reuse)**:
     - **Always wrap** the list screen with `src/shared/layouts/page-layout.tsx` (`LayoutPage`) to keep a consistent page header/actions/filter/pagination area across features.
@@ -226,6 +167,21 @@ export default function* featureSaga() {
       - `pagination`: custom pagination node (optional)
       - `paginationBarProps`: preferred for standard paging using `PaginationBar` (optional)
       - `isPaginationVisible`: toggle pagination area (default `true`)
+    - **Filter layout (required)**:
+      - **Layout**: use a `grid` with **12 columns** (`grid grid-cols-12 gap-3`) for filters to allow for more granular control over field widths (e.g., name/email usually wider than status/role).
+      - **Reset filter (required)**:
+        - Must have a **Reset filter** button.
+        - Button should be **inline** with the filters (usually the last column) to minimize vertical space and improve interaction flow.
+        - Button must be **disabled when not dirty** (no changes vs default values).
+        - Reset must restore **default filter values** and trigger the list refresh using those defaults.
+      - **Accessibility & UX**:
+        - **Decorative icons**: Icons adjacent to text (e.g., in a Reset button) must have `aria-hidden="true"`.
+        - **Input metadata**: Inputs must have meaningful `name`, `autocomplete`, and appropriate `type` (e.g., `email`). Set `spellCheck={false}` on email/ID fields.
+        - **Typography**: Always use the ellipsis character `…` (U+2026) instead of three dots `...` in placeholders and loading text.
+      - **Text rule reminder**: only validation messages use i18n; filter labels/button text can be hardcoded.
+      - **Control width (required)**:
+        - **All filter controls** (inputs/selects/date pickers) must be `w-full` (100% width) inside their grid column.
+        - Avoid mixing `max-w-*` on form controls unless a design spec explicitly requires it.
     - **Example** (follows the codebase convention: arrow function + `memo` + `export default`):
 
 ```tsx
@@ -282,10 +238,17 @@ export default memo(FeatureListPage);
       - **Table data must render with** `src/shared/components/data-table/data-table.tsx` (`DataTable`).
       - **Empty state must render with** `src/shared/components/ui/empty.tsx` (use the `Empty` component family).
       - **Do not rely on `DataTable`'s `emptyText`** for feature empty states; use `Empty` to keep consistent layout/CTA and allow richer content.
+    - **Table header/body alignment (required)**:
+      - **Always keep header and body columns aligned** by applying the same alignment/width rules to both.
+      - **Preferred approach**: use `columnDef.meta` with `headerClassName` + `cellClassName` so `TableHead` and `TableCell` share the same layout constraints.
+      - **Actions column UX**:
+        - Avoid `text-right` + `justify-end` unless the design explicitly wants actions pushed to the far edge.
+        - If right-aligned actions are required, keep consistent padding (don’t let buttons feel glued to the cell edge).
   - **Create/Edit page**: load detail (edit), wire submit → dispatch create/update.
   - **Confirm actions (required)**:
     - **All confirm flows** (delete, destructive update, discard changes, etc.) must use `src/shared/components/ui/alert-dialog.tsx`.
     - **Do not implement custom confirm modals** (or browser `confirm`) for CRUD flows.
+    - **Never execute destructive actions immediately** from a table row/menu without a confirm modal (or an explicit undo window requirement).
     - **Styling constraint**: keep the dialog close to the library defaults; avoid custom styling/variants unless necessary for correctness (e.g. layout bug) or an explicit design requirement.
   - **Delete**: confirm → dispatch delete → refetch/navigate.
 - **Form component**:
@@ -319,5 +282,11 @@ export default memo(FeatureListPage);
 - **Quick a11y check**:
   - **Keyboard**: tab order, focus trap for dialog/drawer.
   - **ARIA/labels**: inputs have labels, buttons have accessible names.
+- **Web Interface Guidelines review (required)**:
+  - **Gating rule (must-do before merge)**: you **must** review the relevant UI files using `@.agents/skills/web-design-guidelines/SKILL.md`.
+  - **Scope**: include all touched UI files (typically `pages/*.tsx`, `components/*.tsx`, `shared/components/ui/*` used/modified, and any new styles/layout wrappers).
+  - **Timing**: do this **after** the UI is functionally complete (states + empty/loading/error) and before final review/merge.
+  - **Always fetch the latest rules** from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` before reviewing.
+  - **Report findings** in the required `file:line` format.
 - **Review outcome**:
   - **If it deviates**: align with existing features first, or move the pattern into shared UI components for reuse.

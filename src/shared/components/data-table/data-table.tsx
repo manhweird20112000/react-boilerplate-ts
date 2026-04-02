@@ -30,6 +30,11 @@ type DataTableProps<TData> = {
 
 export { DataTableColumnHeader };
 
+type DataTableColumnMeta = {
+  readonly headerClassName?: string;
+  readonly cellClassName?: string;
+};
+
 type DataTableColumnHeaderProps<TData> = {
   readonly column: import("@tanstack/react-table").Column<TData>;
   readonly title: string;
@@ -103,7 +108,13 @@ function DataTableComponent<TData>(props: DataTableProps<TData>): ReactElement {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead
+                  key={header.id}
+                  className={cn(
+                    (header.column.columnDef.meta as DataTableColumnMeta | undefined)
+                      ?.headerClassName,
+                  )}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -117,7 +128,13 @@ function DataTableComponent<TData>(props: DataTableProps<TData>): ReactElement {
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className={cn(
+                      (cell.column.columnDef.meta as DataTableColumnMeta | undefined)
+                        ?.cellClassName,
+                    )}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

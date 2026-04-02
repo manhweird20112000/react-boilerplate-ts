@@ -1,5 +1,5 @@
 ---
-description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n validation, services, UI; hooks/local state by default)
+description: Implement a CRUD feature end-to-end (routes, layout/sidebar, validation i18n only, hardcoded UI copy, services, UI; hooks/local state by default)
 ---
 
 ## Workflow: Implement a CRUD feature (in order)
@@ -18,6 +18,25 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
 - **Keep values (edit)**
 - **Disable submit when submitting**
 - **Show server errors inline if available**
+
+## Copy / i18n (required — strict)
+- **Only validation messages** (Zod resolver / field errors) are loaded from i18n (`public/locales/ja/translation.json` under `validation.*`).
+- **Everything else is hardcoded** in JSX/TS: page titles, headings, buttons, filters, table headers, empty states, dialog titles, alert-dialog copy, placeholders (except where you intentionally mirror validation), sidebar labels.
+- **API result toasts** (success/error after mutations): **not** covered by “hardcoded UI copy” — see **Toasts after API calls** in step 4 (backend `message` only; no frontend fallback text).
+- **Do not** add `features.*` UI keys, `t("...")` for labels, or extra locale entries for non-validation copy unless the product explicitly requires full localization later.
+
+## Responsive by default (required)
+- **Mobile-first mindset**: all pages, forms, filters, dialogs, and tables must be usable on mobile viewports (`≥ 320px`) without horizontal scroll or clipped content.
+- **Breakpoint strategy**: start with a single-column stacked layout, then add columns with `sm:`/`md:` breakpoints.
+- **Key responsive checkpoints**:
+  - **Filters**: stack to `col-span-12` on mobile, split into columns on `md:`.
+  - **Forms**: single column by default; two-column grids only from `md:` up.
+  - **Tables**: ensure the table container scrolls horizontally (`overflow-x-auto`) if columns exceed viewport width; avoid hiding columns without a clear design spec.
+  - **Dialogs**: use `max-w-[calc(100%-2rem)]` on mobile (the Dialog component default) so the dialog never touches screen edges.
+  - **Action buttons**: use `flex flex-col-reverse gap-2 sm:flex-row sm:justify-end` for form footers so the primary action is reachable on small screens.
+  - **Page heading + action**: stack vertically on mobile (`flex-col`), side-by-side from `md:` up — already handled by `LayoutPage`.
+- **Content safety**: use `min-w-0` + `truncate` for bounded text; `break-words` for user-generated content; never rely on fixed widths for text containers.
+- **Testing reminder**: after implementation, visually verify at **320px**, **768px**, and **1280px** widths.
 
 ## Do NOT (required)
 - **Do NOT hardcode API field names**
@@ -39,7 +58,7 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **API contract**: endpoints, request/response shape, error codes, paging format.
 - **Non-functional**:
   - **Permissions**: who can view/edit/delete.
-  - **i18n**: supported languages; keys to add.
+  - **Locale**: default is `ja`; add or extend **only** `validation.*` keys in `translation.json` when new validation rules need messages.
   - **Tracking** (if any): logs/toasts, analytics, audit.
 
 ### 2) Create a plan and confirm requirements
@@ -47,14 +66,17 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **Screens**: list, create, edit, detail (if needed).
   - **Data behavior**: data source, caching/invalidation, pagination.
   - **Edge cases**: empty, error, retry, concurrent edits.
-  - **Definition of Done**: UI, validation, i18n, route/sidebar, tests (if applicable).
+  - **Definition of Done**: UI (hardcoded copy), validation + **validation-only** i18n, route/sidebar, tests (if applicable).
 - **Execution plan (recommended)**:
-  - **Types + contracts** → **Services** → **State management (hooks/local state by default)** → **Pages** → **Components/Form** → **i18n messages** → **Routes + Sidebar** → **Smoke test**.
+  - **Types + contracts** → **Services** → **State management (hooks/local state by default)** → **Pages** → **Components/Form** → **validation keys in `translation.json` (if new rules)** → **Routes + Sidebar** → **Smoke test**.
 
 ### 3) Define required components (form must be separate)
 - **Feature structure (recommended for this template)**:
   - `src/features/<feature-name>/types/`:
     - **Entity/DTO types**: `.../types/*.ts`
+  - `src/features/<feature-name>/schemas/`:
+    - **Validation schemas** (Zod + i18n for error messages only): `.../schemas/<feature>.schema.ts`
+    - **Pattern**: export a hook (e.g. `useFeatureSchemas`) that wraps `useTranslation()` and returns `{ createSchema, updateSchema }`.
   - `src/features/<feature-name>/services/`:
     - **API client**: `.../services/*.ts`
   - `src/features/<feature-name>/hooks/` (recommended):
@@ -72,37 +94,44 @@ description: Implement a CRUD feature end-to-end (routes, layout/sidebar, i18n v
   - **The form is a separate component** with RO-RO props: initialValues, onSubmit, isSubmitting, mode.
   - **Separate the validation schema** (zod) from UI so it can be reused for create/update.
   - **Required field marker (JP projects) (required)**:
-    - **Convention**: `* = (必須)` for required fields.
-    - **UI rule**: required fields must show `* (必須)` next to the field label (hardcoded).
+    - **Convention**: `(必須)` for required fields.
+    - **UI rule**: required fields must show `(必須)` next to the field label (hardcoded), styled with `<span className="text-destructive font-bold text-xs ml-1">(必須)</span>`.
     - **Scope reminder**: only validation messages are i18n-based; this required marker is **not** a validation message.
   - **Field width consistency (required)**:
     - **All fields must use consistent width** (prefer `w-full`).
     - **Inputs/selects/textareas must be 100% width by default** (`w-full`).
     - **Use a consistent layout wrapper** (prefer a `grid` container) so label/input/error blocks align across fields.
     - **Avoid per-field width styling** (e.g. mixing `w-1/2`, `max-w-*`, custom margins) unless a design spec explicitly requires it.
+  - **Form dialog width (create/edit) (required)**:
+    - **When create/update is implemented in a `Dialog`** (not a full routed page), **`DialogContent` must use `max-w-xl` and `sm:max-w-xl`** on `DialogContent` (36rem / ~576px).
+    - **Purpose**: consistent form density across features and avoids overly wide dialogs on large viewports.
 
-### 4) Validation messages must come from i18n
-- **Scope note**:
-  - **Only validation messages must be i18n-based**. Other UI text can be hardcoded unless there is a requirement to localize it.
-  - **Toasts after API calls** should prefer the message returned by the API (available via `ResponseData.message` from `@/shared/types/common.d.ts`); only use hardcoded/i18n fallback when the API does not provide a message.
+### 4) Validation messages only — i18n; all other copy — hardcoded
+- **Hard rule**:
+  - **i18n (`t()`, `translation.json`)**: **only** for strings returned by Zod (and passed through the resolver to `<FieldError>`). Reuse or add keys under `validation.*` only.
+  - **Hardcode** all visible UI strings everywhere else (labels, buttons, dialogs, tables, filters, empty states). **Do not** invent toast text for API outcomes (see below).
+- **Toasts after API calls (required)**:
+  - **Source of truth**: show **only** `ResponseData.message` from `@/shared/types/common.d.ts` (read from the successful or error response body your API returns).
+  - **If `message` is missing, empty, or whitespace** (after `trim()`): **do not** show a toast with any frontend-written copy — **skip the toast** entirely. **Do not** substitute i18n, hardcoded Japanese, or generic strings (“保存しました”, “エラーが発生しました”, etc.).
+  - **Same rule for `toast.error`**: use the backend-provided message from the error payload when the API exposes it in the same `ResponseData` shape; otherwise omit the toast (rely on inline `errors` / validation / empty state as designed).
+  - **Allowed without backend text**: non-toast UI feedback (loading spinners, disabling buttons, inline field errors from `errors`, list refresh) — not a Sonner message.
 - **Locale-safe formatting (required)**:
   - **Dates/times**: do **not** hardcode formats (e.g. `YYYY-MM-DD`). Use `Intl.DateTimeFormat`.
   - **Numbers/currency**: use `Intl.NumberFormat` (do not hardcode separators/suffixes).
-- **Current locale setup**: only `ja` exists (`public/locales/ja/translation.json`). Do not add other locale files unless explicitly required.
-- **Interpolation syntax**: this project uses `{_placeholder_}` (e.g. `{_field_}`, `{_length_}`, `{_max_}`). Do **not** use the i18next default `{{placeholder}}`.
-- **Key conventions (recommended)**:
-  - `validation.required` — `"{_field_}が入力されていません。"`
-  - `validation.min` — `"{_field_}には少なくとも{_length_}文字を含める必要があります。"`
-  - `validation.max` — `"{_field_}は{_length_}文字以内にしてください。"`
-  - `validation.format` — `"{_field_}の形式が正しくありません。"`
-  - `features.<featureName>.<fieldName>.label`
-  - `features.<featureName>.messages.createSuccess` / `updateSuccess` / `deleteSuccess`
+- **Locale file**: only `ja` exists (`public/locales/ja/translation.json`). Extend it **only** with new `validation.*` entries when needed. Do not add other locale files or `features.*` message trees unless the product explicitly requires full UI localization.
+- **Interpolation syntax** (in `translation.json` for validation only): i18next double-brace `{{_placeholder_}}` (e.g. `{{_field_}}`, `{{_length_}}`, `{{_max_}}`). Underscores are a naming convention for param names passed to `t()`.
+- **Key conventions** (`validation.*` only):
+  - `validation.required` — `"{{_field_}}が入力されていません。"`
+  - `validation.min` — `"{{_field_}}には少なくとも{{_length_}}文字を含める必要があります。"`
+  - `validation.max` — `"{{_field_}}は{{_length_}}文字以内にしてください。"`
+  - `validation.format` — `"{{_field_}}の形式が正しくありません。"`
 - **In the schema**:
-  - **Do not hardcode strings** in zod rules.
-  - **Use i18n** to build messages via key + params (min/max, field label) using the `{_placeholder_}` syntax.
+  - **Do not hardcode validation error strings** in zod rules; use `t("validation....", { ... })` with `{{_placeholder_}}` in JSON.
+  - **Field names** passed into `t()` for `_field_` can be **hardcoded Japanese** strings in the schema file (they are not i18n keys — they are literals for the message template).
+  - **Pattern**: export a hook (e.g. `useFeatureSchemas`) that calls `useTranslation()` internally so validation messages stay reactive. Return `{ createSchema, updateSchema }` from the hook. Place in `schemas/<feature>.schema.ts`.
 - **In the UI**:
-  - **Field errors** come from the resolver (already translated).
-  - **Toasts/alerts**: for API calls, prefer API-provided messages; otherwise they can be hardcoded unless the project/feature explicitly requires i18n.
+  - **Field errors** come from the resolver (i18n-backed).
+  - **Never** use `useTranslation()` / `t()` for non-validation labels or buttons; write copy directly in components.
 
 ### 5) Define feature pages and register them in routes + sidebar layout
 - **Routes**:
@@ -148,19 +177,19 @@ const FeatureListPage = lazy(
     - `Future<T>` — `Promise<AxiosResponse<ResponseData<T>>>` (standard return type for API calls).
     - `ResponseData<T>` — `{ message: string; errors?: FormErrors; data: T }` (all API responses follow this shape).
 - **Services**:
-  - **Base class**: `@/shared/common/base.repository.ts` provides `CRUDRepository<T>` with `create`, `get`, `update`, `delete`. It does **not** include a list method — add `getXList` in the feature service when needed.
+  - **Reference interface**: `@/shared/common/base.repository.ts` provides `CRUDRepository<T>` with `create`, `get`, `update`, `delete` as a **reference contract**. Feature services may extend it or implement their own class — real API contracts often diverge from a rigid generic shape (e.g. different return types for `update`).
   - **Implement** `createX`, `getXList`, `getXById`, `updateX`, `deleteX`.
   - **Return type**: all service methods should return `Future<T>` (or the appropriate `Future<PagedResult<T>>` for list).
   - **Map errors** into a consistent shape for UI/store.
 - **State management (default)**:
   - **Default approach**: keep async calls inside feature hooks/pages using the feature services; model loading/error states locally (or via a dedicated feature hook).
   - **State shape (recommended)**: data + pagination + `isLoading`/`isSubmitting` + `error` + `lastMutation`.
-  - **Error handling**: add context (operation name), and prefer API-provided message when available.
+  - **Error handling**: for **toasts**, only backend `message` (see step 4). You may add operation context in **`console`** / logging for debugging — **not** as user-facing toast copy when the API omits `message`.
 - **Pages**:
   - **List page (required layout reuse)**:
     - **Always wrap** the list screen with `src/shared/layouts/page-layout.tsx` (`LayoutPage`) to keep a consistent page header/actions/filter/pagination area across features.
     - **Map layout slots consistently**:
-      - `heading`: page title (string or i18n node)
+      - `heading`: page title (**hardcoded** string)
       - `action`: primary actions (e.g. Create button)
       - `filter`: filters/search UI
       - `children`: table/list + empty/loading/error states
@@ -178,7 +207,7 @@ const FeatureListPage = lazy(
         - **Decorative icons**: Icons adjacent to text (e.g., in a Reset button) must have `aria-hidden="true"`.
         - **Input metadata**: Inputs must have meaningful `name`, `autocomplete`, and appropriate `type` (e.g., `email`). Set `spellCheck={false}` on email/ID fields.
         - **Typography**: Always use the ellipsis character `…` (U+2026) instead of three dots `...` in placeholders and loading text.
-      - **Text rule reminder**: only validation messages use i18n; filter labels/button text can be hardcoded.
+      - **Text rule reminder**: filter labels and buttons are **hardcoded** (not `t()`).
       - **Control width (required)**:
         - **All filter controls** (inputs/selects/date pickers) must be `w-full` (100% width) inside their grid column.
         - Avoid mixing `max-w-*` on form controls unless a design spec explicitly requires it.
@@ -245,6 +274,7 @@ export default memo(FeatureListPage);
         - Avoid `text-right` + `justify-end` unless the design explicitly wants actions pushed to the far edge.
         - If right-aligned actions are required, keep consistent padding (don’t let buttons feel glued to the cell edge).
   - **Create/Edit page**: load detail (edit), wire submit → dispatch create/update.
+  - **Create/Edit dialog**: if using `Dialog` instead of a routed page, apply the **`max-w-xl`** `DialogContent` width rule from step 3 (Form rules → form dialog width).
   - **Confirm actions (required)**:
     - **All confirm flows** (delete, destructive update, discard changes, etc.) must use `src/shared/components/ui/alert-dialog.tsx`.
     - **Do not implement custom confirm modals** (or browser `confirm`) for CRUD flows.
@@ -252,7 +282,7 @@ export default memo(FeatureListPage);
     - **Styling constraint**: keep the dialog close to the library defaults; avoid custom styling/variants unless necessary for correctness (e.g. layout bug) or an explicit design requirement.
   - **Delete**: confirm → dispatch delete → refetch/navigate.
 - **Form component**:
-  - **React Hook Form + Zod resolver** (schema uses i18n messages).
+  - **React Hook Form + Zod resolver** (validation error messages from i18n only).
   - **Clear props contract**, no direct dependency on the store.
   - **Use the `Field` component family** from `@/shared/components/ui/field.tsx`: `Field`, `FieldLabel`, `FieldError`, `FieldGroup`, `FieldDescription`, `FieldContent`. These provide consistent label/input/error layout and spacing.
   - **Field width consistency (required)**:
@@ -261,7 +291,7 @@ export default memo(FeatureListPage);
     - **Display errors with `<FieldError>`** — do not create custom error rendering.
 - **UX polish**:
   - **Loading/disabled states**, empty state, error + retry.
-  - **Toasts**: use **Sonner** (`@/shared/components/ui/sonner.tsx`) — call `toast()` or `toast.error()`. Prefer the message returned by the API (`ResponseData.message`). If the API does not provide a message, fall back to hardcoded text (or i18n if required by the project/feature).
+  - **Toasts**: use **Sonner** (`@/shared/components/ui/sonner.tsx`). After API calls, call `toast()` / `toast.error()` **only** when there is a non-empty `ResponseData.message` (or equivalent from the error body). If there is no message, **do not** toast invented text.
 - **Smoke test**:
   - **Manual**: create → list updates → edit → delete.
   - **Routing**: refresh list/edit pages still works (deep links).
@@ -274,7 +304,7 @@ export default memo(FeatureListPage);
 - **Cross-feature UI consistency check**:
   - **Typography/spacing**: heading scale, padding/margins, table/form density.
   - **Colors & states**: hover/active/disabled, focus ring, error/success/warning.
-  - **Empty/loading/error**: standardized states, consistent wording (i18n).
+  - **Empty/loading/error**: standardized states, consistent **hardcoded** wording across features.
   - **Form UX**: labels, hints, required markers, error placement, submit/cancel placement.
 - **Routing & layout consistency**:
   - **Page header/actions** (if used): title format, action buttons (Create/Edit/Delete) follow existing conventions.
@@ -282,10 +312,14 @@ export default memo(FeatureListPage);
 - **Quick a11y check**:
   - **Keyboard**: tab order, focus trap for dialog/drawer.
   - **ARIA/labels**: inputs have labels, buttons have accessible names.
+- **Shadcn design system review (required)**:
+  - **Gating rule (must-do before merge)**: you **must** review the feature against `@.agents/workflows/shadcn-design-system.md`.
+  - **Checklist scope**: tokens (no hardcoded colors), spacing scale, layout (flex vs grid), component states (hover/focus/disabled/loading), action hierarchy, a11y rules, content safety, responsive mobile-first, data view states (loading/empty/error).
+  - **Timing**: do this **after** the UI is functionally complete and before the Web Interface Guidelines review.
 - **Web Interface Guidelines review (required)**:
   - **Gating rule (must-do before merge)**: you **must** review the relevant UI files using `@.agents/skills/web-design-guidelines/SKILL.md`.
   - **Scope**: include all touched UI files (typically `pages/*.tsx`, `components/*.tsx`, `shared/components/ui/*` used/modified, and any new styles/layout wrappers).
-  - **Timing**: do this **after** the UI is functionally complete (states + empty/loading/error) and before final review/merge.
+  - **Timing**: do this **after** the shadcn design system review passes and before final merge.
   - **Always fetch the latest rules** from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` before reviewing.
   - **Report findings** in the required `file:line` format.
 - **Review outcome**:

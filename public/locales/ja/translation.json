@@ -21,6 +21,45 @@
     "password": "パスワードは半角英数字で6桁〜20桁まで入力してください。",
     "no_data": "現在の条件に一致するデータがありません。",
     "allow-image": "画像ファイルは jpg、jpeg、png、svg、webp のいずれかの形式を選択してください。",
-    "regex-password": "{{_field_}}は半角英数字で6桁〜20桁まで入力してください。"
+    "regex-password": "{{_field_}}は半角英数字で6桁〜20桁まで入力してください。",
+    "no_selection": "選択してください"
+  },
+  "features": {
+    "accounts": {
+      "title": "アカウント管理",
+      "fields": {
+        "id": "アカウントID",
+        "name": "アカウント名",
+        "email": "メールアドレス",
+        "role": "権限",
+        "password": "パスワード",
+        "confirmPassword": "パスワード (確認用)",
+        "resetPassword": "パスワードを再設定",
+        "status": "ステータス"
+      },
+      "roles": {
+        "admin": "管理者",
+        "staff": "担当者"
+      },
+      "status": {
+        "active": "アクティブ",
+        "inactive": "非アクティブ"
+      },
+      "actions": {
+        "create": "新規追加",
+        "edit": "編集",
+        "delete": "削除",
+        "save": "保存",
+        "cancel": "キャンセル",
+        "resetFilter": "リセット"
+      },
+      "messages": {
+        "createSuccess": "アカウントを作成しました。",
+        "updateSuccess": "アカウントを更新しました。",
+        "deleteSuccess": "アカウントを削除しました。",
+        "deleteConfirm": "このアカウントを削除してもよろしいですか？",
+        "deleteDescription": "この操作は取り消せません。"
+      }
+    }
   }
 }

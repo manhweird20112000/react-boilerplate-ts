@@ -1,5 +1,7 @@
 import type { AxiosResponse } from "axios";
 
+export type FormErrors = Record<string, readonly string[]>;
+
 export type Future<T> = Promise<AxiosResponse<ResponseData<T>>>;
 
 export interface ResponseData<T> {

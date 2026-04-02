@@ -1,102 +1,162 @@
 import { memo, useMemo } from "react";
-import { Input } from "@/shared/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { RotateCcw, Search } from "lucide-react";
+
 import { Button } from "@/shared/components/ui/button";
-import { RotateCcwIcon } from "lucide-react";
-import { Field, FieldLabel, FieldContent } from "@/shared/components/ui/field";
-import type { AccountFilters as FilterType, AccountRole, AccountStatus } from "../types/account";
+import { Input } from "@/shared/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
+import { Field, FieldLabel } from "@/shared/components/ui/field";
+import type { AccountListQuery } from "../types/accounts.types";
 
 interface AccountFiltersProps {
-  filters: FilterType;
-  onChange: (filters: FilterType) => void;
-  onReset: () => void;
+  onSearch: (query: AccountListQuery) => void;
+  isLoading?: boolean;
 }
 
-const AccountFilters = ({ filters, onChange, onReset }: AccountFiltersProps) => {
-  const isDirty = useMemo(() => {
-    return !!(filters.name || filters.email || filters.role || filters.status);
-  }, [filters]);
+const AccountFilters = ({ onSearch, isLoading }: AccountFiltersProps) => {
+  const { t } = useTranslation();
 
-  const roleValue: AccountRole | "ALL" = filters.role ?? "ALL";
-  const statusValue: AccountStatus | "ALL" = filters.status ?? "ALL";
+  const defaultValues: AccountListQuery = {
+    name: "",
+    email: "",
+    role: undefined,
+    status: undefined,
+  };
+
+  const { register, handleSubmit, reset, watch, setValue, formState } =
+    useForm<AccountListQuery>({
+      defaultValues,
+    });
+
+  const isDirty = formState.isDirty;
+
+  const onSubmit = (data: AccountListQuery) => {
+    // Convert string status to boolean if needed, but for now assuming select values are handled correctly
+    onSearch(data);
+  };
+
+  const handleReset = () => {
+    reset(defaultValues);
+    onSearch(defaultValues);
+  };
+
+  const roleOptions = useMemo(
+    () => [
+      { value: "admin", label: t("features.accounts.roles.admin") },
+      { value: "staff", label: t("features.accounts.roles.staff") },
+    ],
+    [t]
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "true", label: t("features.accounts.status.active") },
+      { value: "false", label: t("features.accounts.status.inactive") },
+    ],
+    [t]
+  );
 
   return (
-    <div className="grid grid-cols-12 items-end gap-3">
-      <Field className="col-span-12 md:col-span-3">
-        <FieldLabel htmlFor="filter-name">アカウント名</FieldLabel>
-        <FieldContent>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid grid-cols-12 gap-3 items-end"
+    >
+      <div className="col-span-12 md:col-span-3">
+        <Field>
+          <FieldLabel className="text-xs">{t("features.accounts.fields.name")}</FieldLabel>
           <Input
-            id="filter-name"
-            name="name"
-            value={filters.name ?? ""}
-            onChange={(e) => onChange({ ...filters, name: e.target.value })}
-            placeholder="アカウント名で検索…"
-            autoComplete="name"
+            {...register("name")}
+            placeholder={t("features.accounts.fields.name")}
+            className="h-9"
           />
-        </FieldContent>
-      </Field>
-      <Field className="col-span-12 md:col-span-4">
-        <FieldLabel htmlFor="filter-email">メールアドレス</FieldLabel>
-        <FieldContent>
+        </Field>
+      </div>
+
+      <div className="col-span-12 md:col-span-3">
+        <Field>
+          <FieldLabel className="text-xs">{t("features.accounts.fields.email")}</FieldLabel>
           <Input
-            id="filter-email"
-            name="email"
+            {...register("email")}
             type="email"
-            value={filters.email ?? ""}
-            onChange={(e) => onChange({ ...filters, email: e.target.value })}
-            placeholder="メールアドレスで検索…"
-            autoComplete="email"
+            placeholder={t("features.accounts.fields.email")}
+            className="h-9"
             spellCheck={false}
           />
-        </FieldContent>
-      </Field>
-      <Field className="col-span-12 md:col-span-2">
-        <FieldLabel htmlFor="filter-role">権限</FieldLabel>
-        <FieldContent>
+        </Field>
+      </div>
+
+      <div className="col-span-12 md:col-span-2">
+        <Field>
+          <FieldLabel className="text-xs">{t("features.accounts.fields.role")}</FieldLabel>
           <Select
-            value={roleValue}
-            onValueChange={(val) =>
-              onChange({ ...filters, role: val === "ALL" ? undefined : (val as AccountRole) })
-            }
+            value={watch("role") || ""}
+            onValueChange={(value) => setValue("role", value as any, { shouldDirty: true })}
           >
-            <SelectTrigger id="filter-role" className="w-full">
-              <SelectValue placeholder="選択してください" />
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder={t("validation.no_selection")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">すべて</SelectItem>
-              <SelectItem value="ADMIN">管理者</SelectItem>
-              <SelectItem value="STAFF">担当者</SelectItem>
+              {roleOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-        </FieldContent>
-      </Field>
-      <Field className="col-span-12 md:col-span-2">
-        <FieldLabel htmlFor="filter-status">ステータス</FieldLabel>
-        <FieldContent>
+        </Field>
+      </div>
+
+      <div className="col-span-12 md:col-span-2">
+        <Field>
+          <FieldLabel className="text-xs">{t("features.accounts.fields.status")}</FieldLabel>
           <Select
-            value={statusValue}
-            onValueChange={(val) =>
-              onChange({ ...filters, status: val === "ALL" ? undefined : (val as AccountStatus) })
+            value={watch("status")?.toString() || ""}
+            onValueChange={(value) =>
+              setValue("status", value === "true", { shouldDirty: true })
             }
           >
-            <SelectTrigger id="filter-status" className="w-full">
-              <SelectValue placeholder="選択してください" />
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder={t("validation.no_selection")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">すべて</SelectItem>
-              <SelectItem value="ACTIVE">アクティブ</SelectItem>
-              <SelectItem value="INACTIVE">非アクティブ</SelectItem>
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-        </FieldContent>
-      </Field>
-      <div className="col-span-12 flex justify-end md:col-span-1">
-        <Button variant="outline" size="sm" onClick={onReset} disabled={!isDirty} className="gap-2">
-          <RotateCcwIcon className="size-4" aria-hidden="true" />
-          リセット
+        </Field>
+      </div>
+
+      <div className="col-span-12 md:col-span-2 flex gap-2">
+        <Button
+          type="submit"
+          className="flex-1 h-9"
+          disabled={isLoading}
+        >
+          <Search className="size-4 mr-1" aria-hidden="true" />
+          検索
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1 h-9"
+          onClick={handleReset}
+          disabled={!isDirty || isLoading}
+        >
+          <RotateCcw className="size-4 mr-1" aria-hidden="true" />
+          {t("features.accounts.actions.resetFilter")}
         </Button>
       </div>
-    </div>
+    </form>
   );
 };
 

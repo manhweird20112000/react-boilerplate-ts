@@ -92,7 +92,7 @@ const AccountTable = ({ data, onEdit, onDelete }: AccountTableProps) => {
       {
         id: "actions",
         header: () => (
-          <div className="text-center">{t("features.accounts.fields.actions" as any) || "操作"}</div>
+          <div className="text-center"></div>
         ),
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-2">

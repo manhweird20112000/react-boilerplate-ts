@@ -8,8 +8,8 @@ const NotFoundPage = lazy(() => import("~/features/errors/pages"));
 const AuthorListPage = lazy(
   () => import("~/features/author/pages/author-list-page"),
 );
-const AccountsListPage = lazy(
-  () => import("~/features/accounts/pages/accounts-list-page"),
+const TopicListPage = lazy(
+  () => import("~/features/topics/pages/topic-list-page"),
 );
 
 /**
@@ -20,7 +20,7 @@ export function AppRoutes(): ReactElement {
     <Routes>
       <Route path="/admin" element={<LayoutAdmin />}>
         <Route path="authors" element={<AuthorListPage />} />
-        <Route path="accounts" element={<AccountsListPage />} />
+        <Route path="topics" element={<TopicListPage />} />
       </Route>
       <Route element={<LayoutDefault />}>
         <Route path="*" element={<NotFoundPage />} />

@@ -46,6 +46,12 @@ const ADMIN_NAV_ITEMS: readonly AdminNavItem[] = [
     icon: <ShieldIcon />,
     isActive: (pathname: string) => pathname.startsWith("/admin/accounts"),
   },
+  {
+    to: "/admin/topics",
+    label: "トピックス管理",
+    icon: <NewspaperIcon />, // Reusing NewspaperIcon or similar
+    isActive: (pathname: string) => pathname.startsWith("/admin/topics"),
+  },
 ] as const;
 
 function AdminSidebarNav(): ReactElement {

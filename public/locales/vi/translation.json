@@ -1,0 +1,351 @@
+{
+  "validation": {
+    "min-price": "Giá bán tối thiểu là {{_price_}} đồng.",
+    "format": "Định dạng {{_field_}} không hợp lệ.",
+    "alpha": "{{_field_}} chỉ được chứa chữ cái.",
+    "alpha_dash": "{{_field_}} chỉ được chứa chữ cái (A–Z, a–z), số (0–9), dấu gạch ngang (-) và dấu gạch dưới (_).",
+    "alpha_num": "{{_field_}} chỉ được chứa chữ cái và chữ số.",
+    "confirmed": "Mật khẩu không đúng. Vui lòng kiểm tra lại.",
+    "email": "Định dạng email không hợp lệ.",
+    "excluded": "{{_field_}} không phải giá trị hợp lệ.",
+    "min": "{{_field_}} phải có ít nhất {{_length_}} ký tự.",
+    "required": "Vui lòng nhập {{_field_}}.",
+    "max-use": "{{_field_}} không được vượt quá {{_max_}}.",
+    "required_if_answer": "Vui lòng chọn một đáp án.",
+    "phone": "Định dạng số điện thoại không hợp lệ.",
+    "confirm-password": "Mật khẩu xác nhận không khớp.",
+    "max": "{{_field_}} tối đa {{_length_}} ký tự.",
+    "max-file": "Dung lượng tệp không được vượt quá {{size}} MB.",
+    "regex": "{{_field_}} có định dạng không hợp lệ.",
+    "confirm-new-password": "Mật khẩu mới và xác nhận mật khẩu mới không khớp.",
+    "password": "Mật khẩu phải từ 6 đến 20 ký tự, chỉ gồm chữ và số (không dấu).",
+    "no_data": "Không có dữ liệu phù hợp với điều kiện hiện tại.",
+    "allow-image": "Vui lòng chọn ảnh định dạng jpg, jpeg, png, svg hoặc webp.",
+    "regex-password": "{{_field_}} phải từ 6 đến 20 ký tự, chỉ gồm chữ và số (không dấu).",
+    "no_selection": "Vui lòng chọn",
+    "password-account-8-20": "{{_field_}} phải từ 8 đến 20 ký tự, chỉ gồm chữ và số (không dấu).",
+    "numberFinite": "{{_field_}} không hợp lệ.",
+    "numberInteger": "{{_field_}} phải là số nguyên.",
+    "numberPositive": "{{_field_}} phải lớn hơn 0.",
+    "numberBetweenInclusive": "{{_field_}} phải nằm trong khoảng {{_min_}}–{{_max_}}."
+  },
+  "actions": {
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "save": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "cancel": "Hủy",
+    "resetFilter": "Đặt lại bộ lọc",
+    "back": "Quay lại"
+  },
+  "enums": {
+    "permission_scope": {
+      "any": "Toàn bộ",
+      "related": "Theo quan hệ",
+      "none": "Không được phép"
+    }
+  },
+  "access_control": {
+    "page": {
+      "matrix-title": "Cầu hình ma trận",
+      "title": "Quản lý phân quyền",
+      "matrixDescription": "Thiết lập quyền chi tiết cho từng thực thể trong hệ thống. Chọn phạm vi truy cập (Bất kỳ/Liên quan) hoặc bật/tắt hành động cụ thể."
+    },
+    "fields": {
+      "name": "tên vai trò",
+      "description": "Mô tả mục đích",
+      "users_count": "số user hiện có"
+    },
+    "table": {
+      "columns": {
+        "name": "Tên vai trò",
+        "description": "Mô tả đặc quyền",
+        "usersCount": "Số user hiện có",
+        "actions": "Hành động"
+      },
+      "empty": "Không có vai trò.",
+      "noEntities": "Không có dữ liệu thực thể.",
+      "noEntitiesDescription": "Cấu hình quyền hệ thống chưa được thiết lập hoặc thực thể không khả dụng."
+    },
+    "modules": {
+      "crm": "Khách hàng (CRM)",
+      "hr": "Nhân sự (HR)",
+      "finance": "Tài chính (Finance)",
+      "system": "Hệ thống (System)",
+      "auth": "Phân quyền (Auth)",
+      "pm": "Dự án (PM)",
+      "hrm": "Nhân sự (HRM)"
+    },
+    "entities": {
+      "company": "Công ty",
+      "contact": "Liên hệ",
+      "department": "Phòng ban",
+      "user": "Người dùng",
+      "role": "Vai trò",
+      "leave": "Đơn nghỉ phép",
+      "contract": "Hợp đồng",
+      "activity": "Hoạt động",
+      "deal": "Cơ hội",
+      "deal_comment": "Thảo luận",
+      "estimate": "Báo giá",
+      "quotation": "Yêu cầu báo giá",
+      "milestone": "Cột mốc",
+      "system_config": "Cấu hình hệ thống"
+    },
+    "actions": {
+      "view": "Xem (View)",
+      "create": "Tạo mới (Create)",
+      "update": "Chỉnh sửa (Update)",
+      "delete": "Xoá (Delete)",
+      "import": "Nhập file (Import)",
+      "export": "Xuất file (Export)",
+      "approve": "Phê duyệt (Approve)"
+    },
+    "dialogs": {
+      "createTitle": "Thêm vai trò mới",
+      "editTitle": "Chỉnh sửa vai trò",
+      "deleteTitle": "Xoá vai trò",
+      "deleteDescription": "Bạn có chắc chắn muốn xoá vai trò “{{name}}”? Hành động này không thể hoàn tác.",
+      "matrixTitle": "Cấu hình Ma trận: {{name}}"
+    },
+    "status": {
+      "systemRole": "Vai trò hệ thống",
+      "systemRoleNoEdit": "Vai trò hệ thống không thể sửa",
+      "systemRoleNoDelete": "Vai trò hệ thống không thể xoá"
+    },
+    "placeholders": {
+      "name": "Ví dụ: Kế toán Tổng hợp",
+      "description": "Nhập mô tả ngắn gọn về vai trò này…"
+    },
+    "toasts": {
+      "loadError": "Không thể tải danh sách vai trò",
+      "matrixLoadError": "Không thể tải ma trận quyền",
+      "matrixSaveSuccess": "Đã cập nhật ma trận quyền",
+      "matrixSaveError": "Lưu ma trận quyền thất bại"
+    }
+  },
+  "users": {
+    "fields": {
+      "fullName": "họ và tên",
+      "email": "email công ty",
+      "department": "phòng ban"
+    },
+    "validation": {
+      "inactiveCannotAddRoles": "Tài khoản ngưng hoạt động không được gán thêm nhóm quyền."
+    }
+  },
+  "systemSettings": {
+    "title": "Cấu hình hệ thống",
+    "description": "Quản lý các cấu hình động trên toàn hệ thống. Các thay đổi sẽ có hiệu lực ngay lập tức sau khi lưu.",
+    "readOnlyMode": "Chế độ chỉ đọc",
+    "noPermissionUpdate": "Bạn không có quyền chỉnh sửa các cấu hình này.",
+    "noGroups": "Không tìm thấy nhóm cấu hình nào.",
+    "toasts": {
+      "updateSuccess": "Đã cập nhật cấu hình",
+      "updateError": "Cập nhật cấu hình thất bại",
+      "imageUploaded": "Đã tải ảnh lên thành công"
+    },
+    "displayPosition": {
+      "stamp": "Con dấu",
+      "signature": "Chữ ký",
+      "horizontal": "Ngang (X)",
+      "vertical": "Dọc (Y)",
+      "uploadFirst": "Vui lòng tải lên hình ảnh trong phần \"Thông tin doanh nghiệp\" trước"
+    },
+    "tabs": {
+      "common": "Chung"
+    },
+    "fields": {
+
+      "standardMandayRateDefault": "đơn giá manday mặc định",
+      "googleDriveRootCrm": "Root Folder ID (CRM)",
+      "googleDriveRootHrm": "Root Folder ID (HRM)",
+      "googleDriveRootFinance": "Root Folder ID (Finance)",
+      "vatRateDefault": "VAT mặc định",
+      "marginRateTarget": "margin mục tiêu"
+    }
+  },
+  "departments": {
+    "title": "Quản lý phòng ban",
+    "actions": {
+      "expandAll": "Mở rộng tất cả",
+      "collapseAll": "Thu gọn tất cả",
+      "expand": "Mở rộng",
+      "collapse": "Thu gọn",
+      "addRoot": "Thêm phòng ban gốc",
+      "addBranch": "Thêm nhánh",
+      "addDepartment": "Thêm phòng ban",
+      "assignPersonnel": "Gán nhân sự"
+    },
+    "fields": {
+      "identifierCode": "Mã định danh",
+      "name": "Tên phòng ban",
+      "description": "Mô tả",
+      "parent": "Phòng ban cha",
+      "manager": "Người quản lý"
+    },
+    "table": {
+      "columns": {
+        "info": "Phòng ban, mã và mô tả",
+        "manager": "Quản lý",
+        "actions": "Thao tác"
+      },
+      "empty": "Không tìm thấy phòng ban nào.",
+      "personnelCount": "{{count}} nhân sự"
+    },
+    "dialogs": {
+      "createRootTitle": "Thêm phòng ban gốc",
+      "createChildTitle": "Thêm phòng ban con",
+      "editTitle": "Chỉnh sửa phòng ban",
+      "deleteTitle": "Xóa phòng ban",
+      "deleteDescription": "Bạn có chắc chắn muốn xóa {{name}}? Hành động này không thể hoàn tác.",
+      "assignPersonnelTitle": "Gán nhân sự",
+      "assignPersonnelDescription": "Quản lý nhân viên cho {{name}}",
+      "searchPersonnelPlaceholder": "Chọn nhân viên...",
+      "noPersonnelFound": "Không tìm thấy dữ liệu.",
+      "endOfList": "Hết danh sách.",
+      "namePlaceholder": "Nhập tên phòng ban...",
+      "descriptionPlaceholder": "Nhập mô tả (tùy chọn)..."
+    },
+    "validation": {
+      "codeDuplicate": "Mã định danh đã tồn tại. Vui lòng nhập mã khác."
+    },
+    "toasts": {
+      "loadError": "Không thể tải danh sách phòng ban",
+      "operationFailed": "Thao tác thất bại",
+      "deleteFailed": "Xóa thất bại",
+      "syncFailed": "Đồng bộ thất bại",
+      "maxDepth": "Đã đạt độ sâu tối đa"
+    }
+  },
+  "notificationWebhooks": {
+    "fields": {
+      "provider": "loại nhà cung cấp",
+      "name": "tên định danh",
+      "description": "mô tả",
+      "url": "Webhook URL",
+      "isEnabled": "trạng thái hoạt động",
+      "config": "cấu hình bổ sung"
+    },
+    "providers": {
+      "google_chat": "Google Chat"
+    },
+    "page": {
+      "title": "Danh mục Webhook",
+      "emptyTitle": "Chưa có webhook nào",
+      "emptyDescription": "Hãy tạo webhook để bắt đầu nhận thông báo.",
+      "createTitle": "Đăng ký webhook mới",
+      "editTitle": "Cập nhật webhook"
+    },
+    "form": {
+      "namePlaceholder": "Ví dụ: Google Chat - Kỹ thuật",
+      "descriptionPlaceholder": "Nhập mô tả ngắn gọn về webhook này...",
+      "urlPlaceholder": "Dán webhook URL tuyệt đối vào đây...",
+      "providerLockedHint": "Không thể thay đổi nhà cung cấp sau khi tạo."
+    },
+    "status": {
+      "active": "Đang hoạt động",
+      "inactive": "Ngưng hoạt động"
+    },
+    "actions": {
+      "create": "Đăng ký webhook",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "deleteTitle": "Xóa webhook",
+      "deleteConfirm": "Hành động này sẽ xóa vĩnh viễn {{_name_}}. Bạn có chắc chắn muốn tiếp tục?",
+      "testTitle": "Kiểm tra kết nối",
+      "testDescription": "Gửi tin nhắn thử nghiệm đến URL để kiểm tra tính khả dụng.",
+      "testSend": "Thử gửi tin nhắn",
+      "testing": "Đang kiểm tra..."
+    }
+  },
+  "features": {
+    "errors": {
+      "notFound": {
+        "documentTitle": "404 — Không tìm thấy trang",
+        "eyebrow": "Không tìm thấy trang",
+        "title": "Trang này không tồn tại",
+        "description": "Liên kết có thể không hợp lệ hoặc trang đã bị gỡ. Vui lòng kiểm tra URL hoặc quay về trang chủ.",
+        "backHome": "Về trang chủ"
+      },
+      "serverError": {
+        "documentTitle": "500 — Lỗi máy chủ",
+        "eyebrow": "Lỗi máy chủ",
+        "title": "Đã xảy ra sự cố",
+        "description": "Không thể hoàn tất yêu cầu. Vui lòng thử lại sau hoặc quay về trang chủ.",
+        "retry": "Tải lại trang",
+        "home": "Trang chủ"
+      }
+    }
+  },
+  "systemLog": {
+    "fields": {
+      "time": "thời gian",
+      "module": "module",
+      "entityName": "tên entity",
+      "action": "hành động",
+      "user": "người thực hiện",
+      "type": "loại",
+      "ip": "địa chỉ IP"
+    }
+  },
+  "profile": {
+    "fields": {
+      "name": "họ và tên"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Chào mừng bạn quay lại!",
+      "subtitle": "Hãy đăng nhập bằng tài khoản công ty để bắt đầu ngày làm việc mới.",
+      "ssoAlertTitle": "Đăng nhập an toàn",
+      "ssoAlertDescription": "Để bảo vệ thông tin, hệ thống sẽ chuyển hướng bạn đến Google để xác thực.",
+      "buttonLabel": "Đăng nhập với Google",
+      "redirecting": "Đang chuyển hướng...",
+      "silentSsoTitle": "Bạn đã đăng nhập",
+      "silentSsoDescription": "Hệ thống đang tự động chuyển hướng bạn quay lại ứng dụng..."
+    },
+    "eventCoordination": {
+      "fields": {
+        "notificationWebhook": "webhook nhận tin",
+        "emailCc": "email CC",
+        "template": "nội dung thông báo"
+      },
+      "page": {
+        "title": "Điều phối sự kiện",
+        "subtitle": "Quản lý các sự kiện kích hoạt và cấu hình nơi gửi tin nhắn cho từng module"
+      },
+      "card": {
+        "noDestination": "Chưa cấu hình nơi nhận",
+        "sendingTo": "Đang gửi đến:",
+        "involvedParty": "Involved Party"
+      },
+      "form": {
+        "title": "Cấu hình sự kiện",
+        "masterToggle": "Bật thông báo cho sự kiện này",
+        "masterToggleDesc": "Khi tắt, hệ thống vẫn ghi log nhưng sẽ không đẩy tin tới bất kỳ nơi nhận nào.",
+        "webhookGroupLabel": "Webhook nhận tin",
+        "webhookGroupDesc": "Tin sẽ được đẩy tới các Webhook được chọn. Danh sách lấy từ Danh mục Webhook.",
+        "involvedPartyLabel": "Gửi cho Đối tượng liên quan (Involved Party)",
+        "involvedPartyDesc": "Hệ thống tự xác định User trực tiếp tham gia sự kiện (người xin nghỉ, chủ sở hữu Task…) để gửi tin cá nhân qua Bot App.",
+        "emailCcLabel": "Email CC cá nhân",
+        "emailCcDesc": "Hoạt động độc lập với Involved Party — các email ở đây sẽ luôn nhận CC mỗi lần sự kiện xảy ra.",
+        "emailCcPlaceholder": "Nhập email...",
+        "templateLabel": "Nội dung thông báo (Template)",
+        "templatePlaceholder": "Ví dụ: ✅ Đơn {{form_type}} của {{employee_name}} đã được duyệt bởi {{manager_name}}.",
+        "placeholderHint": "Sử dụng cú pháp {{ biến }} để chèn dữ liệu động. Các biến khả dụng:",
+        "footerHint": "Thay đổi sẽ áp dụng ngay cho các lần kích hoạt sự kiện kế tiếp.",
+        "save": "Lưu thay đổi",
+        "saving": "Đang lưu...",
+        "cancel": "Hủy",
+        "configHeading": "Cấu hình nhận thông báo",
+        "contentHeading": "Nội dung thông báo"
+      },
+      "toasts": {
+        "updateSuccess": "Đã cập nhật cấu hình sự kiện",
+        "updateError": "Cập nhật cấu hình thất bại"
+      }
+    }
+  }
+}

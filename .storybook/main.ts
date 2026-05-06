@@ -8,7 +8,12 @@ const projectRoot: string = path.dirname(fileURLToPath(import.meta.url))
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
   stories: ['../src/**/*.stories.@(ts|tsx|mdx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-a11y', '@storybook/addon-docs'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-a11y',
+    '@storybook/addon-docs',
+    '@storybook/addon-vitest'
+  ],
   viteFinal: async (config): Promise<UserConfig> => {
     return mergeConfig(config, {
       resolve: {

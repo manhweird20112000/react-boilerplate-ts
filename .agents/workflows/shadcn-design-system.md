@@ -1,8 +1,8 @@
 ---
-description: Shadcn/UI design system notes (tokens, spacing, layout rules, states, a11y, governance). Use this as the default UI contract for all new/updated screens.
+description: Design system notes (tokens, spacing, layout rules, states, a11y, governance). Use this as the default UI contract for all new/updated screens.
 ---
 
-## Workflow: Shadcn/UI design system (Core Principles + rules)
+## Workflow: Design system (Core Principles + rules)
 
 ## Core Principles (required)
 
@@ -42,7 +42,7 @@ description: Shadcn/UI design system notes (tokens, spacing, layout rules, state
   - **Between sections** (page blocks): `gap-6` or `gap-8`
 - **Buttons spacing**:
   - Between 2 adjacent action buttons: **default `gap-2`**, use `gap-3` only when the design requires more breathing room.
-- **Prefer `flex`/`grid` with `gap-*`** over `space-y-*` / `space-x-*` (per shadcn styling rules). Avoid scattered `mt-*`/`mb-*`.
+- **Prefer `flex`/`grid` with `gap-*`** over `space-y-*` / `space-x-*` (per project styling rules). Avoid scattered `mt-*`/`mb-*`.
 
 ## Layout rules: Flex vs Grid (required)
 

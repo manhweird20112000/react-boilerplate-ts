@@ -39,7 +39,7 @@ patterns. **Known tech debt — DO NOT copy** (auto-checks may fire on it; treat
 
 - `result as any` casts to bypass paginated response shapes
 - Hardcoded VN/EN toast fallback strings
-- `className` on shadcn primitives (`Button`, `Badge`, `DropdownMenuItem`, `AlertDialogAction`, etc.)
+- `className` on shared UI primitives (`Button`, `Badge`, `DropdownMenuItem`, `AlertDialogAction`, etc.)
 - `shadow-*` classes in feature code
 - `new HttpRepository()` at module scope **when the feature also has a mock in scope** (use the factory — see decision matrix below)
 
@@ -253,7 +253,7 @@ Non-negotiables (full rules in the reference):
   codebase), `FormDialogContent` for dialog forms (the default).
 - **Dialog forms:** `max-h-[75vh]` + `overflow-y-auto` on body; **all** action buttons inside
   `DialogFooter`; footer outside scroll area.
-- **Components:** `shared/components/ui/*` first; **zero** `className` on shadcn primitives in
+- **Components:** `shared/components/ui/*` first; **zero** `className` on shared UI primitives in
   feature code; **zero** `shadow-*`.
 - **Buttons:** `variant` prop only on standard buttons; `size` prop only on icon-only buttons; never `className`.
 - **Dates:** `DD-MM-YYYY` (date) or `DD-MM-YYYY HH:mm` (date+time) via `shared/lib/format-date.ts`.
@@ -363,7 +363,7 @@ A 🟡 rule may be broken if and only if **all four** conditions are met:
 
    ```
    ### Deviation
-   - Rule: <e.g. "no className on shadcn primitives">
+   - Rule: <e.g. "no className on shared UI primitives">
    - File: <path>
    - Reason: <why the standard fix doesn't work>
    - Approved by: <user / designer / reviewer name from the chat>
@@ -392,7 +392,7 @@ If the user explicitly says "skip the rule" mid-conversation: still record it as
 #### 🟡 Required (must fix — design / architecture violations)
 
 - [ ] **Layout:** Feature UI inside existing shells; no unrelated `shared/layouts/` edits
-- [ ] **Design system:** Reuse `shared/components/ui/*`; **zero** `className` on shadcn primitives;
+- [ ] **Design system:** Reuse `shared/components/ui/*`; **zero** `className` on shared UI primitives;
       **zero** `shadow-*` in feature code
   - Auto-check: `rg 'shadow-' frontend/src/features/<name>`
   - Auto-check (className on primitives — manual review): `rg 'className=' frontend/src/features/<name>/components`

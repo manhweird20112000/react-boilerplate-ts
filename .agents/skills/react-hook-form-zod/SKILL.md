@@ -3,7 +3,7 @@ name: react-hook-form-zod
 description: |
   Build type-safe validated forms in React using React Hook Form and Zod. Single schema can validate on client and server with TypeScript inference via z.infer.
 
-  Use when building forms with validation, integrating shadcn Field/Input patterns, multi-step wizards, useFieldArray, fixing uncontrolled/controlled warnings, resolver errors, or async validation.
+  Use when building forms with validation, integrating project Field/Input patterns, multi-step wizards, useFieldArray, fixing uncontrolled/controlled warnings, resolver errors, or async validation.
 user-invocable: false
 allowed-tools: Bash(npm *), Bash(pnpm *), Bash(bun *)
 ---
@@ -75,7 +75,7 @@ Reuse the same `schema` (or a stricter server variant) on the API. Client valida
 
 Map API field errors with `setError` from `useForm`.
 
-## shadcn / UI in this repo
+## UI in this repo
 
 Prefer project `Field`, `Input`, and related primitives from `@/shared/components/ui` per existing patterns. Wire them with `Controller` or `register` depending on whether the component forwards a ref.
 

@@ -63,7 +63,7 @@ Avoid importing one feature’s internals from another feature’s `pages/` or `
 
 ## `shared/` — reusable across features
 
-- `components/ui/` — design-system primitives (e.g. shadcn-style components)
+- `components/ui/` — design-system primitives (e.g. shared UI components)
 - `layouts/` — shell layouts (header, sidebar wrappers) used by routes
 - `hooks/` — hooks with no single-feature ownership
 - `lib/` — small pure helpers (e.g. `cn()`)

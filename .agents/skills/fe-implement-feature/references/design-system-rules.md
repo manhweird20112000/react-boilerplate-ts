@@ -49,14 +49,14 @@ For the **deviation policy** (when you must legitimately break a rule), see SKIL
 
 ### Styling prohibitions
 
-- `className` on shadcn primitives in feature code is **FORBIDDEN** — use `variant` / `size` props or extend in `shared/components/ui/`.
+- `className` on shared UI primitives in feature code is **FORBIDDEN** — use `variant` / `size` props or extend in `shared/components/ui/`.
 - `className` **allowed only** on layout wrappers (`div`, grids, `flex` containers) for structural layout (grid, flex, gap).
 - `shadow-*` classes are **FORBIDDEN** in feature code — shadows are design-system level only.
 - Never add arbitrary Tailwind utilities to override design-system component appearance.
 
 ### Component usage
 
-- Use `src/shared/components/ui/*` first. Add primitives via the project shadcn CLI if missing — do not invent parallel markup.
+- Use `src/shared/components/ui/*` first. Add primitives via the project CLI if missing — do not invent parallel markup.
 - Compose: `FieldGroup` → `Field` → `FieldLabel` + `FieldContent` + `FieldError` + `FieldDescription`.
 - Spacing: `flex` + `gap-*`, not `space-x-*` / `space-y-*`.
 - `FieldError` for validation messages; `FieldDescription` for static hints only.

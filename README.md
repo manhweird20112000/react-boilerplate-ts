@@ -1,68 +1,40 @@
-# BKS Auth Hub Frontend & SDK
+# Setup
 
-This repository contains the **BKS Auth Hub** frontend (built with React 19, Vite, and Tailwind CSS v4) and the shared **@bks/auth-sdk**.
+## Prerequisites
 
-## @bks/auth-sdk
+- Node.js (LTS recommended)
+- pnpm (see `package.json` → `packageManager`)
 
-The SDK provides a centralized way to handle authentication across the BKS ecosystem.
+## Install dependencies
 
-### Key Features
-
-1.  **Multi-site Session**: Each site (Auth Hub, CRM, HRM, etc.) manages its own session in `localStorage`. Tokens are not shared directly across domains for security.
-2.  **SSO Handshake**: Automatic handling of cross-domain authentication via temporary codes.
-3.  **Preemptive Refresh**: Background token refresh logic to keep users logged in seamlessly.
-4.  **Reusable Components**: Standardized UI components for common auth flows.
-
-### Reusable Callback Page
-
-You can reuse the entire SSO callback logic in any client application by using the `BksSsoCallback` component. It handles code exchange, handshake redirects, and profile fetching.
-
-```tsx
-import { BksSsoCallback } from '@/sdk' // or '@bks/auth-sdk'
-
-export default function MyCallbackPage() {
-  return (
-    <BksSsoCallback
-      loadingComponent={<MySpinner />}
-      errorComponent={(message) => <MyAlert message={message} />}
-      onFinish={(targetUrl) => {
-        // Optional: custom logic after successful login
-      }}
-    />
-  )
-}
+```bash
+pnpm install
 ```
 
-### startLogin Optimization (`sso-service`)
+## Environment
 
-The `startLogin` method is optimized to provide a faster experience:
+- If the project requires environment variables, create a local file (commonly `.env.local`) based on the project convention.
 
-- **Logged-in Detection**: If a user is already authenticated at the Auth Hub, `startLogin` skips the external redirect and navigates internally to the callback page with the necessary handshake parameters.
-- **Service Awareness**:
-  - `auth-service`: Always redirects to the home page (`/`) after login.
-  - `sso-service`: Follows the redirection logic provided by the API (handshake) or the requested `redirect_url`.
+## Run locally
 
-## Tech Stack
+```bash
+pnpm dev
+```
 
-| Layer     | Technologies                             |
-| --------- | ---------------------------------------- |
-| **Core**  | React 19, Vite 6, TypeScript 5           |
-| **State** | Redux Toolkit & Saga                     |
-| **UI**    | Tailwind CSS v4, shadcn/ui, Lucide React |
-| **Auth**  | Axios with interceptors, PKCE, OAuth2    |
+## Build
 
-## Development
+```bash
+pnpm build
+```
 
-### Common Commands
+## Preview production build
 
-- `pnpm dev` — Start Vite dev server
-- `pnpm build:sdk` — Build the SDK package using `tsup`
-- `pnpm lint` — Run ESLint and Prettier
+```bash
+pnpm preview
+```
 
-### SDK Integration
+## Lint & format
 
-To use this SDK in another project:
-
-1. Build the SDK: `pnpm run build:sdk`
-2. Link or install the package: `pnpm add ../erp-auth/frontend` (or via registry)
-3. Wrap your app with `BksAuthProvider`.
+```bash
+pnpm lint
+```

@@ -1,0 +1,7 @@
+public/**
+.nuxt/**
+.output/**
+.nitro/**
+dist/**
+coverage/**
+node_modules/**

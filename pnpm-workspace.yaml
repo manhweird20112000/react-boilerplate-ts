@@ -1,0 +1,6 @@
+ignoredBuiltDependencies:
+  - less
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild

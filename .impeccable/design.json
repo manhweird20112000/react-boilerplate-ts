@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-06T06:23:00.000Z",
+  "title": "Design System: W3rd Codebase",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "App Background Base",
+        "canonical": "#F5F6F7",
+        "tonalRamp": [
+          "#12171C",
+          "#1D232A",
+          "#1D2D3E",
+          "#2E3742",
+          "#556B82",
+          "#8396A8",
+          "#EFF1F2",
+          "#F5F6F7"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink Foreground",
+        "canonical": "#131E29",
+        "tonalRamp": [
+          "#12171C",
+          "#1D232A",
+          "#1D2D3E",
+          "#2E3742",
+          "#556B82",
+          "#8396A8",
+          "#EFF1F2",
+          "#F5F6F7"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Brand / Highlight",
+        "canonical": "#0070F2",
+        "tonalRamp": [
+          "#00144A",
+          "#0057D2",
+          "#0064D9",
+          "#0070F2",
+          "#4DB1FF",
+          "#A6E0FF",
+          "#E1F4FF",
+          "#EBF8FF"
+        ]
+      },
+      "brand": {
+        "role": "accent",
+        "displayName": "Brand Signal",
+        "canonical": "#0070F2",
+        "tonalRamp": [
+          "#00144A",
+          "#0057D2",
+          "#0064D9",
+          "#0070F2",
+          "#4DB1FF",
+          "#A6E0FF",
+          "#E1F4FF",
+          "#EBF8FF"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI text, descriptions, and table content."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, helper text, and compact meta copy."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headers and panel titles."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface-modal",
+        "value": "0 18px 60px -24px rgba(0,0,0,0.35), 0 8px 24px -14px rgba(0,0,0,0.25)",
+        "purpose": "Dialogs, sheets, and popovers over the overlay."
+      },
+      {
+        "name": "surface-subtle",
+        "value": "0 1px 0 0 hsl(var(--border))",
+        "purpose": "Hairline depth for table/container edges."
+      }
+    ],
+    "motion": [
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Most component state transitions."
+      },
+      {
+        "name": "duration-standard",
+        "value": "200ms",
+        "purpose": "Overlays, sheets, dialogs."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default ease-out for state feedback."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action, used sparingly as a signal.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn{appearance:none;border:1px solid transparent;border-radius:10px;padding:.5rem .625rem;font-family:\"72\",Inter,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:.875rem;line-height:1;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),transform 150ms cubic-bezier(0.16,1,0.3,1),box-shadow 150ms cubic-bezier(0.16,1,0.3,1);user-select:none}.ds-btn:focus{outline:none}.ds-btn:focus-visible{box-shadow:0 0 0 3px rgba(0,112,242,.25)}.ds-btn:active{transform:translateY(1px)}.ds-btn:disabled{opacity:.5;cursor:not-allowed}.ds-btn-primary{background:#0070F2;color:#FFFFFF}.ds-btn-primary:hover{background:#0057D2}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action, quiet by default with clear hover.",
+      "html": "<button class=\"ds-btn ds-btn-outline\">Cancel</button>",
+      "css": ".ds-btn-outline{background:#FFFFFF;color:#131E29;border-color:#E5E5E5}.ds-btn-outline:hover{background:#EFF1F2}"
+    },
+    {
+      "name": "Modal Overlay",
+      "kind": "custom",
+      "refersTo": "dialog-surface",
+      "description": "Backdrop establishes modality without decoration.",
+      "html": "<div class=\"ds-overlay\"><div class=\"ds-modal\"><div class=\"ds-modal-title\">Dialog title</div><div class=\"ds-modal-body\">Dense content stays readable. The overlay is the separation.</div><div class=\"ds-modal-actions\"><button class=\"ds-btn ds-btn-outline\">Close</button><button class=\"ds-btn ds-btn-primary\">Confirm</button></div></div></div>",
+      "css": ".ds-overlay{position:relative;min-height:220px;padding:16px;border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.04));display:flex;align-items:center;justify-content:center}.ds-overlay:before{content:\"\";position:absolute;inset:0;border-radius:14px;background:rgba(19,30,41,.35);backdrop-filter:blur(8px)}.ds-modal{position:relative;z-index:1;width:min(520px,100%);border-radius:14px;background:#FFFFFF;color:#131E29;box-shadow:0 18px 60px -24px rgba(0,0,0,0.35),0 8px 24px -14px rgba(0,0,0,0.25);border:1px solid rgba(229,229,229,.9);padding:16px;font-family:\"72\",Inter,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}.ds-modal-title{font-weight:600;font-size:1rem;line-height:1.35;margin:0 0 8px}.ds-modal-body{font-size:.875rem;line-height:1.5;color:rgba(85,107,130,.95)}.ds-modal-actions{margin-top:14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Precision Console",
+    "overview": "This system is built for internal operators working quickly through dense information. It rewards accuracy and speed through consistent structure, predictable component behavior, and high-clarity states. It should feel like a well-tuned instrument, not a decorative theme.\n\nThis project explicitly rejects a Bootstrap-like, border-heavy, dated look. Borders exist, but they are thin, quiet, and always subordinate to hierarchy.",
+    "keyCharacteristics": [
+      "Dense by default, readable by design.",
+      "Familiar patterns, no invented affordances.",
+      "State clarity over decoration.",
+      "Restrained accent usage, focus and selection are the signal."
+    ],
+    "rules": [
+      {
+        "name": "The Signal-Only Accent Rule",
+        "body": "The brand accent is not decoration. Use it only for primary intent (CTA), selection, focus rings, and semantic emphasis where ambiguity would cost time.",
+        "section": "colors"
+      },
+      {
+        "name": "The Small-Type Discipline Rule",
+        "body": "Labels stay small and calm. Use weight and spacing for clarity, never oversized type for authority.",
+        "section": "typography"
+      },
+      {
+        "name": "The Modal Wins Rule",
+        "body": "When a dialog or sheet is open, the overlay and surface elevation must clearly establish a new interaction layer.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep accent usage restrained and functional (focus, selection, primary actions).",
+      "Do use thin, quiet borders for separation, not to “decorate” the UI.",
+      "Do ship complete interaction states: hover, focus-visible, active, disabled, loading, error."
+    ],
+    "donts": [
+      "Don't drift into a Bootstrap-like UI (heavy borders, coarse spacing, dated feel).",
+      "Don't use gradient text, decorative glass blur, or “stripe borders” as accents."
+    ]
+  }
+}
+

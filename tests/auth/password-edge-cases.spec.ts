@@ -8,7 +8,7 @@ test.describe('Password Field Edge Cases', () => {
     await page.goto('http://localhost:9999/auth/login');
     
     // 2. Enter 'Pass!@#$%^&*()' in the password field containing special characters
-    await page.getByRole('textbox', { name: 'Mất khẩu' }).fill('Pass!@#$%^&*()');
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('Pass!@#$%^&*()');
     
     // 3. Enter a valid email
     await page.getByRole('textbox', { name: 'Email' }).fill('test@example.com');

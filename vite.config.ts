@@ -61,6 +61,31 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: ['@reduxjs/toolkit', 'react', 'react-dom', 'react-router-dom']
     },
+    test: {
+      environment: 'happy-dom',
+      setupFiles: ['./src/tests/setup.ts'],
+      include: ['src/**/*.test.{ts,tsx}'],
+      coverage: {
+        provider: 'v8',
+        include: ['src/**'],
+        exclude: [
+          'node_modules/**',
+          'src/shared/utils/mock-data/**',
+          'src/tests/**',
+          'src/mocks/**',
+          'src/routes/**',
+          'src/store/**'
+        ],
+        thresholds: {
+          global: {
+            lines: 70,
+            branches: 70,
+            functions: 70,
+            statements: 70
+          }
+        }
+      }
+    },
     build: {
       target: 'es2022',
       cssCodeSplit: true,

@@ -13,12 +13,36 @@ export default defineConfig({
   plugins: [react(), tailwindcss({ optimize: true })],
   resolve: {
     alias: {
-      '@': path.resolve(dirname, 'src'),
-      '~': path.resolve(dirname, 'src')
+      '@': path.join(dirname, 'src'),
+      '~': path.join(dirname, 'src')
     }
   },
   test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'json-summary'],
+      thresholds: {
+        'src/shared/utils/**/*.ts': { lines: 70 },
+        'src/features/**/hooks/**/*.ts': { lines: 70 },
+        'src/features/**/components/**/*.tsx': { lines: 70 },
+        'src/features/**/services/**/*.ts': { lines: 50 },
+      },
+      exclude: ['node_modules/**', 'tests/**', 'src/mocks/**', 'src/tests/**'],
+    },
     projects: [
+      {
+        name: 'unit',
+        test: {
+          include: ['src/**/*.test.{ts,tsx}'],
+          environment: 'happy-dom',
+          setupFiles: ['./src/tests/setup.ts'],
+          globals: true,
+          alias: {
+            '@': path.join(dirname, 'src'),
+            '~': path.join(dirname, 'src')
+          }
+        }
+      },
       {
         extends: true,
         plugins: [

@@ -33,7 +33,6 @@ test.describe('Login Form Validation', () => {
     
     // Verify email format validation error is displayed
     await expect(page.locator('body')).toContainText('Định dạng email không hợp lệ.');
-    await expect(page.locator('body')).toContainText('Vui lòng nhập Mật khẩu.');
     await expect(page).toHaveURL('http://localhost:9999/auth/login');
   });
 

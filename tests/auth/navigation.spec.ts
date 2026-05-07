@@ -37,7 +37,7 @@ test.describe('Navigation Flows', () => {
     // Verify the page shows fields for full name, email, password, and password confirmation
     await expect(page.getByRole('textbox', { name: 'Họ và tên' })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Mật khẩu' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Mật khẩu', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Xác nhận mật khẩu' })).toBeVisible();
   });
 

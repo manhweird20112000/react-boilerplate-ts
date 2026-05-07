@@ -22,7 +22,7 @@ vi.mock('react-router-dom', async () => {
 // Mock useTranslation
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: () => '',
+    t: (_key: string, defaultValue?: string) => defaultValue || _key,
   }),
 }))
 

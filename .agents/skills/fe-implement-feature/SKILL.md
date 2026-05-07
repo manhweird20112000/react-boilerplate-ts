@@ -37,7 +37,8 @@ Read this file fully. Then read references **on demand only**:
 3. **Step 1** — Gather requirements (max 2 rounds)
 4. **Step 2** — Apply antd design-system standards (tokens, ProComponents)
 5. **Implementation steps by flow**
-6. **Step 5** — `pnpm lint` → severity checklist → fix blockers → ship
+6. **Step 5** — `pnpm lint` → severity checklist → fix blockers
+7. **Step 6** — add unit tests and E2E tests for the feature
 
 ---
 
@@ -55,6 +56,7 @@ Hooks depend on `abstract class <Feature>Repository`. Adapters (HTTP/Mock) exten
 ## Mocking with MSW
 
 **Standards:**
+
 - Handlers live in `src/mocks/handlers/<feature>.ts`.
 - Data definitions and factories live in `src/mocks/factories.ts` and `src/mocks/db.ts`.
 - MSW should be initialized in `src/main.tsx`.
@@ -110,8 +112,21 @@ Hooks depend on `abstract class <Feature>Repository`. Adapters (HTTP/Mock) exten
 - [ ] **Buttons:** Use antd `Button` props (`type`, `icon`, `loading`).
 - [ ] **i18n:** All strings via `t()`.
 - [ ] **Dates:** Use `dayjs` via shared helpers.
+- [ ] **Tests:** Add unit tests for component logic/hooks and E2E coverage for the feature flow.
 
 #### 🟢 Recommended (polish)
 
 - [ ] **Responsive:** Verify with `Grid.useBreakpoint()`.
 - [ ] **UX:** `destroyOnClose` on modals; `loading` states on buttons.
+
+## Step 6 — Testing the feature
+
+- **Unit tests**: cover component rendering, validation rules, event callbacks, repository adapters, and hook behavior.
+- **E2E tests**: cover the full feature path in `tests/` using user flows.
+  - For form features: open form, fill fields, submit, assert success and side effects.
+  - For list/detail flows: load data, filter/sort, navigate to detail, perform actions.
+- **Mocks**: prefer `msw` in tests for network stubbing; use real repository interface contracts.
+- **Commands**:
+  - `pnpm test -- --runInBand` or project-specific unit test command
+  - `pnpm playwright test` for E2E coverage
+- **Review**: make sure new tests are added to `src/tests/` and any feature story/seed if needed.

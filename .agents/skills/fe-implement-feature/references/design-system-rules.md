@@ -8,132 +8,108 @@ For the **deviation policy** (when you must legitimately break a rule), see SKIL
 
 ## Layout shells
 
-- **List page** → `LayoutPage` with `heading`, `pagination`, `filter` props
-- **Routed form** → `LayoutFormPage` with `heading`, `topAction`, `bottomAction` (sticky, centered max 730px)
-- **Dialog form** → `FormDialogContent` + `DialogTitle` (pattern: max-w 720px, p-0, border-b header)
+- **List page** → `LayoutPage` wrapping `ProTable` or `ProList`.
+- **Detail page** → `LayoutPage` wrapping `ProDescriptions` and `Tabs`.
+- **Forms** → `ProForm` (routed) or `ProForm.ModalForm` / `ProForm.DrawerForm` (dialogs).
 
-### Modal Form Standards (STRICT)
+### Modal & Drawer Standards (STRICT)
 
-- **Structure:** `DialogHeader` with `px-6 py-4 border-b bg-background` for clean, premium separation.
-- **Layout:** `FormDialogContent` typically uses `className="sm:max-w-[720px] p-0 overflow-hidden gap-0"` to create a unified container.
-- **Scrolling:** Dialog form container **MUST** enforce `max-h-[75vh]` with `overflow-y-auto` on the scrollable body — non-negotiable for all dialog forms regardless of content length.
-- **Footer:** All action buttons (submit, cancel, reset, etc.) inside a dialog form **MUST** be wrapped in `DialogFooter` — never place buttons outside `DialogFooter` or inline in the form body.
-- `DialogFooter` must remain **outside** the scrollable area so actions are always visible.
+- **Selection:** Use `Modal` for focused creation/editing; use `Drawer` for detail views or complex configurations.
+- **Provider:** All messages, notifications, and modals must come from the `App` component via `App.useApp()` hook.
+- **Scrolling:** Modal/Drawer bodies must enforce reasonable height limits if content is dynamic. `ProForm` variants handle scrolling and footers automatically.
+- **Footer:** Submit/Cancel buttons must be placed in the footer area. `ProForm` handled this by default.
+- **Close behavior:** Always include a "Cancel" or "Close" button; clicking mask should not close if the form is "dirty" (has unsaved changes).
 
-### Standard Dialog pattern
+### Standard ProForm Pattern
 
 ```tsx
-<Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-  <FormDialogContent className="sm:max-w-[720px] p-0 overflow-hidden gap-0">
-    <DialogHeader className="px-6 py-4 border-b bg-background">
-      <DialogTitle>{t('feature.dialogs.create')}</DialogTitle>
-    </DialogHeader>
-    <FeatureForm
-      mode="create"
-      isSubmitting={isSubmitting}
-      onSubmit={handleSubmit}
-      onCancel={onClose}
-    />
-  </FormDialogContent>
-</Dialog>
+<ModalForm<FormInput>
+  title={t('feature.dialogs.create')}
+  trigger={<Button type="primary">{t('common.actions.create')}</Button>}
+  onFinish={handleSubmit}
+  modalProps={{
+    destroyOnClose: true,
+    maskClosable: false
+  }}
+>
+  <ProFormText
+    name="name"
+    label={t('feature.fields.name')}
+    placeholder={t('feature.placeholders.name')}
+    rules={[{ required: true, message: t('validation.required') }]}
+  />
+  {/* ... fields */}
+</ModalForm>
 ```
-
-- Never modify `shared/layouts/` unless the task explicitly scopes an app-wide change; exception: update `shared/layouts/app-shell.tsx` to register the feature nav item.
-- Match patterns from `features/customers/` and existing admin pages.
 
 ---
 
 ## Component rules (STRICT — zero tolerance)
 
-**Core principle:** Clean code, single-responsibility components, easy to read and maintain. Every component must be small, focused, and composable. Extract sub-components when a render function exceeds ~40 lines.
+**Core principle:** Use Ant Design core and ProComponents. Do not reinvent what antd provides.
 
-### Styling prohibitions
+### Styling & Tokens
 
-- `className` on shared UI primitives in feature code is **FORBIDDEN** — use `variant` / `size` props or extend in `shared/components/ui/`.
-- `className` **allowed only** on layout wrappers (`div`, grids, `flex` containers) for structural layout (grid, flex, gap).
-- `shadow-*` classes are **FORBIDDEN** in feature code — shadows are design-system level only.
-- Never add arbitrary Tailwind utilities to override design-system component appearance.
+- **Token First:** Use `theme.useToken()` for any custom styling. Do not hardcode colors or spacing.
+- **classNames/styles:** Use the `classNames` and `styles` props of antd components for semantic styling of internal elements.
+- **Tailwind:** Allowed for structural layout (`flex`, `grid`, `gap`, `p-4`) but **FORBIDDEN** for colors, borders, or shadows that should come from tokens.
+- **Global CSS:** Avoid `.ant-*` global overrides. Use `ConfigProvider` for theme-level changes.
 
 ### Component usage
 
-- Use `src/shared/components/ui/*` first. Add primitives via the project CLI if missing — do not invent parallel markup.
-- Compose: `FieldGroup` → `Field` → `FieldLabel` + `FieldContent` + `FieldError` + `FieldDescription`.
-- Spacing: `flex` + `gap-*`, not `space-x-*` / `space-y-*`.
-- `FieldError` for validation messages; `FieldDescription` for static hints only.
+- **Inputs:** `ProFormText`, `ProFormSelect`, `ProFormDateRangePicker`, etc. from `@ant-design/pro-components`.
+- **Tables:** `ProTable` for data-heavy lists; `Table` for simple ones.
+- **Feedback:** `message`, `notification`, `modal` from `App.useApp()`.
 
 ### Button rules (STRICT)
 
-- `Button` accepts **only `variant` prop** for visual differentiation (`default`, `outline`, `ghost`, `destructive`, `link`, etc.).
-- `size` prop is **FORBIDDEN** on standard buttons — only allowed on **icon-only buttons** (e.g. `<Button variant="ghost" size="icon">`).
-- Icons in `Button`: `data-icon` attribute, no extra sizing classes in features.
-- Never add `className` to `Button` — if a button variant doesn't exist, extend it in `shared/components/ui/button.tsx`.
+- Use antd `Button` props: `type` (`primary`, `default`, `dashed`, `text`, `link`), `danger`, `shape`, `size`.
+- **Icons:** Use `icon` prop with icons from `@ant-design/icons`.
+- **Loading:** Always use `loading` prop for async actions.
 
 ### Reusable utility functions
 
 - Any helper function used in **2+ places** MUST be extracted to a util file (`features/<feature>/utils/` or `shared/lib/`).
-- Util functions must be **pure functions** — no side effects, no dependencies on React state or hooks.
-- Each util file must export **one focused concern** (e.g. `format-date.ts`, `parse-currency.ts`).
-- Write clean, typed signatures with JSDoc for public utils; avoid generic names like `helper`, `utils`, `misc`.
+- Util functions must be **pure functions** — no side effects.
+- Use `antd` built-in utils or `dayjs` for dates.
 
 ---
 
 ## Validation & i18n
 
-Pick **one** validation strategy per feature (from plan or default to inline English):
-
-- **Inline English:** `z.string().min(1, "Name is required")`
-- **i18n:** `t("validation.required", { _field_: t("<feature>.fields.name") })` — see `validation-i18n.md`
-
-No mixing within a feature. When using i18n: list the keys in the plan before writing schemas.
-
-### Copy rules
-
-- Match the **existing locale strategy of the project**. New copy must follow the validation-i18n contract.
-- If i18n: shared `validation.*` error templates + `<feature>.fields.*` for field display names.
-- If existing screen is already localized, extend the same mechanism.
+- **Strategy:** Ant Design `rules` prop on form items.
+- **i18n:** Always use `t()` for labels, placeholders, and error messages.
+- **Validation Messages:** Centralize common messages in `translation.json` under `validation.*`.
 
 ---
 
-## Toasts
+## Feedback (Toasts & Notifications)
 
-- **Hook responsibility:** Feature hooks orchestrate toasts after API calls.
-- **Source:** `ResponseData.message` only. If missing or empty after `trim()` → **no toast**. No invented fallback messages.
-- **Helper + import:** Use the shared `shouldShowToast` from `@/shared/lib/toast`. Single source of
-  truth and the full example live in `project-patterns.md` → "Toast policy". **Do not redefine the
-  helper per feature.**
+- **Toasts:** Use `message.success()` / `message.error()` from `App.useApp()`.
+- **Notifications:** Use `notification` for persistent or complex feedback.
+- **Source:** `ResponseData.message` only. If missing or empty → no feedback.
 
 ---
 
 ## Date/time formatting (STRICT)
 
-All date/time values displayed in tables and UI **MUST** use one of these two formats based on context:
-
-| Context                                                          | Format             | Example            |
-| ---------------------------------------------------------------- | ------------------ | ------------------ |
-| Date only (created date, birth date, expiry date)                | `DD-MM-YYYY`       | `23-04-2026`       |
-| Date + time (timestamps, activity logs, last login, audit trail) | `DD-MM-YYYY HH:mm` | `23-04-2026 14:30` |
-
-- **Choose format by semantic context:** If the time component is meaningful for the user's decision-making → use `DD-MM-YYYY HH:mm`. If only the date matters → use `DD-MM-YYYY`.
-- Use the typed helpers in `shared/lib/format-date.ts` (`formatDate(date)` and `formatDateTime(date)`).
-- Never use raw `toLocaleDateString()` or unformatted ISO strings in the UI.
-- Use `date-fns` (already in project: `format` from `date-fns`) for formatting — do not write manual date string manipulation.
+- **Display:** Always use `dayjs` via shared helpers.
+- **Format:** `DD-MM-YYYY` (Date) or `DD-MM-YYYY HH:mm` (DateTime).
+- **Pickers:** `ProFormDatePicker` / `ProFormDateTimePicker`.
 
 ---
 
 ## Responsive
 
-- Mobile-first; verify 320 / 768 / 1280px.
-- Tables: `overflow-x-auto`.
-- Filters: `grid grid-cols-12 gap-3`.
-- Form footer: `flex flex-col-reverse gap-2 sm:flex-row sm:justify-end`.
-- Use `min-w-0`, `truncate`, `break-words` as needed.
-- `Intl.NumberFormat` for locale-safe number/currency formatting.
+- Use `Row` and `Col` with `span` and `gutter`.
+- Use `Grid.useBreakpoint()` for complex responsive logic.
+- `ProTable` handles mobile responsiveness via `card` mode or horizontal scroll.
 
 ---
 
 ## Loading, error, empty states
 
-- **Loading:** Use `Skeleton` from the design system for content placeholders. Use ellipsis `…` only for inline transient states (e.g. button label while submitting).
-- **Error:** Wrap pages in `ErrorBoundary` from `shared/components/`. Show retry CTA when recoverable. Toasts only for transient mutation errors.
-- **Empty:** Use the `Empty` family (`Empty`, `EmptyHeader`, `EmptyMedia`, `EmptyTitle`, `EmptyDescription`).
-- **Optimistic update:** Allowed for list mutations when latency matters; **must** rollback on failure and surface error via toast.
+- **Loading:** `Spin`, `Skeleton`, or component `loading` props.
+- **Error:** Ant Design `Result` component for page-level errors.
+- **Empty:** Ant Design `Empty` component.
+  ack on failure and surface error via toast.

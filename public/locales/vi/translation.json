@@ -27,7 +27,10 @@
     "numberFinite": "{{_field_}} không hợp lệ.",
     "numberInteger": "{{_field_}} phải là số nguyên.",
     "numberPositive": "{{_field_}} phải lớn hơn 0.",
-    "numberBetweenInclusive": "{{_field_}} phải nằm trong khoảng {{_min_}}–{{_max_}}."
+    "numberBetweenInclusive": "{{_field_}} phải nằm trong khoảng {{_min_}}–{{_max_}}.",
+    "invalid_email": "Định dạng email không hợp lệ.",
+    "min_length": "Phải có ít nhất {{count}} ký tự.",
+    "password_mismatch": "Mật khẩu xác nhận không khớp."
   },
   "actions": {
     "create": "Thêm mới",
@@ -94,18 +97,31 @@
     }
   },
   "auth": {
-    "login": {
-      "title": "Đăng nhập",
-      "subtitle": "Chào mừng bạn quay trở lại",
-      "submit": "Đăng nhập",
-      "submitting": "Đang đăng nhập...",
-      "forgotPassword": "Quên mật khẩu?",
-      "register": "Chưa có tài khoản? Đăng ký ngay",
-      "success": "Đăng nhập thành công"
-    },
+    "login_title": "Đăng nhập",
+    "login_subtitle": "Chào mừng bạn quay trở lại với Antgravity",
+    "login_button": "Đăng nhập",
+    "email_placeholder": "Email",
+    "password_placeholder": "Mật khẩu",
+    "remember_me": "Ghi nhớ đăng nhập",
+    "forgot_password": "Quên mật khẩu?",
+    "no_account": "Chưa có tài khoản?",
+    "register_now": "Đăng ký ngay",
+    "register_title": "Tạo tài khoản mới",
+    "register_button": "Đăng ký",
+    "name_placeholder": "Họ và tên",
+    "confirm_password_placeholder": "Xác nhận mật khẩu",
+    "have_account": "Đã có tài khoản?",
+    "login_now": "Đăng nhập ngay",
+    "forgot_pwd_title": "Quên mật khẩu",
+    "forgot_pwd_subtitle": "Nhập email của bạn để khôi phục mật khẩu",
+    "reset_button": "Đặt lại mật khẩu",
+    "back_to_login": "Quay lại đăng nhập",
     "fields": {
       "email": "Email",
-      "password": "Mật khẩu"
+      "password": "Mật khẩu",
+      "name": "Họ và tên",
+      "password_confirmation": "Xác nhận mật khẩu",
+      "remember": "Ghi nhớ đăng nhập"
     }
   }
 }

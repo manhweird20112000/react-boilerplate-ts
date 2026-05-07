@@ -44,10 +44,11 @@ Standard shape (extend only when needed):
 features/posts/
 ├── index.ts           # public exports for this feature (barrel)
 ├── pages/             # route-level screens (often lazy-imported)
+├── components/        # component feature 
 ├── services/          # feature API calls (uses infra/http)
 ├── hooks/             # feature hooks (data loading/mutations, derived UI state)
 ├── types/             # feature-specific types
-└── msw/               # optional: MSW handlers for this feature’s API (see “Feature MSW handlers”)
+├── schemas/           # feature-specific schemas
 ```
 
 **Rules**

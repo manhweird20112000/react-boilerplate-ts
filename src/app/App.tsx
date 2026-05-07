@@ -4,11 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import { AppRoutes } from './routes'
 import { Toaster } from 'sonner'
 
+import { AuthProvider } from '~/features/auth/hooks/auth-provider'
+
 function App(): ReactElement {
   return (
     <BrowserRouter>
       <Suspense fallback={<div>Loading...</div>}>
-        <AppRoutes />
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
         <Toaster />
       </Suspense>
     </BrowserRouter>

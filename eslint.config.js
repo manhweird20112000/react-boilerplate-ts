@@ -6,23 +6,42 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'public/mockServiceWorker.js']),
+  globalIgnores(['dist', 'storybook-static', 'public/mockServiceWorker.js', 'node_modules']),
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat['recommended-latest'],
-      reactRefresh.configs.vite
-    ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser
+      globals: {
+        ...globals.browser,
+        ...globals.es2020,
+      },
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 0,
-      '@typescript-eslint/no-unused-expressions': 0,
-      'react-refresh/only-export-components': 0
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
+    files: ['**/*.cjs', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
     }
   }
 ])

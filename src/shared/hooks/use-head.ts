@@ -10,6 +10,6 @@ export const useHead = (options: Options) => {
   const { title } = options
 
   useEffect(() => {
-    document.title = `${title} | ${SUFFIX_TITLE}`
+    document.title = SUFFIX_TITLE ? `${title} | ${SUFFIX_TITLE}` : title
   }, [title])
 }

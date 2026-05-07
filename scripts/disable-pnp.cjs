@@ -16,4 +16,3 @@ if (Module && typeof Module._load === 'function') {
     return originalLoad.call(this, request, parent, isMain)
   }
 }
-

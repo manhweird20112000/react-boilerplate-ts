@@ -10,4 +10,3 @@ export type TanstackQueryProviderProps = {
 export function TanstackQueryProvider(props: TanstackQueryProviderProps): ReactElement {
   return <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
 }
-

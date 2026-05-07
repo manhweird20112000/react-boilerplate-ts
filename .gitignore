@@ -1,3 +1,14 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+storybook-static/
+*.tsbuildinfo
+
 # Logs
 logs
 *.log
@@ -7,39 +18,42 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist-ssr
-dist
-*.local
-
-# Local environment files (never commit secrets)
+# Environment & Secrets
 .env
 .env.*
 !.env.example
-
-# Local npm config (may contain tokens/registry)
 .npmrc
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-
-./scripts/build/
-./pick-commit/
-
-.pnpm-store/
-
-# Playwright
+# Testing
+coverage/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# IDE & Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Vite
+vite.config.ts.timestamp-*
+
+# Project Specific
+/scripts/build/
+/pick-commit/
+
+# Misc
+.eslintcache
+.stylelintcache

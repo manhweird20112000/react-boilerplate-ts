@@ -1,0 +1,34 @@
+- generic [ref=e3]:
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - heading "ANTGRAVITY" [level=2] [ref=e15]
+      - text: Enterprise Precision Console
+    - generic [ref=e90]:
+      - generic [ref=e91]:
+        - heading "Đăng nhập" [level=3] [ref=e92]
+        - text: Chào mừng bạn quay trở lại với Antgravity
+      - generic [ref=e93]:
+        - generic [ref=e99]:
+          - img "user" [ref=e101]:
+            - img [ref=e102]
+          - textbox "Email" [ref=e104]
+        - generic [ref=e110]:
+          - img "lock" [ref=e112]:
+            - img [ref=e113]
+          - textbox "Mật khẩu" [ref=e115]
+          - img "eye-invisible" [ref=e117] [cursor=pointer]:
+            - img [ref=e118]
+        - generic [ref=e121]:
+          - generic [ref=e122] [cursor=pointer]:
+            - checkbox "Ghi nhớ đăng nhập" [checked] [ref=e124]
+            - generic [ref=e125]: Ghi nhớ đăng nhập
+          - link "Quên mật khẩu?" [ref=e126] [cursor=pointer]:
+            - /url: /auth/forgot-password
+        - button "Đăng nhập" [ref=e132] [cursor=pointer]:
+          - generic [ref=e133]: Đăng nhập
+        - generic [ref=e134]:
+          - generic [ref=e135]: Chưa có tài khoản?
+          - link "Đăng ký ngay" [ref=e136] [cursor=pointer]:
+            - /url: /auth/register
+    - generic [ref=e65]: © 2026 Antgravity. All rights reserved.
+  - region "Notifications alt+T"

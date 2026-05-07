@@ -11,6 +11,13 @@ import { AntdProvider } from '@/infra/antd/antd-provider'
 import '~/assets/styles/tailwind.css'
 
 async function bootstrap(): Promise<void> {
+  if (import.meta.env.DEV && import.meta.env.VITE_USE_MSW === 'true') {
+    const { worker } = await import('./mocks/browser')
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+    })
+  }
+
   createRoot(document.getElementById('root')!).render(
     <TanstackQueryProvider>
       <Provider store={store}>

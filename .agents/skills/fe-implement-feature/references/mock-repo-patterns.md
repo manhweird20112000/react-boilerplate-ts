@@ -1,12 +1,7 @@
-# Mock Repository Patterns
-
-When the API is not ready, implement `Mock<Feature>Repository` so feature hooks behave the same as
-production.
-
-> Read `repository-factory-pattern.md` first if the decision matrix in `SKILL.md` → "Data layer"
-> sends you to the "Both, runtime-switchable" row. If your feature is **mock-only** (no HTTP yet),
-> the hook just instantiates the mock via `useMemo` — see `project-patterns.md`. This file only
-> covers the **internals** of the mock class either way.
+> **IMPORTANT:** MSW (Mock Service Worker) is now the **preferred** way to mock data. 
+> Only use the in-memory `Mock<Feature>Repository` pattern if you need to simulate complex state 
+> that is difficult to represent in MSW handlers or for quick UI-only prototyping without MSW setup.
+> See `src/mocks/handlers/` for MSW examples.
 
 ---
 

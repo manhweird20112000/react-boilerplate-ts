@@ -4,7 +4,6 @@ import { AuthProvider } from './auth-provider'
 import { useAuth } from './use-auth'
 import { App } from 'antd'
 import { authRepo } from '../services/factory'
-import React from 'react'
 
 // Mocking antd App
 const TestComponent = () => {

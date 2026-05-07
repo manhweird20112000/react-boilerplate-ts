@@ -9,7 +9,10 @@ class AuthRepositoryFactory {
     if (this.instance) return this.instance
 
     const isMock = import.meta.env.VITE_USE_MOCK === 'true'
-    this.instance = isMock ? new MockAuthRepository() : new HttpAuthRepository()
+    const isMSW = import.meta.env.VITE_USE_MSW === 'true'
+    
+    // If using MSW, we want to use the HttpAuthRepository because MSW intercepts HTTP calls
+    this.instance = (isMSW || !isMock) ? new HttpAuthRepository() : new MockAuthRepository()
 
     return this.instance
   }

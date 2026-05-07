@@ -135,10 +135,11 @@ import { CustomerRepository } from './customer.repository'
 import { HttpCustomerRepository } from './http-customer.repository'
 import { MockCustomerRepository } from './mock-customer.repository'
 
-export type RepositoryMode = 'http' | 'mock'
+export type RepositoryMode = 'http' | 'mock' | 'msw'
 
 const DEFAULT_MODE: RepositoryMode =
-  (import.meta.env.VITE_CUSTOMER_REPO_MODE as RepositoryMode | undefined) ?? 'http'
+  (import.meta.env.VITE_CUSTOMER_REPO_MODE as RepositoryMode | undefined) ?? 
+  (import.meta.env.VITE_USE_MSW === 'true' ? 'msw' : 'http')
 
 export const createCustomerRepository = (
   mode: RepositoryMode = DEFAULT_MODE
@@ -146,8 +147,10 @@ export const createCustomerRepository = (
   switch (mode) {
     case 'mock':
       return new MockCustomerRepository()
+    case 'msw':
     case 'http':
     default:
+      // MSW mode uses HttpCustomerRepository because MSW intercepts HTTP calls
       return new HttpCustomerRepository()
   }
 }

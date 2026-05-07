@@ -45,8 +45,20 @@ Read this file fully. Then read references **on demand only**:
 
 Hooks depend on `abstract class <Feature>Repository`. Adapters (HTTP/Mock) extend it.
 
-- HTTP adapter: uses `HttpService` from `@/infra/api`.
+- **HTTP adapter**: uses `HttpService` from `@/infra/api`.
+- **MSW Mocking (Preferred)**: We use MSW to intercept HTTP calls. When `VITE_USE_MSW=true` is set, the repository factory should return the `HttpAdapter`, and MSW handles the data.
+- **Mock adapter (Legacy/Fallback)**: In-memory class used only if MSW is not suitable.
 - Param transformation (filters, sorting) lives in the adapter.
+
+---
+
+## Mocking with MSW
+
+**Standards:**
+- Handlers live in `src/mocks/handlers/<feature>.ts`.
+- Data definitions and factories live in `src/mocks/factories.ts` and `src/mocks/db.ts`.
+- MSW should be initialized in `src/main.tsx`.
+- Enable via `.env`: `VITE_USE_MSW=true`.
 
 ---
 

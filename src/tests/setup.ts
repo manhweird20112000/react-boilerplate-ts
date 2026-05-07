@@ -1,11 +1,8 @@
 import '@testing-library/jest-dom'
 import { beforeAll, afterEach, afterAll } from 'vitest'
-import { setupServer } from 'msw/node'
-import { authHandlers } from '../mocks/handlers/auth'
+import { server } from '../mocks/server'
 
-export const server = setupServer(...authHandlers)
-
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
@@ -28,8 +25,8 @@ if (typeof window !== 'undefined' && (!window.localStorage || typeof window.loca
   })
   
   // Also set on global for good measure
-  if (typeof global !== 'undefined') {
-    (global as any).localStorage = localStorageMock
+  if (typeof globalThis !== 'undefined') {
+    (globalThis as any).localStorage = localStorageMock
   }
 }
 

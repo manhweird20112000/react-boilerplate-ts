@@ -25,7 +25,7 @@ lerna-debug.log*
 .npmrc
 
 # Testing
-coverage/
+/coverage/
 /test-results/
 /playwright-report/
 /blob-report/

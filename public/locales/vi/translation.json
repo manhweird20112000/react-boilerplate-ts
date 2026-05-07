@@ -92,5 +92,20 @@
       "kindFile": "Tệp",
       "unnamedFile": "tệp"
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Đăng nhập",
+      "subtitle": "Chào mừng bạn quay trở lại",
+      "submit": "Đăng nhập",
+      "submitting": "Đang đăng nhập...",
+      "forgotPassword": "Quên mật khẩu?",
+      "register": "Chưa có tài khoản? Đăng ký ngay",
+      "success": "Đăng nhập thành công"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Mật khẩu"
+    }
   }
 }

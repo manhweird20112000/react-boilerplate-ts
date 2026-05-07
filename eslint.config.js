@@ -15,33 +15,30 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
-        ...globals.es2020,
-      },
+        ...globals.es2020
+      }
     },
     plugins: {
       'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      'react-refresh': reactRefresh
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
-    },
+      '@typescript-eslint/no-require-imports': 'off'
+    }
   },
   {
     files: ['**/*.cjs', 'scripts/**/*.js'],
     languageOptions: {
       globals: {
-        ...globals.node,
-      },
+        ...globals.node
+      }
     },
     rules: {
-      'no-undef': 'off',
+      'no-undef': 'off'
     }
   }
 ])

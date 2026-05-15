@@ -2,8 +2,10 @@ import { http, HttpResponse } from 'msw'
 import { createAuthResponse, createUser } from '../factories'
 import { findUserByEmail, addUser } from '../db'
 
+const authPath = (path: string): RegExp => new RegExp(`/(?:api/)?auth/${path}(?:[?#].*)?$`)
+
 export const authHandlers = [
-  http.post('*/api/auth/login', async ({ request }) => {
+  http.post(authPath('login'), async ({ request }) => {
     const { email, password } = (await request.json()) as any
     
     const user = findUserByEmail(email)
@@ -32,7 +34,7 @@ export const authHandlers = [
     }, { status: 401 })
   }),
 
-  http.post('*/api/auth/register', async ({ request }) => {
+  http.post(authPath('register'), async ({ request }) => {
     const data = (await request.json()) as any
     const newUser = {
       ...createUser(),
@@ -48,7 +50,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/auth/logout', () => {
+  http.post(authPath('logout'), () => {
     return HttpResponse.json({
       success: true,
       message: 'Logged out successfully',
@@ -56,7 +58,7 @@ export const authHandlers = [
     })
   }),
 
-  http.get('*/api/auth/me', () => {
+  http.get(authPath('me'), () => {
     return HttpResponse.json({
       success: true,
       message: 'User profile fetched',
@@ -64,7 +66,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/auth/forgot-password', () => {
+  http.post(authPath('forgot-password'), () => {
     return HttpResponse.json({
       success: true,
       message: 'Recovery email sent',
@@ -72,7 +74,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/auth/token-refresh', () => {
+  http.post(authPath('token-refresh'), () => {
     return HttpResponse.json({
       success: true,
       message: 'Token refreshed',

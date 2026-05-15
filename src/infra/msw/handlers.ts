@@ -1,4 +1,3 @@
-/**
- * Composes all feature-level MSW handlers for the browser worker.
- */
-export const mswHandlers = []
+import { handlers } from '@/mocks/handlers'
+
+export const mswHandlers = handlers

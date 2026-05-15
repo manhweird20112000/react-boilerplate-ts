@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react-swc'
 import { defineConfig, loadEnv } from 'vite'
 
 const projectRoot: string = path.dirname(fileURLToPath(import.meta.url))
-const DEFAULT_DEV_PORT = 9000
+const DEFAULT_DEV_PORT = 9999
 
 function resolvePortFromEnv(raw: string | undefined, fallback: number): number {
   if (raw === undefined || raw === '') {

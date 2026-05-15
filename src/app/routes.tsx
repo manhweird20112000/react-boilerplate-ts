@@ -17,6 +17,10 @@ const ForgotPasswordPage = lazy(() =>
   }))
 )
 
+function ErrorPage({ title }: { readonly title: string }): ReactElement {
+  return <div>{title}</div>
+}
+
 /**
  * Application route tree; lazy-loaded feature pages stay in their modules.
  */
@@ -39,6 +43,9 @@ export function AppRoutes(): ReactElement {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
 
+        <Route path="/403" element={<ErrorPage title="Forbidden" />} />
+        <Route path="/404" element={<ErrorPage title="Not found" />} />
+        <Route path="/500" element={<ErrorPage title="Server error" />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>

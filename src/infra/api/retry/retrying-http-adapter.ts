@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import type { IHttpAdapter } from '../http-adapter'
+import type { RefreshTokenHandler } from '../module'
 import type { RetryDecision, RetryOptions } from './retry.types'
 import type { RetryPolicy } from './retry-policy'
 import { sleep } from './sleep'
@@ -27,7 +28,7 @@ export class RetryingHttpAdapter<TClient = unknown> implements IHttpAdapter<TCli
     this.inner.setHeaders(headers)
   }
 
-  public setRefreshTokenHandler(handler: any): void {
+  public setRefreshTokenHandler(handler: RefreshTokenHandler): void {
     this.inner.setRefreshTokenHandler(handler)
   }
 

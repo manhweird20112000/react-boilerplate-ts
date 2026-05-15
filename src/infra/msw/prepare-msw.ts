@@ -1,11 +1,11 @@
 /**
- * Registers and starts MSW in development unless disabled via VITE_ENABLE_MSW=false.
+ * Registers and starts MSW in development unless VITE_USE_MSW=false.
  */
 export async function prepareMsw(): Promise<void> {
   if (!import.meta.env.DEV) {
     return
   }
-  if (import.meta.env['VITE_ENABLE_MSW'] === 'false') {
+  if (import.meta.env['VITE_USE_MSW'] === 'false') {
     return
   }
   const { worker } = await import('./browser')

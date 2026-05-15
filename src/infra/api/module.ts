@@ -40,9 +40,9 @@ class HttpModule {
   private refreshTokenHandler: RefreshTokenHandler | null = null
   private isRefreshing = false
   private failedQueue: Array<{
-    resolve: (value: AxiosResponse) => void
+    resolve: () => void
     reject: (error: unknown) => void
-    config: InternalAxiosRequestConfig
+    config: InternalAxiosRequestConfig & { _retry?: boolean }
   }> = []
 
   constructor(baseURL: string, timeout: number = 50000) {
@@ -78,10 +78,12 @@ class HttpModule {
           !originalRequest.url?.includes('/auth/token-refresh') // Don't refresh on refresh endpoint failure
         ) {
           if (this.isRefreshing) {
-            return new Promise((resolve, reject) => {
+            originalRequest._retry = true
+            return new Promise<void>((resolve, reject) => {
               this.failedQueue.push({ resolve, reject, config: originalRequest })
             })
               .then(() => {
+                deleteAuthorizationHeader(originalRequest)
                 return this.instance(originalRequest)
               })
               .catch((err) => {
@@ -131,7 +133,7 @@ class HttpModule {
         prom.reject(error)
       } else {
         deleteAuthorizationHeader(prom.config)
-        prom.resolve({} as AxiosResponse) // Placeholder, originalRequest will be retried
+        prom.resolve()
       }
     })
     this.failedQueue = []

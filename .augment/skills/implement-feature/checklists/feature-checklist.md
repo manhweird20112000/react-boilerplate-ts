@@ -1,0 +1,29 @@
+# Feature Checklist
+
+- [ ] Feature is placed under `src/features/{{feature-name}}`
+- [ ] Type files are separated by responsibility
+- [ ] Entity type is in `types/{{entity}}.type.ts`
+- [ ] Request types are in `types/{{entity}}-request.type.ts`
+- [ ] Response types are in `types/{{entity}}-response.type.ts`
+- [ ] Form values are in `types/{{entity}}-form.type.ts`
+- [ ] API service is in `services/{{entity}}.service.ts`
+- [ ] API service does not import React
+- [ ] API service does not contain JSX
+- [ ] Hooks are in `hooks/`
+- [ ] Each hook has its own file
+- [ ] Hooks call services, not raw API clients
+- [ ] Hooks do not contain JSX
+- [ ] Components are in `components/`
+- [ ] Components do not call services directly
+- [ ] Pages are in `pages/`
+- [ ] Pages compose hooks and components
+- [ ] Mutation hooks invalidate relevant query keys
+- [ ] Mapping logic is placed in `utils/` when needed
+- [ ] Public exports are intentional
+- [ ] No empty files are created
+- [ ] No unused files are created
+- [ ] No `any` unless unavoidable
+- [ ] File names use kebab-case
+- [ ] Components use PascalCase
+- [ ] Hooks use camelCase and start with `use`
+- [ ] Constants use uppercase snake case

@@ -17,6 +17,11 @@ const ForgotPasswordPage = lazy(() =>
   }))
 )
 
+// Post feature
+const ListPostPage = lazy(() =>
+  import('~/features/posts/pages/list.page').then((m) => ({ default: m.ListPostPage }))
+)
+
 function ErrorPage({ title }: { readonly title: string }): ReactElement {
   return <div>{title}</div>
 }
@@ -40,6 +45,7 @@ export function AppRoutes(): ReactElement {
         {/* Protected Routes */}
         <Route element={<AuthGuard />}>
           <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
+          <Route path="/posts" element={<ListPostPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
 

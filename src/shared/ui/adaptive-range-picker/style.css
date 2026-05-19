@@ -1,0 +1,93 @@
+.adaptive-range-picker-drawer-open .ant-drawer:not(:has(.adaptive-range-picker-drawer)) .ant-drawer-footer {
+  visibility: hidden;
+}
+
+.adaptive-range-picker-mobile-panel {
+  background: var(--adaptive-range-picker-panel-bg, transparent);
+}
+
+.adaptive-range-picker-day-picker {
+  --rdp-accent-color: var(--adaptive-range-picker-primary);
+  --rdp-accent-background-color: var(--adaptive-range-picker-primary-bg);
+  --rdp-day-height: 42px;
+  --rdp-day-width: calc((100vw - 32px) / 7);
+  --rdp-day_button-height: 34px;
+  --rdp-day_button-width: 34px;
+  --rdp-day_button-border-radius: var(--adaptive-range-picker-radius);
+  --rdp-day_button-border: 1px solid transparent;
+  --rdp-selected-border: 1px solid var(--adaptive-range-picker-primary);
+  --rdp-range_middle-background-color: var(--adaptive-range-picker-primary-bg);
+  --rdp-range_middle-color: var(--adaptive-range-picker-text);
+  --rdp-range_start-date-background-color: var(--adaptive-range-picker-primary);
+  --rdp-range_end-date-background-color: var(--adaptive-range-picker-primary);
+  --rdp-today-color: var(--adaptive-range-picker-primary);
+  --rdp-disabled-opacity: 0.35;
+  color: var(--adaptive-range-picker-text);
+  font-family: var(--adaptive-range-picker-font-family);
+  margin: 0;
+  width: 100%;
+}
+
+.adaptive-range-picker-day-picker .rdp-months,
+.adaptive-range-picker-day-picker .rdp-month,
+.adaptive-range-picker-day-picker .rdp-month_grid {
+  max-width: 100%;
+  width: 100%;
+}
+
+.adaptive-range-picker-day-picker .rdp-months {
+  justify-content: center;
+}
+
+.adaptive-range-picker-day-picker .rdp-month_grid {
+  table-layout: fixed;
+}
+
+.adaptive-range-picker-day-picker .rdp-month_caption {
+  border-bottom: 1px solid var(--adaptive-range-picker-border);
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+
+.adaptive-range-picker-day-picker .rdp-caption_label {
+  color: var(--adaptive-range-picker-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.adaptive-range-picker-day-picker .rdp-button_next,
+.adaptive-range-picker-day-picker .rdp-button_previous {
+  border-radius: var(--adaptive-range-picker-radius);
+}
+
+.adaptive-range-picker-day-picker .rdp-button_next:hover,
+.adaptive-range-picker-day-picker .rdp-button_previous:hover,
+.adaptive-range-picker-day-picker .rdp-day_button:hover:not(:disabled) {
+  background: var(--adaptive-range-picker-hover-bg);
+}
+
+.adaptive-range-picker-day-picker .rdp-weekday {
+  color: var(--adaptive-range-picker-muted);
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.adaptive-range-picker-day-picker .rdp-day_button {
+  color: inherit;
+  font-size: 14px;
+}
+
+.adaptive-range-picker-day-picker .rdp-outside {
+  color: var(--adaptive-range-picker-muted);
+  opacity: 0.45;
+}
+
+.adaptive-range-picker-day-picker .rdp-selected .rdp-day_button {
+  font-weight: 500;
+}
+
+.adaptive-range-picker-day-picker .rdp-range_start .rdp-day_button,
+.adaptive-range-picker-day-picker .rdp-range_end .rdp-day_button {
+  color: var(--adaptive-range-picker-selected-text);
+}

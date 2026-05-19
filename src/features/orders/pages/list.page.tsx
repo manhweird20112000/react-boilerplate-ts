@@ -8,7 +8,6 @@ import {
 import {
   Button,
   Col,
-  DatePicker,
   Dropdown,
   Grid,
   Space,
@@ -21,6 +20,7 @@ import type { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
 import type { Order } from '../types/order.type'
 import { PageLayout } from '@/shared/layouts'
+import { AdaptiveRangePicker } from '@/shared/ui/adaptive-range-picker'
 
 const createColumns = (isMobile: boolean): TableProps<Order>['columns'] => [
   {
@@ -431,9 +431,9 @@ export const ListOrderPage = () => {
       filters={
         <>
           <Col xs={24} md={6} lg={5}>
-            <DatePicker.RangePicker
+            <AdaptiveRangePicker
               format="YYYY-MM-DD"
-              onChange={(dates) => setDateRange(dates)}
+              onChange={setDateRange}
               style={{ width: '100%' }}
               value={dateRange}
             />

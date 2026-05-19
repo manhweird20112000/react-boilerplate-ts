@@ -28,7 +28,7 @@ export class RetryingHttpAdapter<TClient = unknown> implements IHttpAdapter<TCli
     this.inner.setHeaders(headers)
   }
 
-  public setRefreshTokenHandler(handler: RefreshTokenHandler): void {
+  public setRefreshTokenHandler(handler: RefreshTokenHandler | null): void {
     this.inner.setRefreshTokenHandler(handler)
   }
 

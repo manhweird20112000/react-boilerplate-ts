@@ -9,7 +9,7 @@ export abstract class IHttpAdapter<TClient = unknown> {
   public abstract readonly client: TClient
 
   public abstract setHeaders(headers: AxiosRequestConfig['headers']): void
-  public abstract setRefreshTokenHandler(handler: RefreshTokenHandler): void
+  public abstract setRefreshTokenHandler(handler: RefreshTokenHandler | null): void
 
   public abstract get<TParams = unknown, TResponse = AxiosResponse>(
     url: string,

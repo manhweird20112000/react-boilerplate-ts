@@ -2,6 +2,8 @@ import React from 'react'
 import { Layout, theme, Typography } from 'antd'
 import { Outlet } from 'react-router-dom'
 
+import '@/infra/i18n'
+
 const { Content } = Layout
 const { Title, Text } = Typography
 

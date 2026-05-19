@@ -22,23 +22,59 @@ function resolvePortFromEnv(raw: string | undefined, fallback: number): number {
  * Splits stable framework dependencies into separate chunks for caching.
  */
 function resolveManualChunk(moduleId: string): string | undefined {
-  if (!moduleId.includes('node_modules')) {
+  const packageName = resolveNodeModulePackageName(moduleId)
+
+  if (!packageName) {
     return undefined
   }
+
   if (
-    moduleId.includes('@reduxjs') ||
-    moduleId.includes('redux-saga') ||
-    moduleId.includes('/react-redux/')
+    packageName === '@reduxjs/toolkit' ||
+    packageName === 'redux-saga' ||
+    packageName === 'react-redux'
   ) {
     return 'redux-vendor'
   }
-  if (moduleId.includes('react-router')) {
+
+  if (packageName === 'react-router' || packageName === 'react-router-dom') {
     return 'router-vendor'
   }
-  if (/node_modules\/react(?!-)/u.test(moduleId) || moduleId.includes('react-dom')) {
+
+  if (packageName === 'react' || packageName === 'react-dom' || packageName === 'scheduler') {
     return 'react-vendor'
   }
+
   return undefined
+}
+
+function resolveNodeModulePackageName(moduleId: string): string | undefined {
+  const normalizedModuleId = normalizeModuleId(moduleId)
+  const nodeModulesMarker = '/node_modules/'
+  const nodeModulesIndex = normalizedModuleId.lastIndexOf(nodeModulesMarker)
+
+  if (nodeModulesIndex === -1) {
+    return undefined
+  }
+
+  const packagePath = normalizedModuleId.slice(nodeModulesIndex + nodeModulesMarker.length)
+  const packagePathParts = packagePath.split('/')
+  const scopeOrName = packagePathParts[0]
+
+  if (!scopeOrName) {
+    return undefined
+  }
+
+  if (scopeOrName.startsWith('@')) {
+    const scopedPackageName = packagePathParts[1]
+
+    return scopedPackageName ? `${scopeOrName}/${scopedPackageName}` : undefined
+  }
+
+  return scopeOrName
+}
+
+function normalizeModuleId(moduleId: string): string {
+  return moduleId.replaceAll('\\', '/')
 }
 
 // https://vite.dev/config/

@@ -140,7 +140,7 @@ export const PageLayout = ({
               footer: { padding: 16 }
             }}
           >
-            {filterFields}
+            {filterDrawerOpen ? filterFields : null}
           </Drawer>
         </>
       ) : (

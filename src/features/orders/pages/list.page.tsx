@@ -5,22 +5,15 @@ import {
   MoreOutlined,
   UploadOutlined
 } from '@ant-design/icons'
-import {
-  Button,
-  Col,
-  Dropdown,
-  Grid,
-  Space,
-  Table,
-  Tag,
-  Typography,
-  type TableProps
-} from 'antd'
+import { Button, Col, Dropdown, Grid, Space, Table, Tag, Typography, type TableProps } from 'antd'
 import type { Dayjs } from 'dayjs'
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import type { Order } from '../types/order.type'
-import { PageLayout } from '@/shared/layouts'
-import { AdaptiveRangePicker } from '@/shared/ui/adaptive-range-picker'
+import { PageLayout } from '@/shared/layouts/page-layout'
+
+const AdaptiveRangePicker = lazy(() =>
+  import('@/shared/ui/adaptive-range-picker').then((m) => ({ default: m.AdaptiveRangePicker }))
+)
 
 const createColumns = (isMobile: boolean): TableProps<Order>['columns'] => [
   {
@@ -431,12 +424,14 @@ export const ListOrderPage = () => {
       filters={
         <>
           <Col xs={24} md={6} lg={5}>
-            <AdaptiveRangePicker
-              format="YYYY-MM-DD"
-              onChange={setDateRange}
-              style={{ width: '100%' }}
-              value={dateRange}
-            />
+            <Suspense fallback={<div style={{ height: 32 }} />}>
+              <AdaptiveRangePicker
+                format="YYYY-MM-DD"
+                onChange={setDateRange}
+                style={{ width: '100%' }}
+                value={dateRange}
+              />
+            </Suspense>
           </Col>
         </>
       }

@@ -1,8 +1,13 @@
-import { DefaultLayout } from '@/shared/layouts'
 import { lazy, Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { GuestGuard } from '~/features/auth/components/guards'
 
+const DefaultLayout = lazy(() =>
+  import('@/shared/layouts/default').then((m) => ({ default: m.DefaultLayout }))
+)
+const ProtectedAppProviders = lazy(() =>
+  import('./protected-app-providers').then((m) => ({ default: m.ProtectedAppProviders }))
+)
 const AuthLayout = lazy(() =>
   import('~/features/auth/pages/auth-layout').then((m) => ({ default: m.AuthLayout }))
 )
@@ -44,7 +49,13 @@ export function AppRoutes(): ReactElement {
         </Route>
 
         {/* Protected Routes */}
-        <Route element={<DefaultLayout />}>
+        <Route
+          element={
+            <ProtectedAppProviders>
+              <DefaultLayout />
+            </ProtectedAppProviders>
+          }
+        >
           <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
           <Route path="/orders" element={<ListOrderPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

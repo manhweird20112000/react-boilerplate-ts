@@ -27,7 +27,7 @@ class AxiosHttpAdapter implements IHttpAdapter<AxiosInstance> {
     Object.assign(this.client.defaults.headers, headers)
   }
 
-  public setRefreshTokenHandler(handler: RefreshTokenHandler): void {
+  public setRefreshTokenHandler(handler: RefreshTokenHandler | null): void {
     this.module.setRefreshTokenHandler(handler)
   }
 

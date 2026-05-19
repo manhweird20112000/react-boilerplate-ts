@@ -1,13 +1,13 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '@fontsource/inter';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/vietnamese-400.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Be Vietnam Pro", sans-serif;
+  --font-sans: 'Inter', sans-serif;
 }
-
 
 * {
   font-family: var(--font-sans);

@@ -123,7 +123,7 @@ class HttpModule {
     )
   }
 
-  public setRefreshTokenHandler(handler: RefreshTokenHandler): void {
+  public setRefreshTokenHandler(handler: RefreshTokenHandler | null): void {
     this.refreshTokenHandler = handler
   }
 

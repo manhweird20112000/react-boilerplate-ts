@@ -18,7 +18,7 @@ export function AntdProvider(props: AntdProviderProps): ReactElement {
           algorithm: theme.defaultAlgorithm,
           token: {
             colorPrimary: '#6f43fd',
-            fontFamily: 'Be Vietnam Pro'
+            fontFamily: 'Inter'
           }
         }}
       >

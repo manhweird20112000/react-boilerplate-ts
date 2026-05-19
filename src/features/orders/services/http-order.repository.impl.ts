@@ -9,7 +9,7 @@ export class HttpOrderRepositoryImpl extends OrderRepository {
   private endpoint = '/orders'
 
   list(query?: Record<string, any>): Future<PaginatedData<Order>> {
-    return HttpService.get(this.endpoint, { params: query })
+    return HttpService.get(this.endpoint, query)
   }
 
   create(dto: Partial<CreateOrderDto>): Future<boolean> {

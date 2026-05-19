@@ -1,3 +1,4 @@
-import { handlers } from '@/mocks/handlers'
+import { authHandlers } from '@/mocks/handlers/auth'
+import { orderHandlers } from '@/features/orders/msw/order-handlers'
 
-export const mswHandlers = handlers
+export const mswHandlers = [...authHandlers, ...orderHandlers]

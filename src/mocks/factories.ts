@@ -5,10 +5,10 @@ export const createUser = () => ({
   username: faker.internet.username(),
   email: faker.internet.email(),
   role: faker.helpers.arrayElement(['admin', 'user']),
-  createdAt: faker.date.past().toISOString(),
+  createdAt: faker.date.past().toISOString()
 })
 
 export const createAuthResponse = (user = createUser()) => ({
   user,
-  token: faker.string.alphanumeric(32),
+  token: faker.string.alphanumeric(32)
 })

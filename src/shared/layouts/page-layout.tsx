@@ -1,13 +1,13 @@
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons'
-import { Grid, Row, Col, Button, Typography, Flex, Drawer, Pagination } from 'antd'
-import { useState } from 'react'
+import { Grid, Row, Col, Button, Typography, Flex, Drawer, Pagination, theme } from 'antd'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Content } from 'antd/es/layout/layout'
 
 interface Props {
-  heading?: string | React.ReactNode
-  content?: React.ReactNode
-  filters?: React.ReactNode
-  actions?: React.ReactNode
+  heading?: string | ReactNode
+  content?: ReactNode
+  filters?: ReactNode
+  actions?: ReactNode
   pagination?: {
     total: number
     pageSize: number
@@ -29,6 +29,7 @@ export const PageLayout = ({
   onResetFilters
 }: Props) => {
   const screens = Grid.useBreakpoint()
+  const { token } = theme.useToken()
   const isMobile = screens.md === false
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
 
@@ -45,22 +46,28 @@ export const PageLayout = ({
   const filterFields = (
     <Row gutter={[16, 16]}>
       {filters}
-      {isFilterDirty ? (
+      {!isMobile && isFilterDirty ? (
         <Col xs={24} md="auto">
           <Button block={isMobile} color="default" onClick={handleResetFilters} variant="filled">
             Reset
           </Button>
         </Col>
       ) : null}
-      {isMobile ? (
-        <Col xs={24}>
-          <Button block icon={<SearchOutlined />} onClick={handleSearch} type="primary">
-            Search
-          </Button>
-        </Col>
-      ) : null}
     </Row>
   )
+
+  const paginationBarStyle: CSSProperties = {
+    background: token.colorBgContainer,
+    borderTop: `1px solid ${token.colorBorderSecondary}`,
+    bottom: 0,
+    boxShadow: '0 -6px 16px rgba(0, 0, 0, 0.04)',
+    left: 'var(--layout-sider-width, 0px)',
+    paddingBlock: isMobile ? '12px calc(12px + env(safe-area-inset-bottom))' : 16,
+    paddingInline: isMobile ? 12 : 20,
+    position: 'fixed',
+    right: 0,
+    zIndex: 20
+  }
 
   return (
     <Content
@@ -83,7 +90,14 @@ export const PageLayout = ({
           )}
         </Col>
         <Col xs={24} md={14}>
-          <Flex align="center" gap="small" justify={isMobile ? 'start' : 'end'} wrap>
+          <Flex
+            align={isMobile ? 'stretch' : 'center'}
+            gap="small"
+            justify={isMobile ? 'start' : 'end'}
+            style={isMobile ? { width: '100%' } : undefined}
+            vertical={isMobile}
+            wrap={!isMobile}
+          >
             {actions}
           </Flex>
         </Col>
@@ -106,9 +120,25 @@ export const PageLayout = ({
           <Drawer
             onClose={() => setFilterDrawerOpen(false)}
             open={filterDrawerOpen}
-            placement="right"
-            size={320}
+            placement="bottom"
+            size="min(82dvh, 640px)"
             title="Filters"
+            footer={
+              <Flex gap={8}>
+                {isFilterDirty ? (
+                  <Button block color="default" onClick={handleResetFilters} variant="filled">
+                    Reset
+                  </Button>
+                ) : null}
+                <Button block icon={<SearchOutlined />} onClick={handleSearch} type="primary">
+                  Apply
+                </Button>
+              </Flex>
+            }
+            styles={{
+              body: { paddingBottom: 16 },
+              footer: { padding: 16 }
+            }}
           >
             {filterFields}
           </Drawer>
@@ -119,30 +149,20 @@ export const PageLayout = ({
         </Flex>
       )}
 
-      <Row>{content}</Row>
+      <Row style={{ minWidth: 0, width: '100%' }}>{content}</Row>
 
       {pagination ? (
-        <Flex
-          justify="end"
-          style={{
-            background: '#fff',
-            borderTop: '1px solid rgba(5, 5, 5, 0.06)',
-            bottom: 0,
-            boxShadow: '0 -6px 16px rgba(0, 0, 0, 0.04)',
-            left: 'var(--layout-sider-width, 0px)',
-            paddingBlock: 16,
-            paddingInline: 20,
-            position: 'fixed',
-            right: 0,
-            zIndex: 20
-          }}
-        >
+        <Flex justify={isMobile ? 'center' : 'end'} style={paginationBarStyle}>
           <Pagination
-            onShowSizeChange={(evt) => console.log(evt)}
-            defaultCurrent={pagination.current}
+            current={pagination.current}
             onChange={pagination.onChange}
+            pageSize={pagination.pageSize}
             responsive
-            showQuickJumper
+            showLessItems={isMobile}
+            showQuickJumper={!isMobile}
+            showSizeChanger={!isMobile}
+            simple={isMobile ? { readOnly: true } : false}
+            size={isMobile ? 'small' : 'medium'}
             total={pagination.total}
           />
         </Flex>

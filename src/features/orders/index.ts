@@ -1,2 +1,2 @@
 // pages
-export { ListPostPage } from './pages/list.page'
+export { ListOrderPage } from './pages/list.page'

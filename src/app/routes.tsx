@@ -1,6 +1,7 @@
+import { DefaultLayout } from '@/shared/layouts'
 import { lazy, Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AuthGuard, GuestGuard } from '~/features/auth/components/guards'
+import { GuestGuard } from '~/features/auth/components/guards'
 
 const AuthLayout = lazy(() =>
   import('~/features/auth/pages/auth-layout').then((m) => ({ default: m.AuthLayout }))
@@ -17,9 +18,9 @@ const ForgotPasswordPage = lazy(() =>
   }))
 )
 
-// Post feature
-const ListPostPage = lazy(() =>
-  import('~/features/posts/pages/list.page').then((m) => ({ default: m.ListPostPage }))
+// Order feature
+const ListOrderPage = lazy(() =>
+  import('@/features/orders/pages/list.page').then((m) => ({ default: m.ListOrderPage }))
 )
 
 function ErrorPage({ title }: { readonly title: string }): ReactElement {
@@ -43,9 +44,9 @@ export function AppRoutes(): ReactElement {
         </Route>
 
         {/* Protected Routes */}
-        <Route element={<AuthGuard />}>
+        <Route element={<DefaultLayout />}>
           <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
-          <Route path="/posts" element={<ListPostPage />} />
+          <Route path="/orders" element={<ListOrderPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
 

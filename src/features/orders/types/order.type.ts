@@ -13,6 +13,8 @@ export interface Order {
   total_price_format: string
   items: {
     id: number
+    product_id: number
+    product_variant_id: number
     name: string
     quantity: number
     price: number

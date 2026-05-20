@@ -12,6 +12,10 @@ export class HttpOrderRepositoryImpl extends OrderRepository {
     return HttpService.get(this.endpoint, query)
   }
 
+  detail(id: number): Future<Order> {
+    return HttpService.get(`${this.endpoint}/${id}`)
+  }
+
   create(dto: Partial<CreateOrderDto>): Future<boolean> {
     return HttpService.post(this.endpoint, dto)
   }

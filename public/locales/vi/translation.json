@@ -69,5 +69,14 @@
       "password_confirmation": "Xác nhận mật khẩu",
       "remember": "Ghi nhớ đăng nhập"
     }
+  },
+  "orders": {
+    "fields": {
+      "date": "ngày đặt hàng",
+      "customer": "khách hàng",
+      "items": "sản phẩm",
+      "product": "sản phẩm",
+      "quantity": "số lượng"
+    }
   }
 }

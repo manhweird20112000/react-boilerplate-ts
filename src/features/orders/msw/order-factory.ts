@@ -1,45 +1,14 @@
 import { faker } from '@faker-js/faker'
 
+import { orderCustomers, orderPaymentStatuses, orderProducts } from '../constants/order-options'
 import type { CreateOrderDto } from '../types/create-order.dto.type'
 import type { Order } from '../types/order.type'
-
-const customers = [
-  'Nguyen Van An',
-  'Tran Thi Bich',
-  'Le Minh Khoa',
-  'Pham Hoang Nam',
-  'Do Thuy Linh',
-  'Hoang Minh Chau',
-  'Vu Quang Huy',
-  'Dang Thu Ha',
-  'Bui Gia Bao',
-  'Mai Anh Thu'
-]
-
-const products = [
-  { id: 1, name: 'Wireless Keyboard', price: 790000 },
-  { id: 2, name: 'USB-C Cable', price: 250000 },
-  { id: 3, name: 'Bluetooth Speaker', price: 2190000 },
-  { id: 4, name: '27-inch Monitor', price: 4590000 },
-  { id: 5, name: 'Ergonomic Mouse', price: 650000 },
-  { id: 6, name: 'Laptop Stand', price: 1500000 },
-  { id: 7, name: 'Desk Lamp', price: 490000 },
-  { id: 8, name: 'Webcam 2K', price: 1190000 },
-  { id: 9, name: 'Noise Cancelling Headset', price: 2790000 },
-  { id: 10, name: 'Portable SSD 1TB', price: 3290000 }
-]
-
-const paymentStatuses = [
-  { id: 0, name: 'Paid' },
-  { id: 1, name: 'Pending' },
-  { id: 2, name: 'Failed' }
-]
 
 const formatVnd = (value: number): string => `${new Intl.NumberFormat('en-US').format(value)} VND`
 
 export const createOrder = (index = 0): Order => {
   const selectedProducts = faker.helpers.arrayElements(
-    products,
+    orderProducts,
     faker.number.int({ min: 1, max: 3 })
   )
   const items = selectedProducts.map((product, itemIndex) => {
@@ -47,6 +16,8 @@ export const createOrder = (index = 0): Order => {
 
     return {
       id: index * 10 + itemIndex + 1,
+      product_id: product.id,
+      product_variant_id: product.id,
       name: product.name,
       quantity,
       price: product.price,
@@ -54,16 +25,16 @@ export const createOrder = (index = 0): Order => {
     }
   })
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const customerIndex = index % customers.length
+  const customerIndex = index % orderCustomers.length
 
   return {
     id: 1001 + index,
     date: faker.date.recent({ days: 45 }).toISOString().slice(0, 10),
     customer: {
-      id: customerIndex + 1,
-      name: customers[customerIndex]
+      id: orderCustomers[customerIndex].id,
+      name: orderCustomers[customerIndex].name
     },
-    payment_status: paymentStatuses[index % paymentStatuses.length],
+    payment_status: orderPaymentStatuses[index % orderPaymentStatuses.length],
     total_price: totalPrice,
     total_price_format: formatVnd(totalPrice),
     items
@@ -71,20 +42,22 @@ export const createOrder = (index = 0): Order => {
 }
 
 export const createOrderFromDto = (id: number, dto: Partial<CreateOrderDto>): Order => {
-  const items = (dto.items?.length ? dto.items : [{ product_id: 1, quantity: 1 }]).map(
-    (item, index) => {
-      const product = products.find((entry) => entry.id === item.product_id) ?? products[0]
-      const quantity = item.quantity ?? 1
+  const items = (
+    dto.items?.length ? dto.items : [{ product_id: 1, product_variant_id: 1, quantity: 1 }]
+  ).map((item, index) => {
+    const product = orderProducts.find((entry) => entry.id === item.product_id) ?? orderProducts[0]
+    const quantity = item.quantity ?? 1
 
-      return {
-        id: id * 10 + index,
-        name: product.name,
-        quantity,
-        price: product.price,
-        price_format: formatVnd(product.price)
-      }
+    return {
+      id: id * 10 + index,
+      product_id: product.id,
+      product_variant_id: item.product_variant_id ?? product.id,
+      name: product.name,
+      quantity,
+      price: product.price,
+      price_format: formatVnd(product.price)
     }
-  )
+  })
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const customerId = dto.customer_id ?? 1
 
@@ -93,9 +66,11 @@ export const createOrderFromDto = (id: number, dto: Partial<CreateOrderDto>): Or
     date: dto.date ?? new Date().toISOString().slice(0, 10),
     customer: {
       id: customerId,
-      name: customers[(customerId - 1) % customers.length] ?? customers[0]
+      name:
+        orderCustomers.find((customer) => customer.id === customerId)?.name ??
+        orderCustomers[0].name
     },
-    payment_status: paymentStatuses[1],
+    payment_status: orderPaymentStatuses[1],
     total_price: totalPrice,
     total_price_format: formatVnd(totalPrice),
     items

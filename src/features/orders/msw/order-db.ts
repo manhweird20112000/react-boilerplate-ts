@@ -25,9 +25,9 @@ export const updateOrder = (id: number, dto: Partial<CreateOrderDto>): Order | n
     items:
       dto.items ??
       orderDb.orders[index].items.map((item) => ({
-        product_id: item.id,
+        product_id: item.product_id,
         quantity: item.quantity,
-        product_variant_id: item.id
+        product_variant_id: item.product_variant_id
       }))
   })
   orderDb.orders[index] = updated

@@ -5,8 +5,8 @@
 - [ ] Entity type is in `types/{{entity}}.type.ts`
 - [ ] Request types are in `types/{{entity}}-request.type.ts`
 - [ ] Response types are in `types/{{entity}}-response.type.ts`
-- [ ] Form values are in `types/{{entity}}-form.type.ts`
-- [ ] API service is in `services/{{entity}}.service.ts`
+- [ ] Form values are in `types/{{entity}}-dto.type.ts`
+- [ ] API service is in `services/{{entity}}.repository.impl.ts`
 - [ ] API service does not import React
 - [ ] API service does not contain JSX
 - [ ] Hooks are in `hooks/`

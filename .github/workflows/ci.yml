@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint source
+        run: pnpm lint:ci
+
+      - name: Unit tests
+        run: pnpm test:unit
+
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_API_URL: https://api.w3rd.com/api/
+          VITE_APP_NAME: W3RD Codebase
+          VITE_USE_MOCK: false
+          VITE_USE_MSW: false
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: quality
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: w3rd-codebase:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VITE_API_URL=https://api.w3rd.com/api/
+            VITE_APP_NAME=W3RD Codebase
+            VITE_USE_MOCK=false
+            VITE_USE_MSW=false
+
+      - name: Verify container starts
+        run: |
+          docker run -d --name app-ci -p 8080:80 w3rd-codebase:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/ > /dev/null; then
+              echo "Container is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs app-ci
+          exit 1

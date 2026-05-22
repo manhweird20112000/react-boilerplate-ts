@@ -8,9 +8,8 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { orderCustomers, orderProducts } from '../constants/order-options'
 import { useOrderSchemas, type OrderFormValues } from '../schemas/order.schema'
 import type { CreateOrderDto } from '../types/create-order.dto.type'
+import type { OrderFormMode } from '../types/order-form-mode.type'
 import type { Order } from '../types/order.type'
-
-export type OrderFormMode = 'create' | 'edit'
 
 export type OrderFormDrawerProps = {
   readonly mode: OrderFormMode

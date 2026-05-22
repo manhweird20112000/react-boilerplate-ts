@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test'
 test.describe('UI and Accessibility', () => {
   test('Login page displays all required elements', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // Verify page displays ANTGRAVITY branding and subtitle
     await expect(page.getByRole('heading', { name: 'ANTGRAVITY' })).toBeVisible();
@@ -44,7 +44,7 @@ test.describe('UI and Accessibility', () => {
 
   test('Form input fields have proper labels and placeholders', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // Verify email field displays proper label/placeholder
     const emailInput = page.getByRole('textbox', { name: 'Email' });
@@ -61,7 +61,7 @@ test.describe('UI and Accessibility', () => {
 
   test('Login button is properly focused and clickable', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // Verify login button is visible
     const loginButton = page.getByRole('button', { name: 'Đăng nhập' });
@@ -82,6 +82,6 @@ test.describe('UI and Accessibility', () => {
     await expect(page.locator('body')).toContainText('Vui lòng nhập');
     
     // Verify user remains on login page
-    await expect(page).toHaveURL('http://localhost:9999/auth/login');
+    await expect(page).toHaveURL('/auth/login');
   });
 });

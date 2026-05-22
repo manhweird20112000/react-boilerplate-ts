@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Remember Me Functionality', () => {
   test('Remember me checkbox is checked by default', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // Verify the 'Ghi nhớ đăng nhập' (Remember me) checkbox is checked by default
     const rememberMeCheckbox = page.getByRole('checkbox', { name: 'Ghi nhớ đăng nhập' });
@@ -14,7 +14,7 @@ test.describe('Remember Me Functionality', () => {
 
   test('Toggle remember me checkbox', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // Verify checkbox is initially checked
     const rememberMeCheckbox = page.getByRole('checkbox', { name: 'Ghi nhớ đăng nhập' });

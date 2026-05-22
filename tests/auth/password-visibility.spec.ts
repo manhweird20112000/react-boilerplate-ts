@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Password Visibility Toggle', () => {
   test('Toggle password visibility from hidden to visible', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // 2. Enter 'mypassword123' in the password field
     await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('mypassword123');
@@ -23,7 +23,7 @@ test.describe('Password Visibility Toggle', () => {
 
   test('Toggle password visibility from visible to hidden', async ({ page }) => {
     // 1. Navigate to the login page
-    await page.goto('http://localhost:9999/auth/login');
+    await page.goto('/auth/login');
     
     // 2. Enter 'mypassword123' in the password field
     await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('mypassword123');

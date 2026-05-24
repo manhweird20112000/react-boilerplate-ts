@@ -7,6 +7,7 @@ import {
 import { Button, Drawer, Grid, Layout, Menu, Space, Typography, type MenuProps } from 'antd'
 import { useMemo, useState, type CSSProperties } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { UserMenu } from '~/features/auth/components/user-menu'
 
 const { Header, Content, Sider } = Layout
 
@@ -166,6 +167,8 @@ export function DefaultLayout() {
           <Typography.Title level={4} style={{ margin: 0 }}>
             {selectedKeys[0] === '/orders' ? 'Orders' : 'Dashboard'}
           </Typography.Title>
+
+          <UserMenu />
         </Header>
 
         <Content

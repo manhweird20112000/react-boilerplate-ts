@@ -1,85 +1,105 @@
 import { http, HttpResponse } from 'msw'
-import { createAuthResponse, createUser } from '../factories'
-import { findUserByEmail, addUser } from '../db'
+import { createAuthResponse } from '../factories'
+import { ADMIN_AUTH_COOKIES } from '@/features/auth/constants/admin-auth.paths'
 
-const authPath = (path: string): RegExp => new RegExp(`/(?:api/)?auth/${path}(?:[?#].*)?$`)
+const adminAuthPath = (path: string): RegExp =>
+  new RegExp(`/(?:api/)?admin/auth/${path}(?:[?#].*)?$`)
+
+const adminPath = (path: string): RegExp => new RegExp(`/(?:api/)?admin/${path}(?:[?#].*)?$`)
+
+const mockAdmin = {
+  id: '1',
+  email: 'admin@example.com',
+  username: 'Admin User',
+  role: 'admin',
+  createdAt: new Date().toISOString()
+}
 
 export const authHandlers = [
-  http.post(authPath('login'), async ({ request }) => {
-    const { email, password } = (await request.json()) as any
-    
-    const user = findUserByEmail(email)
-    
-    // Check for mock admin or users in DB
-    if ((email === 'admin@example.com' && password === 'password') || (user && password === 'password123')) {
-      const authData = createAuthResponse(user || {
-        id: '1',
-        email: 'admin@example.com',
-        username: 'admin',
-        role: 'admin',
-        createdAt: new Date().toISOString()
-      })
-      
-      return HttpResponse.json({
-        success: true,
-        message: 'Login successful',
-        data: authData
-      })
+  http.get(adminAuthPath('google/url'), () => {
+    return HttpResponse.json(
+      {
+        data: {
+          url: 'https://accounts.google.com/o/oauth2/v2/auth?client_id=mock'
+        }
+      },
+      {
+        headers: {
+          'Set-Cookie': `${ADMIN_AUTH_COOKIES.oauthState}=mock-state; Path=/; HttpOnly`
+        }
+      }
+    )
+  }),
+
+  http.get(adminAuthPath('google/callback'), ({ request, cookies }) => {
+    const url = new URL(request.url)
+    const code = url.searchParams.get('code')
+    const state = url.searchParams.get('state')
+
+    if (!code || !state) {
+      return HttpResponse.json(
+        {
+          errors: [{ code: 'BAD_REQUEST', message: 'missing OAuth callback parameters' }]
+        },
+        { status: 400 }
+      )
     }
-    
-    return HttpResponse.json({
-      success: false,
-      message: 'Invalid email or password',
-      data: null
-    }, { status: 401 })
-  }),
 
-  http.post(authPath('register'), async ({ request }) => {
-    const data = (await request.json()) as any
-    const newUser = {
-      ...createUser(),
-      email: data.email,
-      username: data.username || data.name,
+    if (!cookies[ADMIN_AUTH_COOKIES.oauthState]) {
+      return HttpResponse.json(
+        {
+          errors: [{ code: 'UNAUTHORIZED', message: 'invalid OAuth state' }]
+        },
+        { status: 401 }
+      )
     }
-    addUser(newUser)
-    
-    return HttpResponse.json({
-      success: true,
-      message: 'Registration successful',
-      data: createAuthResponse(newUser)
+
+    return HttpResponse.json(
+      {
+        data: {
+          verified: true,
+          redirect_url: '/dashboard'
+        }
+      },
+      {
+        status: 200,
+        headers: {
+          'Set-Cookie': `${ADMIN_AUTH_COOKIES.session}=mock-session; Path=/; HttpOnly`
+        }
+      }
+    )
+  }),
+
+  http.post(adminAuthPath('logout'), () => {
+    return new HttpResponse(null, {
+      status: 204,
+      headers: {
+        'Set-Cookie': `${ADMIN_AUTH_COOKIES.session}=; Path=/; Max-Age=0`
+      }
     })
   }),
 
-  http.post(authPath('logout'), () => {
-    return HttpResponse.json({
-      success: true,
-      message: 'Logged out successfully',
-      data: null
-    })
-  }),
+  http.get(adminPath('me'), ({ cookies }) => {
+    if (!cookies[ADMIN_AUTH_COOKIES.session]) {
+      return HttpResponse.json(
+        {
+          errors: [{ code: 'UNAUTHORIZED', message: 'unauthorized' }]
+        },
+        { status: 401 }
+      )
+    }
 
-  http.get(authPath('me'), () => {
-    return HttpResponse.json({
-      success: true,
-      message: 'User profile fetched',
-      data: createAuthResponse()
-    })
-  }),
+    const authData = createAuthResponse(mockAdmin)
 
-  http.post(authPath('forgot-password'), () => {
     return HttpResponse.json({
-      success: true,
-      message: 'Recovery email sent',
-      data: null
-    })
-  }),
-
-  http.post(authPath('token-refresh'), () => {
-    return HttpResponse.json({
-      success: true,
-      message: 'Token refreshed',
-      data: createAuthResponse()
+      data: {
+        id: authData.user.id,
+        email: authData.user.email,
+        name: authData.user.username,
+        avatar_url: undefined,
+        role: authData.user.role,
+        status: 'active'
+      }
     })
   })
 ]
-

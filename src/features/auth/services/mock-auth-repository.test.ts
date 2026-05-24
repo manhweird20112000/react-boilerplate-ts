@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { ADMIN_AUTH_COOKIES } from '../constants/admin-auth.paths'
 import { MockAuthRepository } from './mock-auth-repository'
 
 describe('MockAuthRepository (Powered by MSW)', () => {
@@ -8,48 +9,31 @@ describe('MockAuthRepository (Powered by MSW)', () => {
     repository = new MockAuthRepository()
   })
 
-  it('should login with correct credentials', async () => {
-    const response = await repository.login({
-      email: 'admin@example.com',
-      password: 'password',
-    })
+  afterEach(() => {
+    document.cookie = `${ADMIN_AUTH_COOKIES.session}=; Path=/; Max-Age=0`
+  })
 
-    expect(response.data.success).toBe(true)
+  it('should return Google login URL', async () => {
+    const response = await repository.getGoogleLoginUrl()
+
+    expect(response.data.data?.url).toContain('accounts.google.com')
+  })
+
+  it('should reject me when session cookie is missing', async () => {
+    await expect(repository.me()).rejects.toMatchObject({
+      response: { status: 401 }
+    })
+  })
+
+  it('should get current admin info when session cookie exists', async () => {
+    document.cookie = `${ADMIN_AUTH_COOKIES.session}=mock-token; Path=/`
+
+    const response = await repository.me()
+
     expect(response.data.data?.user.email).toBe('admin@example.com')
   })
 
-  it('should return error with incorrect credentials', async () => {
-    try {
-      await repository.login({
-        email: 'wrong@example.com',
-        password: 'wrong',
-      })
-    } catch (error: any) {
-      expect(error.response.status).toBe(401)
-      expect(error.response.data.success).toBe(false)
-    }
-  })
-
-  it('should register successfully', async () => {
-    const response = await repository.register({
-      email: 'new@example.com',
-      name: 'New User',
-      password: 'password',
-      password_confirmation: 'password',
-    })
-
-    expect(response.data.success).toBe(true)
-    expect(response.data.data?.user.email).toBe('new@example.com')
-  })
-
-  it('should get current user info', async () => {
-    const response = await repository.me()
-    expect(response.data.success).toBe(true)
-    expect(response.data.data?.user).toBeDefined()
-  })
-
   it('should logout successfully', async () => {
-    const response = await repository.logout()
-    expect(response.data.success).toBe(true)
+    await expect(repository.logout()).resolves.toBeUndefined()
   })
 })

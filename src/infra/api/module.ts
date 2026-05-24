@@ -48,7 +48,8 @@ class HttpModule {
   constructor(baseURL: string, timeout: number = 50000) {
     this.instance = axios.create({
       baseURL,
-      timeout
+      timeout,
+      withCredentials: true
     })
 
     this.instance.interceptors.request.use(

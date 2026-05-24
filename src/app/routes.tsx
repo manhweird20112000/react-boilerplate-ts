@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { GuestGuard } from '~/features/auth/components/guards'
+import { AuthGuard, GuestGuard } from '~/features/auth/components/guards'
+import { GOOGLE_CALLBACK_ROUTE } from '~/features/auth/constants/admin-auth.paths'
 
 const DefaultLayout = lazy(() =>
   import('@/shared/layouts/default').then((m) => ({ default: m.DefaultLayout }))
@@ -22,6 +23,11 @@ const ForgotPasswordPage = lazy(() =>
     default: m.ForgotPasswordPage
   }))
 )
+const GoogleCallbackPage = lazy(() =>
+  import('~/features/auth/pages/google-callback-page').then((m) => ({
+    default: m.GoogleCallbackPage
+  }))
+)
 
 // Order feature
 const ListOrderPage = lazy(() =>
@@ -39,6 +45,8 @@ export function AppRoutes(): ReactElement {
   return (
     <Suspense fallback={null}>
       <Routes>
+        <Route path={GOOGLE_CALLBACK_ROUTE} element={<GoogleCallbackPage />} />
+
         {/* Public Auth Routes */}
         <Route element={<GuestGuard />}>
           <Route path="/auth" element={<AuthLayout />}>
@@ -49,16 +57,18 @@ export function AppRoutes(): ReactElement {
         </Route>
 
         {/* Protected Routes */}
-        <Route
-          element={
-            <ProtectedAppProviders>
-              <DefaultLayout />
-            </ProtectedAppProviders>
-          }
-        >
-          <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
-          <Route path="/orders" element={<ListOrderPage />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<AuthGuard />}>
+          <Route
+            element={
+              <ProtectedAppProviders>
+                <DefaultLayout />
+              </ProtectedAppProviders>
+            }
+          >
+            <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
+            <Route path="/orders" element={<ListOrderPage />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Route>
         </Route>
 
         <Route path="/403" element={<ErrorPage title="Forbidden" />} />

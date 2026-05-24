@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { App } from 'antd'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
 import type { AuthUser } from '../types'
-import type { LoginCredentials, RegisterRequest } from '../schemas/auth.schema'
+import { GOOGLE_CALLBACK_ROUTE } from '../constants/admin-auth.paths'
 import { AuthContext } from './auth-context'
+import { getApiErrorMessage } from '../utils/api-error'
 
 async function loadAuthRepo() {
   const { authRepo } = await import('../services/factory')
@@ -15,6 +18,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const { message } = App.useApp()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { t } = useTranslation()
+  const isOAuthCallbackRoute = location.pathname === GOOGLE_CALLBACK_ROUTE
 
   useEffect(() => {
     isMountedRef.current = true
@@ -24,128 +31,79 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [])
 
-  const refresh = useCallback(async () => {
-    try {
-      const authRepo = await loadAuthRepo()
-      const { data: res } = await authRepo.refresh()
-      if (isMountedRef.current) {
-        setUser(res.data.user)
-      }
-    } catch (error) {
-      if (isMountedRef.current) {
-        setUser(null)
-      }
-      throw error
-    }
-  }, [])
-
-  useEffect(() => {
-    let isActive = true
-
-    void import('@/infra/api/http-service')
-      .then(({ HttpService }) => {
-        if (isActive) {
-          HttpService.setRefreshTokenHandler(refresh)
-        }
-      })
-      .catch((error: unknown) => {
-        console.error('Failed to load HTTP service', error)
-      })
-
-    return () => {
-      isActive = false
-      void import('@/infra/api/http-service')
-        .then(({ HttpService }) => {
-          HttpService.setRefreshTokenHandler(null)
-        })
-        .catch((error: unknown) => {
-          console.error('Failed to clear HTTP refresh handler', error)
-        })
-    }
-  }, [refresh])
-
-  const checkMe = useCallback(async () => {
+  const syncUserFromSession = useCallback(async (): Promise<AuthUser | null> => {
     try {
       const authRepo = await loadAuthRepo()
       const { data: res } = await authRepo.me()
       if (isMountedRef.current) {
         setUser(res.data.user)
       }
+      return res.data.user
     } catch {
       if (isMountedRef.current) {
         setUser(null)
       }
-    } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false)
-      }
+      return null
     }
   }, [])
 
-  useEffect(() => {
-    void checkMe()
+  const checkMe = useCallback(async () => {
+    await syncUserFromSession()
+    if (isMountedRef.current) {
+      setIsLoading(false)
+    }
+  }, [syncUserFromSession])
+
+  const refresh = useCallback(async () => {
+    await checkMe()
   }, [checkMe])
 
-  const login = useCallback(
-    async (credentials: LoginCredentials) => {
-      try {
-        const authRepo = await loadAuthRepo()
-        const { data: res } = await authRepo.login(credentials)
-        if (isMountedRef.current) {
-          setUser(res.data.user)
-        }
-        if (res.message) message.success(res.message)
-      } catch (error: any) {
-        if (error.response?.data?.message) {
-          message.error(error.response.data.message)
-        } else {
-          message.error('Login failed')
-        }
-        throw error
+  useEffect(() => {
+    if (isOAuthCallbackRoute) {
+      if (isMountedRef.current) {
+        setIsLoading(false)
       }
-    },
-    [message]
-  )
+      return
+    }
+    void checkMe()
+  }, [checkMe, isOAuthCallbackRoute])
 
-  const register = useCallback(
-    async (data: RegisterRequest) => {
-      try {
-        const authRepo = await loadAuthRepo()
-        const { data: res } = await authRepo.register(data)
-        if (isMountedRef.current) {
-          setUser(res.data.user)
-        }
-        if (res.message) message.success(res.message)
-      } catch (error: any) {
-        if (error.response?.data?.message) {
-          message.error(error.response.data.message)
-        } else {
-          message.error('Registration failed')
-        }
-        throw error
-      }
-    },
-    [message]
-  )
+  const loginWithGoogle = useCallback(async () => {
+    try {
+      const authRepo = await loadAuthRepo()
+      const { data: res } = await authRepo.getGoogleLoginUrl()
+      window.location.assign(res.data.url)
+    } catch (error: unknown) {
+      message.error(getApiErrorMessage(error, 'Google sign-in failed'))
+      throw error
+    }
+  }, [message])
+
+  const completeGoogleLogin = useCallback(async (params: { code: string; state: string }): Promise<string> => {
+    const authRepo = await loadAuthRepo()
+    const redirectTo = await authRepo.completeGoogleLogin(params)
+    await syncUserFromSession()
+    return redirectTo
+  }, [syncUserFromSession])
 
   const logout = useCallback(async () => {
     try {
       const authRepo = await loadAuthRepo()
       await authRepo.logout()
+      message.success(t('auth.logout_success', 'Signed out successfully'))
+    } catch (error: unknown) {
+      message.error(getApiErrorMessage(error, t('auth.logout_failed', 'Sign out failed')))
+    } finally {
       if (isMountedRef.current) {
         setUser(null)
       }
-    } catch (error) {
-      console.error('Logout error', error)
-      if (isMountedRef.current) {
-        setUser(null)
-      }
+      navigate('/auth/login', { replace: true })
     }
-  }, [])
+  }, [message, navigate, t])
 
   const contextValue = useMemo(
-    () => ({ user, isLoading, login, register, logout, refresh }),
-    [user, isLoading, login, register, logout, refresh]
+    () => ({ user, isLoading, loginWithGoogle, completeGoogleLogin, logout, refresh }),
+    [user, isLoading, loginWithGoogle, completeGoogleLogin, logout, refresh]
   )
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

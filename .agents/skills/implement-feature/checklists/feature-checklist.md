@@ -3,26 +3,44 @@
 - [ ] Feature is placed under `src/features/{{feature-name}}`
 - [ ] Type files are separated by responsibility
 - [ ] Entity type is in `types/{{entity}}.type.ts`
-- [ ] Request types are in `types/{{entity}}-request.type.ts`
-- [ ] Response types are in `types/{{entity}}-response.type.ts`
-- [ ] Form values are in `types/{{entity}}-dto.type.ts`
-- [ ] API service is in `services/{{entity}}.repository.impl.ts`
+- [ ] Payload types are in `types/{{entity}}-payload.type.ts`
+- [ ] Form values are in `types/{{entity}}-form.type.ts`
+- [ ] API service is in `services/http-{{entity}}.repository.impl.ts`, `services/mock-{{entity}}.repository.impl.ts`, `services/{{entity}}.repository.ts`, `services/{{entity}}.factory.ts`
 - [ ] API service does not import React
 - [ ] API service does not contain JSX
 - [ ] Hooks are in `hooks/`
 - [ ] Each hook has its own file
 - [ ] Hooks call services, not raw API clients
 - [ ] Hooks do not contain JSX
+- [ ] Query keys expose list/detail scopes used by mutation invalidation
 - [ ] Components are in `components/`
 - [ ] Components do not call services directly
+- [ ] Components are function components only
+- [ ] No React class components are introduced
+- [ ] UI uses Ant Design / ProComponents where suitable
+- [ ] Antd component APIs are checked before writing/changing component code
+- [ ] No `.ant-*` selector or internal antd DOM coupling
+- [ ] Styling uses tokens, `styles`, or documented props before global CSS
 - [ ] Pages are in `pages/`
 - [ ] Pages compose hooks and components
 - [ ] Mutation hooks invalidate relevant query keys
 - [ ] Mapping logic is placed in `utils/` when needed
 - [ ] Public exports are intentional
+- [ ] Route entries and create/edit redirects are registered when user-facing
+- [ ] Navigation item and page title mapping are updated when needed
+- [ ] MSW handlers are added to all handler aggregators when mock API is used
+- [ ] Translation keys are added for fields, filters, actions, validation, and messages
 - [ ] No empty files are created
 - [ ] No unused files are created
 - [ ] No `any` unless unavoidable
+- [ ] No `console.log` left in pages/components
+- [ ] Component templates compile after placeholder replacement
+- [ ] No generic/account-like sample fields remain unless they belong to the target domain
+- [ ] Form fields match entity schema
+- [ ] Table columns match entity list use case
+- [ ] Query helpers match searchable/filterable fields
+- [ ] MSW validation matches feature business rules
+- [ ] MSW validation covers required fields, enums, unique constraints, and update exclusions
 - [ ] File names use kebab-case
 - [ ] Components use PascalCase
 - [ ] Hooks use camelCase and start with `use`

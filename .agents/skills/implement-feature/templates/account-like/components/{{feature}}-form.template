@@ -1,0 +1,146 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form, Input, Select } from 'antd'
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  type ReactElement,
+  type ReactNode
+} from 'react'
+import {
+  Controller,
+  useForm,
+  type Control,
+  type ControllerRenderProps,
+  type FieldPath,
+  type UseFormClearErrors
+} from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+import { applyFormErrors } from '@/shared/lib/form-errors'
+import type { FormErrors } from '@/shared/types/common'
+import { use{{Feature}}Schema } from '../schemas/{{feature}}.schema'
+import type { {{Feature}}FormValues } from '../types/{{feature}}-form.type'
+
+export type {{Feature}}FormProps = {
+  readonly defaultValues?: {{Feature}}FormValues
+}
+
+export type {{Feature}}FormHandle = {
+  submit: () => Promise<{{Feature}}FormValues>
+  setServerErrors: (errors: FormErrors) => boolean
+}
+
+const DEFAULT_VALUES: {{Feature}}FormValues = {
+  email: '',
+  name: '',
+  status: 'active',
+  role: 'staff'
+}
+
+const {{FEATURE}}_FORM_FIELDS = ['email', 'name', 'status', 'role'] as const satisfies readonly FieldPath<{{Feature}}FormValues>[]
+
+type {{Feature}}FormFieldProps = {
+  readonly name: FieldPath<{{Feature}}FormValues>
+  readonly label: string
+  readonly control: Control<{{Feature}}FormValues>
+  readonly clearErrors: UseFormClearErrors<{{Feature}}FormValues>
+  readonly children: (field: ControllerRenderProps<{{Feature}}FormValues>) => ReactNode
+}
+
+function {{Feature}}FormField({
+  name,
+  label,
+  control,
+  clearErrors,
+  children
+}: {{Feature}}FormFieldProps): ReactElement {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <Form.Item
+          help={fieldState.error?.message}
+          label={label}
+          validateStatus={fieldState.error ? 'error' : undefined}
+        >
+          {children({
+            ...field,
+            onChange: (...args: Parameters<typeof field.onChange>) => {
+              clearErrors(name)
+              field.onChange(...args)
+            }
+          })}
+        </Form.Item>
+      )}
+    />
+  )
+}
+
+export const {{Feature}}Form = forwardRef<{{Feature}}FormHandle, {{Feature}}FormProps>(function {{Feature}}Form(
+  { defaultValues = DEFAULT_VALUES },
+  ref
+): ReactElement {
+  const { t } = useTranslation()
+  const schema = use{{Feature}}Schema()
+  const translateServerMessage = useCallback(
+    (message: string) =>
+      message
+        .split(' ')
+        .map((part) => (part.includes('.') ? t(part) : part))
+        .join(' '),
+    [t]
+  )
+  const { control, handleSubmit, setError, clearErrors } = useForm<{{Feature}}FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues,
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
+  })
+
+  useImperativeHandle(ref, () => ({
+    submit: () =>
+      new Promise<{{Feature}}FormValues>((resolve, reject) => {
+        void handleSubmit(
+          (values) => resolve(values),
+          () => reject(new Error('validation_failed'))
+        )()
+      }),
+    setServerErrors: (errors: FormErrors) =>
+      applyFormErrors(setError, errors, {{FEATURE}}_FORM_FIELDS, translateServerMessage)
+  }), [handleSubmit, setError, translateServerMessage])
+
+  return (
+    <Form layout="vertical">
+      <{{Feature}}FormField clearErrors={clearErrors} control={control} label={t('{{featurePluralCamel}}.fields.email')} name="email">
+        {(field) => <Input {...field} type="email" />}
+      </{{Feature}}FormField>
+      <{{Feature}}FormField clearErrors={clearErrors} control={control} label={t('{{featurePluralCamel}}.fields.name')} name="name">
+        {(field) => <Input {...field} />}
+      </{{Feature}}FormField>
+      <{{Feature}}FormField clearErrors={clearErrors} control={control} label={t('{{featurePluralCamel}}.fields.status')} name="status">
+        {(field) => (
+          <Select
+            {...field}
+            options={[
+              { label: t('{{featurePluralCamel}}.status.active'), value: 'active' },
+              { label: t('{{featurePluralCamel}}.status.inactive'), value: 'inactive' }
+            ]}
+          />
+        )}
+      </{{Feature}}FormField>
+      <{{Feature}}FormField clearErrors={clearErrors} control={control} label={t('{{featurePluralCamel}}.fields.role')} name="role">
+        {(field) => (
+          <Select
+            {...field}
+            options={[
+              { label: t('{{featurePluralCamel}}.role.admin'), value: 'admin' },
+              { label: t('{{featurePluralCamel}}.role.staff'), value: 'staff' }
+            ]}
+          />
+        )}
+      </{{Feature}}FormField>
+    </Form>
+  )
+})

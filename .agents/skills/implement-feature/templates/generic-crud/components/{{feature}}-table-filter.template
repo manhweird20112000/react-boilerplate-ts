@@ -1,0 +1,41 @@
+import { Input, Select, Space } from 'antd'
+import type { ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+
+export type {{Feature}}ListFiltersProps = {
+  readonly search: string
+  readonly isEnabled: string | undefined
+  readonly onSearchChange: (value: string) => void
+  readonly onEnabledChange: (value: string | undefined) => void
+}
+
+export function {{Feature}}ListFilters({
+  search,
+  isEnabled,
+  onSearchChange,
+  onEnabledChange
+}: {{Feature}}ListFiltersProps): ReactElement {
+  const { t } = useTranslation()
+
+  return (
+    <Space wrap>
+      <Input
+        allowClear
+        onChange={(event) => onSearchChange(event.target.value)}
+        placeholder={t('{{featurePluralCamel}}.filters.searchPlaceholder')}
+        value={search}
+      />
+      <Select
+        allowClear
+        onChange={onEnabledChange}
+        options={[
+          { label: t('{{featurePluralCamel}}.filters.enabled'), value: 'true' },
+          { label: t('{{featurePluralCamel}}.filters.disabled'), value: 'false' }
+        ]}
+        placeholder={t('{{featurePluralCamel}}.fields.isEnabled')}
+        value={isEnabled}
+        style={{ minWidth: 160 }}
+      />
+    </Space>
+  )
+}

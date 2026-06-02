@@ -1,0 +1,31 @@
+import { Table, type TableProps } from 'antd'
+import type { ReactElement } from 'react'
+
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+export type {{Feature}}ListTableProps = {
+  readonly columns: TableProps<{{Feature}}>['columns']
+  readonly data: readonly {{Feature}}[]
+  readonly loading: boolean
+  readonly rowSelection?: TableProps<{{Feature}}>['rowSelection']
+}
+
+export function {{Feature}}ListTable({
+  columns,
+  data,
+  loading,
+  rowSelection
+}: {{Feature}}ListTableProps): ReactElement {
+  return (
+    <Table
+      rowKey="id"
+      rowSelection={rowSelection}
+      style={{ width: '100%' }}
+      columns={columns}
+      dataSource={[...data]}
+      loading={loading}
+      pagination={false}
+      scroll={{ x: 1200 }}
+    />
+  )
+}

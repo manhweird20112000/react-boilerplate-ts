@@ -1,0 +1,10 @@
+import type { Future, PaginatedData } from '@/shared/types/common'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+export abstract class {{Feature}}Repository {
+  abstract list(query?: Record<string, unknown>): Future<PaginatedData<{{Feature}}>>
+  abstract get(id: string): Future<{{Feature}} | null>
+  abstract create(data: Partial<{{Feature}}>): Future<boolean>
+  abstract update(id: string, data: Partial<{{Feature}}>): Future<boolean>
+  abstract delete(id: string): Future<boolean>
+}

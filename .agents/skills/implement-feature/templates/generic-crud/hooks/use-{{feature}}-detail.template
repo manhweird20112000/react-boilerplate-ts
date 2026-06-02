@@ -1,0 +1,13 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { unwrapResponse } from '@/shared/lib/response'
+import { {{FEATURE}}_QUERY_KEYS } from '../constants/{{feature}}-query-key'
+import { get{{Feature}}Repository } from '../services/{{feature}}.factory'
+
+export function use{{Feature}}Detail(id: string | null) {
+  return useQuery({
+    queryKey: id ? {{FEATURE}}_QUERY_KEYS.detail(id) : [...{{FEATURE}}_QUERY_KEYS.details(), 'idle'],
+    queryFn: async () => (id ? unwrapResponse(await get{{Feature}}Repository().get(id)).data : null),
+    enabled: Boolean(id)
+  })
+}

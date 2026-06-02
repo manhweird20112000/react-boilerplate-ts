@@ -6,26 +6,24 @@ Use kebab-case.
 
 ```txt
 user.type.ts
-user-request.type.ts
-user-response.type.ts
+user-payload.type.ts
 user-form.type.ts
 user-query-key.ts
-use-user-list.ts
+use-list-user.ts
 use-user-detail.ts
 use-create-user.ts
 use-update-user.ts
 use-delete-user.ts
-user-table.tsx
+user-table-list.tsx
+user-table-filter.tsx
 user-form.tsx
-user-filters.tsx
-user-actions.tsx
-user-list-page.tsx
-user-create-page.tsx
-user-edit-page.tsx
-user-detail-page.tsx
-user-mapper.ts
+create-user-dialog.tsx
+edit-user-dialog.tsx
+list-user.page.tsx
+user-query.ts
 user.repository.ts
-user.repository.impl.ts
+user.factory.ts
+http-user.repository.impl.ts
 mock-user.repository.impl.ts
 ```
 
@@ -60,7 +58,7 @@ UserListPage
 Use camelCase and start with `use`.
 
 ```txt
-useUserList
+useListUser
 useUserDetail
 useCreateUser
 useUpdateUser
@@ -72,10 +70,10 @@ useDeleteUser
 Use PascalCase
 
 ```txt
-UserRepositoryImpl
-PostRepositoryImpl
-CommentRepositoryImpl
-OrderRepositoryImpl
+UserRepoImpl
+PostRepoImpl
+CommentRepoImpl
+OrderRepoImpl
 MockUserRepositoryImpl
 ```
 
@@ -84,7 +82,7 @@ MockUserRepositoryImpl
 Use uppercase snake case.
 
 ```txt
-USER_QUERY_KEY
+USER_QUERY_KEYS
 ENDPOINT_USER_API
 USER_STATUS_OPTIONS
 ```
@@ -94,7 +92,7 @@ USER_STATUS_OPTIONS
 Use relative imports inside the same feature.
 
 ```ts
-import { UserRepository } from '../services/user.repository.impl'
+import { UserRepository } from '../services/user.repository'
 import type { User } from '../types/user.type'
 ```
 

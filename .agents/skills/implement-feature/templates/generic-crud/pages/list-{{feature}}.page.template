@@ -1,0 +1,195 @@
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Popconfirm, Space, Tag, message } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { useCallback, useMemo, useState, type ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+import { PageLayout } from '@/shared/layouts'
+import { Create{{Feature}}Dialog } from '../components/create-{{feature}}-dialog'
+import { Edit{{Feature}}Dialog } from '../components/edit-{{feature}}-dialog'
+import { {{Feature}}ListFilters } from '../components/{{feature}}-table-filter'
+import { {{Feature}}ListTable } from '../components/{{feature}}-table-list'
+import {
+  {{FEATURE}}_MODAL_STATE,
+  {{FEATURE}}_ROUTES,
+  type {{Feature}}ListModalState
+} from '../constants/{{feature}}-routes'
+import { useDelete{{Feature}} } from '../hooks/use-delete-{{feature}}'
+import { useList{{Feature}} } from '../hooks/use-list-{{feature}}'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+type FilterState = {
+  search: string
+  isEnabled: string | undefined
+}
+
+const DEFAULT_FILTERS: FilterState = {
+  search: '',
+  isEnabled: undefined
+}
+
+const DEFAULT_PAGE_SIZE = 20
+
+function buildQueryParams(filters: FilterState, page: number, pageSize: number) {
+  const params: Record<string, unknown> = { page, pageSize }
+  if (filters.search.trim()) params.search = filters.search.trim()
+  if (filters.isEnabled) params.is_enabled = filters.isEnabled
+  return params
+}
+
+export function List{{Feature}}Page(): ReactElement {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [draftFilters, setDraftFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [appliedFilters, setAppliedFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
+  const modalState = (location.state ?? null) as {{Feature}}ListModalState | null
+  const isCreateDialogOpen = modalState?.modal === 'create'
+  const edit{{Feature}}Id = modalState?.modal === 'edit' ? modalState.{{featureCamel}}Id : null
+  const queryParams = useMemo(
+    () => buildQueryParams(appliedFilters, page, pageSize),
+    [appliedFilters, page, pageSize]
+  )
+  const { data, isLoading } = useList{{Feature}}(queryParams)
+  const delete{{Feature}} = useDelete{{Feature}}()
+  const isFilterDirty =
+    draftFilters.search !== appliedFilters.search ||
+    draftFilters.isEnabled !== appliedFilters.isEnabled
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      const currentPageItemCount = data?.data.length ?? 0
+      try {
+        await delete{{Feature}}.mutateAsync(id)
+        message.success(t('{{featurePluralCamel}}.messages.deleteSuccess'))
+        if (currentPageItemCount <= 1 && page > 1) {
+          setPage((currentPage) => Math.max(1, currentPage - 1))
+        }
+      } catch {
+        message.error(t('{{featurePluralCamel}}.messages.deleteFailed'))
+      }
+    },
+    [data?.data.length, delete{{Feature}}, page, t]
+  )
+
+  const handleCloseDialogs = useCallback(() => {
+    void navigate({{FEATURE}}_ROUTES.list, { replace: true, state: null })
+  }, [navigate])
+
+  const columns: ColumnsType<{{Feature}}> = useMemo(
+    () => [
+      { title: t('{{featurePluralCamel}}.fields.name'), dataIndex: 'name', key: 'name', ellipsis: true },
+      {
+        title: t('{{featurePluralCamel}}.fields.description'),
+        dataIndex: 'description',
+        key: 'description',
+        ellipsis: true
+      },
+      {
+        title: t('{{featurePluralCamel}}.fields.isEnabled'),
+        dataIndex: 'is_enabled',
+        key: 'is_enabled',
+        render: (value: boolean) => (
+          <Tag color={value ? 'green' : 'default'}>
+            {value ? t('{{featurePluralCamel}}.filters.enabled') : t('{{featurePluralCamel}}.filters.disabled')}
+          </Tag>
+        )
+      },
+      {
+        title: t('{{featurePluralCamel}}.fields.createdAt'),
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render: (value: string) => dayjs(value).format('YYYY-MM-DD HH:mm')
+      },
+      {
+        title: t('{{featurePluralCamel}}.fields.actions'),
+        key: 'actions',
+        width: 120,
+        align: 'center',
+        fixed: 'right',
+        render: (_: unknown, record: {{Feature}}): ReactElement => (
+          <Space>
+            <Button
+              aria-label={t('{{featurePluralCamel}}.actions.edit{{Feature}}')}
+              onClick={() => navigate({{FEATURE}}_ROUTES.list, { state: {{FEATURE}}_MODAL_STATE.edit(record.id) })}
+              color="default"
+              icon={<EditOutlined />}
+              variant="filled"
+            />
+            <Popconfirm
+              title={t('{{featurePluralCamel}}.messages.deleteConfirm')}
+              okText={t('actions.delete')}
+              cancelText={t('actions.cancel')}
+              okButtonProps={{ danger: true }}
+              onConfirm={() => void handleDelete(record.id)}
+            >
+              <Button
+                aria-label={t('{{featurePluralCamel}}.actions.delete{{Feature}}')}
+                color="default"
+                icon={<DeleteOutlined />}
+                danger
+                variant="filled"
+              />
+            </Popconfirm>
+          </Space>
+        )
+      }
+    ],
+    [handleDelete, navigate, t]
+  )
+
+  return (
+    <>
+      <PageLayout
+        heading={t('{{featurePluralCamel}}.title')}
+        actions={
+          <Button
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => navigate({{FEATURE}}_ROUTES.list, { state: {{FEATURE}}_MODAL_STATE.create })}
+          >
+            {t('actions.create')}
+          </Button>
+        }
+        filters={
+          <{{Feature}}ListFilters
+            isEnabled={draftFilters.isEnabled}
+            onEnabledChange={(isEnabled) => setDraftFilters((current) => ({ ...current, isEnabled }))}
+            onSearchChange={(search) => setDraftFilters((current) => ({ ...current, search }))}
+            search={draftFilters.search}
+          />
+        }
+        isFilterDirty={isFilterDirty}
+        onResetFilters={() => {
+          setDraftFilters(DEFAULT_FILTERS)
+          setAppliedFilters(DEFAULT_FILTERS)
+          setPage(1)
+        }}
+        onSearch={() => {
+          setAppliedFilters(draftFilters)
+          setPage(1)
+        }}
+        pagination={{
+          current: page,
+          pageSize,
+          total: data?.total ?? 0,
+          onChange: (nextPage, nextPageSize) => {
+            setPage(nextPage)
+            if (nextPageSize) setPageSize(nextPageSize)
+          }
+        }}
+        content={<{{Feature}}ListTable columns={columns} data={data?.data ?? []} loading={isLoading} />}
+      />
+      <Create{{Feature}}Dialog open={isCreateDialogOpen} onClose={handleCloseDialogs} />
+      {edit{{Feature}}Id ? (
+        <Edit{{Feature}}Dialog open {{featureCamel}}Id={edit{{Feature}}Id} onClose={handleCloseDialogs} />
+      ) : null}
+    </>
+  )
+}
+
+export default List{{Feature}}Page

@@ -1,0 +1,79 @@
+import type { AxiosResponse } from 'axios'
+
+import type { Future, PaginatedData, ResponseData, FormErrors } from '@/shared/types/common'
+import { {{FEATURE}}_SERVICE_MESSAGES } from '../constants/{{feature}}-messages'
+import {
+  create{{Feature}}Record,
+  delete{{Feature}}Record,
+  get{{Feature}}Record,
+  list{{Feature}}Records,
+  update{{Feature}}Record
+} from '../msw/{{feature}}-operations'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { {{Feature}}Repository } from './{{feature}}.repository'
+
+type ResponsePayload<T> = ResponseData<T> & { errors?: FormErrors }
+
+function createResponse<T>(data: ResponsePayload<T>, status = 200): AxiosResponse<ResponsePayload<T>> {
+  return {
+    data,
+    status,
+    statusText: status === 404 ? 'Not Found' : status === 422 ? 'Unprocessable Entity' : 'OK',
+    headers: {},
+    config: { headers: {} }
+  } as AxiosResponse<ResponsePayload<T>>
+}
+
+function createSuccessResponse<T>(message: string, data: T): AxiosResponse<ResponsePayload<T>> {
+  return createResponse({ success: true, message, data })
+}
+
+function createFailureResponse(
+  message: string,
+  status: number,
+  errors?: FormErrors
+): AxiosResponse<ResponsePayload<false>> {
+  return createResponse({ success: false, message, errors, data: false }, status)
+}
+
+export class Mock{{Feature}}RepositoryImpl extends {{Feature}}Repository {
+  list(query?: Record<string, unknown>): Future<PaginatedData<{{Feature}}>> {
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.listSuccess, list{{Feature}}Records(query)))
+  }
+
+  get(id: string): Future<{{Feature}} | null> {
+    const item = get{{Feature}}Record(id)
+    return Promise.resolve(
+      createSuccessResponse(
+        item ? {{FEATURE}}_SERVICE_MESSAGES.getSuccess : {{FEATURE}}_SERVICE_MESSAGES.notFound,
+        item
+      )
+    )
+  }
+
+  create(data: {{Feature}}Payload): Future<boolean> {
+    const result = create{{Feature}}Record(data)
+    if (!result.ok) {
+      return Promise.resolve(createFailureResponse(result.message, 422, result.errors))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.createSuccess, true))
+  }
+
+  update(id: string, data: {{Feature}}Payload): Future<boolean> {
+    const result = update{{Feature}}Record(id, data)
+    if (!result.ok) {
+      const status = result.errors ? 422 : 404
+      return Promise.resolve(createFailureResponse(result.message, status, result.errors))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.updateSuccess, true))
+  }
+
+  delete(id: string): Future<boolean> {
+    const result = delete{{Feature}}Record(id)
+    if (!result.ok) {
+      return Promise.resolve(createFailureResponse(result.message, 404))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.deleteSuccess, true))
+  }
+}

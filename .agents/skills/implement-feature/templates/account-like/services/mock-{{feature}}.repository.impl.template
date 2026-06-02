@@ -1,0 +1,81 @@
+import type { AxiosResponse } from 'axios'
+
+import type { FormErrors, PaginatedData, ResponseData } from '@/shared/types/common'
+import { {{FEATURE}}_SERVICE_MESSAGES } from '../constants/{{feature}}-messages'
+import {
+  create{{Feature}}Record,
+  delete{{Feature}}Record,
+  get{{Feature}}Record,
+  list{{Feature}}Records,
+  update{{Feature}}Record
+} from '../msw/{{feature}}-operations'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { {{Feature}}Repository } from './{{feature}}.repository'
+
+function createResponse<T>(data: ResponseData<T>, status = 200): AxiosResponse<ResponseData<T>> {
+  return {
+    data,
+    status,
+    statusText: status === 404 ? 'Not Found' : status === 422 ? 'Unprocessable Entity' : 'OK',
+    headers: {},
+    config: { headers: {} }
+  } as AxiosResponse<ResponseData<T>>
+}
+
+function createSuccessResponse<T>(message: string, payload: T): AxiosResponse<ResponseData<T>> {
+  return createResponse({ success: true, message, data: payload })
+}
+
+function createFailureResponse(
+  message: string,
+  status: number,
+  errors?: FormErrors
+): AxiosResponse<ResponseData<boolean>> {
+  return createResponse({ success: false, message, errors, data: false }, status)
+}
+
+export class Mock{{Feature}}RepositoryImpl extends {{Feature}}Repository {
+  list(query?: Record<string, unknown>) {
+    return Promise.resolve(
+      createSuccessResponse(
+        {{FEATURE}}_SERVICE_MESSAGES.listSuccess,
+        list{{Feature}}Records(query) as PaginatedData<{{Feature}}>
+      )
+    )
+  }
+
+  get(id: string) {
+    const item = get{{Feature}}Record(id)
+    return Promise.resolve(
+      createSuccessResponse(
+        item ? {{FEATURE}}_SERVICE_MESSAGES.getSuccess : {{FEATURE}}_SERVICE_MESSAGES.notFound,
+        item
+      )
+    )
+  }
+
+  create(data: Partial<{{Feature}}>) {
+    const result = create{{Feature}}Record(data)
+    if (!result.ok) {
+      return Promise.resolve(createFailureResponse(result.message, 422, result.errors))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.createSuccess, result.data))
+  }
+
+  update(id: string, data: Partial<{{Feature}}>) {
+    const result = update{{Feature}}Record(id, data)
+    if (!result.ok) {
+      const status = result.errors ? 422 : 404
+      return Promise.resolve(createFailureResponse(result.message, status, result.errors))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.updateSuccess, result.data))
+  }
+
+  delete(id: string) {
+    const result = delete{{Feature}}Record(id)
+    if (!result.ok) {
+      return Promise.resolve(createFailureResponse(result.message, 404))
+    }
+    return Promise.resolve(createSuccessResponse({{FEATURE}}_SERVICE_MESSAGES.deleteSuccess, result.data))
+  }
+}

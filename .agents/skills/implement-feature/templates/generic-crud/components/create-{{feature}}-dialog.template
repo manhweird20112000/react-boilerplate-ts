@@ -1,0 +1,67 @@
+import { message } from 'antd'
+import { useCallback, useRef, type ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { extractFormErrors } from '@/shared/lib/form-errors'
+import { getResponseMessage, translateResponseMessage } from '@/shared/lib/response'
+import { AdaptiveFormDialog } from '@/shared/ui/adaptive-form-dialog'
+import { useCreate{{Feature}} } from '../hooks/use-create-{{feature}}'
+import type { {{Feature}}FormValues } from '../types/{{feature}}-form.type'
+import { {{Feature}}Form, type {{Feature}}FormHandle } from './{{feature}}-form'
+
+export type Create{{Feature}}DialogProps = {
+  readonly open: boolean
+  readonly onClose: () => void
+}
+
+export function Create{{Feature}}Dialog({ open, onClose }: Create{{Feature}}DialogProps): ReactElement {
+  const { t } = useTranslation()
+  const formRef = useRef<{{Feature}}FormHandle>(null)
+  const create{{Feature}} = useCreate{{Feature}}()
+
+  const handleSubmit = useCallback(
+    async (values: {{Feature}}FormValues) => {
+      try {
+        await create{{Feature}}.mutateAsync(values)
+        message.success(t('{{featurePluralCamel}}.messages.createSuccess'))
+        onClose()
+      } catch (error) {
+        const formErrors = extractFormErrors(error)
+        if (formErrors && formRef.current?.setServerErrors(formErrors)) {
+          throw new Error('submit_failed', { cause: error })
+        }
+        const responseMessage = translateResponseMessage(getResponseMessage(error), t)
+        message.error(responseMessage ?? t('{{featurePluralCamel}}.messages.createFailed'))
+        throw new Error('submit_failed', { cause: error })
+      }
+    },
+    [create{{Feature}}, onClose, t]
+  )
+
+  const handleOk = useCallback(async () => {
+    try {
+      const values = await formRef.current!.submit()
+      await handleSubmit(values)
+    } catch {
+      return Promise.reject(new Error('validation_or_submit_failed'))
+    }
+  }, [handleSubmit])
+
+  return (
+    <AdaptiveFormDialog
+      cancelButtonProps={{ disabled: create{{Feature}}.isPending }}
+      cancelText={t('actions.cancel')}
+      closable={!create{{Feature}}.isPending}
+      confirmLoading={create{{Feature}}.isPending}
+      destroyOnClose
+      maskClosable={!create{{Feature}}.isPending}
+      okText={t('actions.save')}
+      onClose={onClose}
+      onOk={handleOk}
+      open={open}
+      title={t('{{featurePluralCamel}}.createTitle')}
+    >
+      <{{Feature}}Form ref={formRef} />
+    </AdaptiveFormDialog>
+  )
+}

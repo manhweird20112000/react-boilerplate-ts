@@ -1,0 +1,8 @@
+import type { {{Feature}}Role, {{Feature}}Status } from './{{feature}}.type'
+
+export type {{Feature}}FormValues = {
+  email: string
+  name: string
+  status: {{Feature}}Status
+  role: {{Feature}}Role
+}

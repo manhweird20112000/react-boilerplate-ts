@@ -1,0 +1,59 @@
+import { http, HttpResponse } from 'msw'
+
+import type { FormErrors } from '@/shared/types/common'
+import { {{FEATURE}}_SERVICE_MESSAGES } from '../constants/{{feature}}-messages'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import {
+  create{{Feature}}Record,
+  delete{{Feature}}Record,
+  get{{Feature}}Record,
+  list{{Feature}}Records,
+  update{{Feature}}Record
+} from './{{feature}}-operations'
+
+const ok = <T>(message: string, data: T) => HttpResponse.json({ success: true, message, data })
+
+const notFound = (message: string) =>
+  HttpResponse.json({ success: false, message, data: null }, { status: 404 })
+
+const validationError = (message: string, errors: FormErrors) =>
+  HttpResponse.json({ success: false, message, errors, data: null }, { status: 422 })
+
+export const {{featureCamel}}Handlers = [
+  http.get('*/{{featurePlural}}', ({ request }) => {
+    const url = new URL(request.url)
+    const params = Object.fromEntries(url.searchParams.entries())
+    return ok({{FEATURE}}_SERVICE_MESSAGES.listSuccess, list{{Feature}}Records(params))
+  }),
+
+  http.get('*/{{featurePlural}}/:id', ({ params }) => {
+    const id = String(params.id)
+    const item = get{{Feature}}Record(id)
+    return item ? ok({{FEATURE}}_SERVICE_MESSAGES.getSuccess, item) : notFound({{FEATURE}}_SERVICE_MESSAGES.notFound)
+  }),
+
+  http.post('*/{{featurePlural}}/create', async ({ request }) => {
+    const payload = (await request.json()) as {{Feature}}Payload
+    const result = create{{Feature}}Record(payload)
+    if (!result.ok) {
+      return validationError(result.message, result.errors ?? {})
+    }
+    return ok({{FEATURE}}_SERVICE_MESSAGES.createSuccess, result.data)
+  }),
+
+  http.put('*/{{featurePlural}}/:id/update', async ({ params, request }) => {
+    const id = String(params.id)
+    const payload = (await request.json()) as {{Feature}}Payload
+    const result = update{{Feature}}Record(id, payload)
+    if (!result.ok) {
+      return result.errors ? validationError(result.message, result.errors) : notFound(result.message)
+    }
+    return ok({{FEATURE}}_SERVICE_MESSAGES.updateSuccess, result.data)
+  }),
+
+  http.delete('*/{{featurePlural}}/:id/delete', ({ params }) => {
+    const id = String(params.id)
+    const result = delete{{Feature}}Record(id)
+    return result.ok ? ok({{FEATURE}}_SERVICE_MESSAGES.deleteSuccess, result.data) : notFound(result.message)
+  })
+]

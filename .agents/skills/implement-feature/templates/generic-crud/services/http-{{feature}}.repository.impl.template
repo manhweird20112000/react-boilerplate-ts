@@ -1,0 +1,45 @@
+import { isAxiosError, type AxiosResponse } from 'axios'
+
+import { HttpService } from '@/infra/api/http-service'
+import type { Future, PaginatedData, ResponseData } from '@/shared/types/common'
+import { {{FEATURE}}_SERVICE_MESSAGES } from '../constants/{{feature}}-messages'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { {{Feature}}Repository } from './{{feature}}.repository'
+
+export class {{Feature}}RepoImpl extends {{Feature}}Repository {
+  private endpoint = '/{{featurePlural}}'
+
+  list(query?: Record<string, unknown>): Future<PaginatedData<{{Feature}}>> {
+    return HttpService.get(this.endpoint, query)
+  }
+
+  get(id: string): Future<{{Feature}} | null> {
+    return HttpService.get(`${this.endpoint}/${id}`, undefined, {
+      config: { skipErrorRedirect: true }
+    }).catch((error: unknown) => {
+      if (isAxiosError(error) && error.response?.status === 404) {
+        return {
+          data: { success: true, message: {{FEATURE}}_SERVICE_MESSAGES.notFound, data: null },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: error.config ?? { headers: {} }
+        } as AxiosResponse<ResponseData<{{Feature}} | null>>
+      }
+      throw error
+    })
+  }
+
+  create(data: {{Feature}}Payload): Future<boolean> {
+    return HttpService.post(`${this.endpoint}/create`, data)
+  }
+
+  update(id: string, data: {{Feature}}Payload): Future<boolean> {
+    return HttpService.put(`${this.endpoint}/${id}/update`, data)
+  }
+
+  delete(id: string): Future<boolean> {
+    return HttpService.delete(`${this.endpoint}/${id}/delete`)
+  }
+}

@@ -1,0 +1,58 @@
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { createMock{{Feature}} } from './{{feature}}-factory'
+
+function normalizePayload(data: {{Feature}}Payload): {{Feature}}Payload {
+  const normalized = { ...data }
+
+  if (data.name !== undefined) {
+    normalized.name = data.name.trim()
+  }
+  if (data.description !== undefined) {
+    normalized.description = data.description.trim()
+  }
+
+  return normalized
+}
+
+export const {{featureCamel}}Db = {
+  {{featurePluralCamel}}: Array.from({ length: 24 }, () => createMock{{Feature}}())
+}
+
+export function reset{{Feature}}Db(items: readonly {{Feature}}[] = []): void {
+  {{featureCamel}}Db.{{featurePluralCamel}}.length = 0
+  {{featureCamel}}Db.{{featurePluralCamel}}.push(...items)
+}
+
+export function insert{{Feature}}(data: {{Feature}}Payload): {{Feature}} {
+  const item = createMock{{Feature}}(normalizePayload(data))
+  {{featureCamel}}Db.{{featurePluralCamel}}.unshift(item)
+  return item
+}
+
+export function update{{Feature}}(id: string, data: {{Feature}}Payload): {{Feature}} | null {
+  const index = {{featureCamel}}Db.{{featurePluralCamel}}.findIndex((item) => item.id === id)
+  if (index < 0) {
+    return null
+  }
+
+  const current = {{featureCamel}}Db.{{featurePluralCamel}}[index]
+  const updated = {
+    ...current,
+    ...normalizePayload(data),
+    updated_at: new Date().toISOString()
+  }
+
+  {{featureCamel}}Db.{{featurePluralCamel}}[index] = updated
+  return updated
+}
+
+export function remove{{Feature}}(id: string): boolean {
+  const index = {{featureCamel}}Db.{{featurePluralCamel}}.findIndex((item) => item.id === id)
+  if (index < 0) {
+    return false
+  }
+
+  {{featureCamel}}Db.{{featurePluralCamel}}.splice(index, 1)
+  return true
+}

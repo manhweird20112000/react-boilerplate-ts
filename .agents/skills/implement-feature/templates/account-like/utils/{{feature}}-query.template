@@ -1,0 +1,52 @@
+import type { PaginatedData } from '@/shared/types/common'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+const getNumberParam = (params: Record<string, unknown>, keys: string[], fallback: number): number => {
+  const value = keys.map((key) => params[key]).find(Boolean)
+  const parsed = Number(value)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
+const filter{{FeaturePlural}} = (
+  items: readonly {{Feature}}[],
+  params: Record<string, unknown>
+): readonly {{Feature}}[] => {
+  const search = String(params.search ?? '').trim().toLowerCase()
+  const status = String(params.status ?? '').trim().toLowerCase()
+  const role = String(params.role ?? '').trim().toLowerCase()
+  const from = params.from ? String(params.from) : undefined
+  const to = params.to ? String(params.to) : undefined
+
+  return items.filter((item) => {
+    const matchesSearch =
+      !search ||
+      item.email.toLowerCase().includes(search) ||
+      item.name.toLowerCase().includes(search)
+    const matchesStatus = !status || item.status === status
+    const matchesRole = !role || item.role === role
+    const createdAt = item.created_at.slice(0, 10)
+    const matchesFrom = !from || createdAt >= from
+    const matchesTo = !to || createdAt <= to
+    return matchesSearch && matchesStatus && matchesRole && matchesFrom && matchesTo
+  })
+}
+
+export function query{{FeaturePlural}}(
+  items: readonly {{Feature}}[],
+  params: Record<string, unknown> = {}
+): PaginatedData<{{Feature}}> {
+  const page = getNumberParam(params, ['page', 'current_page'], 1)
+  const perPage = getNumberParam(params, ['pageSize', 'per_page', 'limit'], 20)
+  const filteredItems = [...filter{{FeaturePlural}}(items, params)].sort((a, b) =>
+    b.created_at.localeCompare(a.created_at)
+  )
+  const start = (page - 1) * perPage
+  const data = filteredItems.slice(start, start + perPage)
+  return {
+    data,
+    current_page: page,
+    total_page: Math.max(1, Math.ceil(filteredItems.length / perPage)),
+    per_page: perPage,
+    total: filteredItems.length
+  }
+}

@@ -1,0 +1,25 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { unwrapResponse } from '@/shared/lib/response'
+import { {{FEATURE}}_QUERY_KEYS } from '../constants/{{feature}}-query-key'
+import { get{{Feature}}Repository } from '../services/{{feature}}.factory'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+
+type Update{{Feature}}Variables = {
+  readonly id: string
+  readonly data: {{Feature}}Payload
+}
+
+export function useUpdate{{Feature}}() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, data }: Update{{Feature}}Variables) =>
+      unwrapResponse(await get{{Feature}}Repository().update(id, data)).data,
+    onSuccess: (_data, variables) =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: {{FEATURE}}_QUERY_KEYS.lists() }),
+        queryClient.invalidateQueries({ queryKey: {{FEATURE}}_QUERY_KEYS.detail(variables.id) })
+      ])
+  })
+}

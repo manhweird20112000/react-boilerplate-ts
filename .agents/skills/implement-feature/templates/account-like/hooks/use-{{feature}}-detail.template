@@ -1,0 +1,14 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { unwrapResponse } from '@/shared/lib/response'
+import { {{FEATURE}}_QUERY_KEYS } from '../constants/{{feature}}-query-key'
+import { get{{Feature}}Repository } from '../services/{{feature}}.factory'
+
+export function use{{Feature}}Detail(id: string) {
+  return useQuery({
+    queryKey: {{FEATURE}}_QUERY_KEYS.detail(id),
+    queryFn: async () => unwrapResponse(await get{{Feature}}Repository().get(id)).data,
+    enabled: Boolean(id),
+    staleTime: 1000 * 60 * 5
+  })
+}

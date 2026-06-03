@@ -8,6 +8,7 @@ import { AuthContext } from './auth-context'
 import { getApiErrorMessage } from '../utils/api-error'
 
 async function loadAuthRepo() {
+  // Keep auth repository lazy so public auth pages do not eagerly load all API code.
   const { authRepo } = await import('../services/factory')
 
   return authRepo
@@ -24,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isOAuthCallbackRoute = location.pathname === GOOGLE_CALLBACK_ROUTE
 
   useEffect(() => {
+    // Async auth calls can resolve after route changes/unmount; guard state updates.
     isMountedRef.current = true
 
     return () => {
@@ -34,6 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const syncUserFromSession = useCallback(async (): Promise<AuthUser | null> => {
     try {
       const authRepo = await loadAuthRepo()
+      // The backend owns the admin session through cookies. The client only asks
+      // /admin/me to hydrate user state; it does not store access tokens.
       const { data: res } = await authRepo.me()
       if (isMountedRef.current) {
         setUser(res.data.user)
@@ -60,6 +64,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (isOAuthCallbackRoute) {
+      // The callback page must exchange code/state first. Calling /admin/me here
+      // would race before the API has created the session cookie.
       if (isMountedRef.current) {
         setIsLoading(false)
       }
@@ -71,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = useCallback(async () => {
     try {
       const authRepo = await loadAuthRepo()
+      // API returns the provider URL and sets/verifies OAuth state server-side.
       const { data: res } = await authRepo.getGoogleLoginUrl()
       window.location.assign(res.data.url)
     } catch (error: unknown) {
@@ -81,6 +88,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const completeGoogleLogin = useCallback(async (params: { code: string; state: string }): Promise<string> => {
     const authRepo = await loadAuthRepo()
+    // Callback verification creates the cookie session, then we immediately
+    // hydrate React auth state from /admin/me before redirecting.
     const redirectTo = await authRepo.completeGoogleLogin(params)
     await syncUserFromSession()
     return redirectTo

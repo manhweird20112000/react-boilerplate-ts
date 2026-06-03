@@ -28,6 +28,7 @@ export function toAuthResponseEnvelope(
       success: true,
       message: '',
       data: {
+        // Keep the rest of the auth layer independent from admin API shape.
         user: mapAdminToAuthUser(admin)
       }
     }

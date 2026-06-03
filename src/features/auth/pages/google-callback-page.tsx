@@ -21,6 +21,8 @@ export const GoogleCallbackPage: React.FC = () => {
     if (hasHandledRef.current) {
       return
     }
+    // React StrictMode may run effects twice in development; the OAuth code
+    // exchange must happen once because authorization codes are single-use.
     hasHandledRef.current = true
     const oauthError = searchParams.get('error')
     if (oauthError) {
@@ -42,6 +44,8 @@ export const GoogleCallbackPage: React.FC = () => {
     void (async () => {
       try {
         const redirectTo = await completeGoogleLogin({ code, state })
+        // Backend may return an internal SPA path or an absolute URL for
+        // cross-app redirects. Keep both cases explicit.
         if (isAbsoluteRedirectUrl(redirectTo)) {
           window.location.assign(redirectTo)
           return

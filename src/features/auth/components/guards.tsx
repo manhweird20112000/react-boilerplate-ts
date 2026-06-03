@@ -20,6 +20,8 @@ export const AuthGuard: React.FC = () => {
   }
 
   if (!user) {
+    // Preserve the blocked destination so GuestGuard can return the user there
+    // after a successful login.
     return <Navigate to="/auth/login" state={{ from: location }} replace />
   }
 
@@ -35,6 +37,8 @@ export const GuestGuard: React.FC = () => {
   }
 
   if (user) {
+    // Auth pages are guest-only; authenticated users go back to the original
+    // protected route when available, otherwise the app default route.
     const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || '/'
     return <Navigate to={from} replace />
   }

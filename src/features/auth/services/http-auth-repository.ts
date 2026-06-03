@@ -13,12 +13,16 @@ import {
 
 export class HttpAuthRepository extends AuthRepository {
   public getGoogleLoginUrl(): Future<{ url: string }> {
+    // Starts Google SSO. The API is responsible for creating/verifying the
+    // OAuth state cookie; the frontend only redirects to the returned URL.
     return HttpService.get<unknown, AxiosResponse<ApiEnvelope<{ url: string }>>>(
       ADMIN_AUTH_PATHS.googleUrl
     ).then(toGoogleLoginUrlEnvelope)
   }
 
   public completeGoogleLogin(params: { code: string; state: string }): Promise<string> {
+    // Exchanges the provider callback params for the admin session cookie and a
+    // post-login redirect path.
     return HttpService.get<
       GoogleCallbackParams,
       AxiosResponse<ApiEnvelope<GoogleCallbackApiResponse>>
@@ -26,12 +30,14 @@ export class HttpAuthRepository extends AuthRepository {
   }
 
   public logout(): Promise<void> {
+    // Successful logout returns 204 and clears the session cookie server-side.
     return HttpService.post(ADMIN_AUTH_PATHS.logout, {}, {
       validateStatus: (status) => status === 204
     }).then(() => undefined)
   }
 
   public me(): Future<AuthResponse> {
+    // Session source of truth. A 401 means no valid cookie/session exists.
     return HttpService.get<unknown, AxiosResponse<ApiEnvelope<AdminMeApiResponse>>>(
       ADMIN_AUTH_PATHS.me
     ).then(toAuthResponseEnvelope)

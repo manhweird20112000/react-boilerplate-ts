@@ -33,6 +33,20 @@ pnpm build
 pnpm preview
 ```
 
+## Tauri desktop app
+
+Run the desktop app in development:
+
+```bash
+pnpm tauri:dev
+```
+
+Build desktop bundles:
+
+```bash
+pnpm tauri:build
+```
+
 ## Lint & format
 
 ```bash

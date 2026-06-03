@@ -13,7 +13,7 @@ const mockAdmin = {
   username: 'Admin User',
   role: 'admin',
   createdAt: new Date().toISOString()
-}
+} as const
 
 export const authHandlers = [
   http.get(adminAuthPath('google/url'), () => {

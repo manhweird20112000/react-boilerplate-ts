@@ -1,111 +1,150 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-05-06T06:23:00.000Z",
+  "generatedAt": "2026-06-03T00:00:00.000Z",
   "title": "Design System: W3rd Codebase",
   "extensions": {
     "colorMeta": {
-      "background": {
-        "role": "neutral",
-        "displayName": "App Background Base",
-        "canonical": "#F5F6F7",
-        "tonalRamp": [
-          "#12171C",
-          "#1D232A",
-          "#1D2D3E",
-          "#2E3742",
-          "#556B82",
-          "#8396A8",
-          "#EFF1F2",
-          "#F5F6F7"
-        ]
-      },
-      "foreground": {
-        "role": "neutral",
-        "displayName": "Ink Foreground",
-        "canonical": "#131E29",
-        "tonalRamp": [
-          "#12171C",
-          "#1D232A",
-          "#1D2D3E",
-          "#2E3742",
-          "#556B82",
-          "#8396A8",
-          "#EFF1F2",
-          "#F5F6F7"
-        ]
-      },
       "primary": {
         "role": "primary",
-        "displayName": "Brand / Highlight",
-        "canonical": "#0070F2",
+        "displayName": "Focused Violet",
+        "canonical": "#6f43fd",
         "tonalRamp": [
-          "#00144A",
-          "#0057D2",
-          "#0064D9",
-          "#0070F2",
-          "#4DB1FF",
-          "#A6E0FF",
-          "#E1F4FF",
-          "#EBF8FF"
+          "oklch(18% 0.08 285)",
+          "oklch(28% 0.14 285)",
+          "oklch(40% 0.19 285)",
+          "#6f43fd",
+          "oklch(66% 0.16 285)",
+          "oklch(78% 0.1 285)",
+          "oklch(88% 0.055 285)",
+          "oklch(96% 0.025 285)"
         ]
       },
-      "brand": {
-        "role": "accent",
-        "displayName": "Brand Signal",
-        "canonical": "#0070F2",
+      "surface": {
+        "role": "neutral",
+        "displayName": "Workbench Surface",
+        "canonical": "#ffffff",
         "tonalRamp": [
-          "#00144A",
-          "#0057D2",
-          "#0064D9",
-          "#0070F2",
-          "#4DB1FF",
-          "#A6E0FF",
-          "#E1F4FF",
-          "#EBF8FF"
+          "#1f1f1f",
+          "#303030",
+          "#595959",
+          "#8c8c8c",
+          "#bfbfbf",
+          "#d9d9d9",
+          "#f5f5f5",
+          "#ffffff"
+        ]
+      },
+      "surface-muted": {
+        "role": "neutral",
+        "displayName": "Soft Control Fill",
+        "canonical": "#f5f5f5",
+        "tonalRamp": [
+          "#1f1f1f",
+          "#303030",
+          "#595959",
+          "#8c8c8c",
+          "#bfbfbf",
+          "#d9d9d9",
+          "#f0f0f0",
+          "#f5f5f5"
+        ]
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Quiet Divider",
+        "canonical": "#f0f0f0",
+        "tonalRamp": [
+          "#1f1f1f",
+          "#303030",
+          "#595959",
+          "#8c8c8c",
+          "#bfbfbf",
+          "#d9d9d9",
+          "#eeeeee",
+          "#f0f0f0"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Primary Ink",
+        "canonical": "#1f1f1f",
+        "tonalRamp": [
+          "#1f1f1f",
+          "#303030",
+          "#595959",
+          "#8c8c8c",
+          "#bfbfbf",
+          "#d9d9d9",
+          "#f5f5f5",
+          "#ffffff"
+        ]
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Destructive Red",
+        "canonical": "#ff4d4f",
+        "tonalRamp": [
+          "#5c0011",
+          "#820014",
+          "#a8071a",
+          "#cf1322",
+          "#ff4d4f",
+          "#ff7875",
+          "#ffccc7",
+          "#fff1f0"
         ]
       }
     },
     "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles, app header titles, and primary section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Drawer titles, form group labels, modal titles, and table-adjacent section headers."
+      },
       "body": {
         "displayName": "Body",
-        "purpose": "Default UI text, descriptions, and table content."
+        "purpose": "Default UI text, table cells, descriptions, form values, and button labels."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Form labels, helper text, and compact meta copy."
-      },
-      "headline": {
-        "displayName": "Headline",
-        "purpose": "Section headers and panel titles."
+        "purpose": "Field labels, compact metadata, table support labels, and calendar weekday text."
       }
     },
     "shadows": [
       {
-        "name": "surface-modal",
-        "value": "0 18px 60px -24px rgba(0,0,0,0.35), 0 8px 24px -14px rgba(0,0,0,0.25)",
-        "purpose": "Dialogs, sheets, and popovers over the overlay."
-      },
-      {
-        "name": "surface-subtle",
-        "value": "0 1px 0 0 hsl(var(--border))",
-        "purpose": "Hairline depth for table/container edges."
+        "name": "fixed-bar-lift",
+        "value": "0 -6px 16px rgba(0, 0, 0, 0.04)",
+        "purpose": "Separates fixed bottom pagination from scrollable content."
       }
     ],
     "motion": [
       {
         "name": "duration-fast",
         "value": "150ms",
-        "purpose": "Most component state transitions."
+        "purpose": "Fast state transitions on controls."
       },
       {
         "name": "duration-standard",
         "value": "200ms",
-        "purpose": "Overlays, sheets, dialogs."
+        "purpose": "Layout shifts for sidebar and header positioning."
       },
       {
         "name": "ease-out",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Default ease-out for state feedback."
+        "purpose": "Default ease-out for product UI feedback."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "Ant Design md"
+      },
+      {
+        "name": "lg",
+        "value": "Ant Design lg"
       }
     ]
   },
@@ -114,61 +153,103 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Primary action, used sparingly as a signal.",
-      "html": "<button class=\"ds-btn ds-btn-primary\">Save changes</button>",
-      "css": ".ds-btn{appearance:none;border:1px solid transparent;border-radius:10px;padding:.5rem .625rem;font-family:\"72\",Inter,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:.875rem;line-height:1;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),transform 150ms cubic-bezier(0.16,1,0.3,1),box-shadow 150ms cubic-bezier(0.16,1,0.3,1);user-select:none}.ds-btn:focus{outline:none}.ds-btn:focus-visible{box-shadow:0 0 0 3px rgba(0,112,242,.25)}.ds-btn:active{transform:translateY(1px)}.ds-btn:disabled{opacity:.5;cursor:not-allowed}.ds-btn-primary{background:#0070F2;color:#FFFFFF}.ds-btn-primary:hover{background:#0057D2}"
+      "description": "Primary command for create, apply, submit, and the single highest-priority action in a group.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Send request</button>",
+      "css": ".ds-btn{appearance:none;border:1px solid transparent;border-radius:6px;height:32px;padding:4px 15px;font-family:Inter,sans-serif;font-size:14px;line-height:1.5;font-weight:400;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),border-color 150ms cubic-bezier(0.16,1,0.3,1),box-shadow 150ms cubic-bezier(0.16,1,0.3,1);cursor:pointer}.ds-btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(111,67,253,.24)}.ds-btn:disabled{opacity:.45;cursor:not-allowed}.ds-btn-primary{background:#6f43fd;color:#ffffff}.ds-btn-primary:hover{background:#5d35df}.ds-btn-primary:active{background:#4f2dbf}"
     },
     {
-      "name": "Outline Button",
+      "name": "Filled Secondary Button",
       "kind": "button",
-      "refersTo": "button-outline",
-      "description": "Secondary action, quiet by default with clear hover.",
-      "html": "<button class=\"ds-btn ds-btn-outline\">Cancel</button>",
-      "css": ".ds-btn-outline{background:#FFFFFF;color:#131E29;border-color:#E5E5E5}.ds-btn-outline:hover{background:#EFF1F2}"
+      "refersTo": "button-filled",
+      "description": "Neutral action for cancel, reset, export, and overflow commands.",
+      "html": "<button class=\"ds-btn ds-btn-filled\">Reset</button>",
+      "css": ".ds-btn{appearance:none;border:1px solid transparent;border-radius:6px;height:32px;padding:4px 15px;font-family:Inter,sans-serif;font-size:14px;line-height:1.5;font-weight:400;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),border-color 150ms cubic-bezier(0.16,1,0.3,1),box-shadow 150ms cubic-bezier(0.16,1,0.3,1);cursor:pointer}.ds-btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(111,67,253,.2)}.ds-btn-filled{background:#f5f5f5;color:#1f1f1f;border-color:#eeeeee}.ds-btn-filled:hover{background:#eeeeee}"
     },
     {
-      "name": "Modal Overlay",
+      "name": "Form Field",
+      "kind": "input",
+      "refersTo": "form-field",
+      "description": "Compact field treatment for request controls, filters, and form drawers.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Endpoint</span><input class=\"ds-input\" value=\"https://api.example.com/users\" /></label>",
+      "css": ".ds-field{display:grid;gap:6px;font-family:Inter,sans-serif;color:#1f1f1f}.ds-field-label{font-size:12px;line-height:1.4;font-weight:500}.ds-input{height:32px;border:1px solid #d9d9d9;border-radius:6px;background:#ffffff;color:#1f1f1f;padding:4px 11px;font-family:Inter,sans-serif;font-size:14px;line-height:1.5}.ds-input:hover{border-color:#8f70ff}.ds-input:focus{outline:none;border-color:#6f43fd;box-shadow:0 0 0 3px rgba(111,67,253,.16)}"
+    },
+    {
+      "name": "Navigation Shell",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Light sidebar and fixed header shell for authenticated product surfaces.",
+      "html": "<div class=\"ds-shell\"><aside class=\"ds-sider\"><div class=\"ds-brand\">API Workbench</div><div class=\"ds-nav-item ds-nav-active\">Requests</div><div class=\"ds-nav-item\">Collections</div></aside><main class=\"ds-main\"><header class=\"ds-header\">Requests</header><section class=\"ds-content\">Workbench content</section></main></div>",
+      "css": ".ds-shell{display:grid;grid-template-columns:240px 1fr;min-height:220px;border:1px solid #f0f0f0;border-radius:8px;overflow:hidden;font-family:Inter,sans-serif;color:#1f1f1f;background:#ffffff}.ds-sider{background:#ffffff;border-right:1px solid rgba(5,5,5,.06);padding:12px}.ds-brand{height:40px;display:flex;align-items:center;font-weight:600;font-size:16px}.ds-nav-item{height:36px;display:flex;align-items:center;border-radius:6px;padding:0 12px;font-size:14px;color:#1f1f1f}.ds-nav-item:hover{background:#f5f5f5}.ds-nav-active{background:rgba(111,67,253,.1);color:#5d35df;font-weight:500}.ds-main{min-width:0;background:#fafafa}.ds-header{height:48px;display:flex;align-items:center;padding:0 16px;background:#ffffff;border-bottom:1px solid rgba(5,5,5,.06);font-size:16px;font-weight:600}.ds-content{padding:16px;font-size:14px;color:#6b7280}"
+    },
+    {
+      "name": "Item Container",
+      "kind": "card",
+      "refersTo": "item-container",
+      "description": "Compact bordered group used for repeated editable items inside drawers.",
+      "html": "<div class=\"ds-item\"><div class=\"ds-item-title\">Header</div><div class=\"ds-item-body\">Key and value controls sit inside a quiet bordered group.</div></div>",
+      "css": ".ds-item{border:1px solid rgba(5,5,5,.08);border-radius:8px;background:#ffffff;padding:12px;font-family:Inter,sans-serif;color:#1f1f1f}.ds-item-title{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:8px}.ds-item-body{font-size:14px;line-height:1.5;color:#6b7280}"
+    },
+    {
+      "name": "Fixed Pagination Bar",
       "kind": "custom",
-      "refersTo": "dialog-surface",
-      "description": "Backdrop establishes modality without decoration.",
-      "html": "<div class=\"ds-overlay\"><div class=\"ds-modal\"><div class=\"ds-modal-title\">Dialog title</div><div class=\"ds-modal-body\">Dense content stays readable. The overlay is the separation.</div><div class=\"ds-modal-actions\"><button class=\"ds-btn ds-btn-outline\">Close</button><button class=\"ds-btn ds-btn-primary\">Confirm</button></div></div></div>",
-      "css": ".ds-overlay{position:relative;min-height:220px;padding:16px;border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.04));display:flex;align-items:center;justify-content:center}.ds-overlay:before{content:\"\";position:absolute;inset:0;border-radius:14px;background:rgba(19,30,41,.35);backdrop-filter:blur(8px)}.ds-modal{position:relative;z-index:1;width:min(520px,100%);border-radius:14px;background:#FFFFFF;color:#131E29;box-shadow:0 18px 60px -24px rgba(0,0,0,0.35),0 8px 24px -14px rgba(0,0,0,0.25);border:1px solid rgba(229,229,229,.9);padding:16px;font-family:\"72\",Inter,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}.ds-modal-title{font-weight:600;font-size:1rem;line-height:1.35;margin:0 0 8px}.ds-modal-body{font-size:.875rem;line-height:1.5;color:rgba(85,107,130,.95)}.ds-modal-actions{margin-top:14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}"
+      "refersTo": "pagination-bar",
+      "description": "Fixed bottom utility surface that stays available during long tables.",
+      "html": "<div class=\"ds-pagination\"><span>1-20 of 128</span><button class=\"ds-page-btn\">Prev</button><button class=\"ds-page-btn ds-page-active\">1</button><button class=\"ds-page-btn\">Next</button></div>",
+      "css": ".ds-pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;background:#ffffff;border-top:1px solid #f0f0f0;box-shadow:0 -6px 16px rgba(0,0,0,.04);padding:16px 20px;font-family:Inter,sans-serif;font-size:14px;color:#6b7280}.ds-page-btn{height:32px;min-width:32px;border:1px solid #d9d9d9;border-radius:6px;background:#ffffff;color:#1f1f1f;font-family:Inter,sans-serif}.ds-page-active{border-color:#6f43fd;color:#6f43fd}"
     }
   ],
   "narrative": {
-    "northStar": "The Precision Console",
-    "overview": "This system is built for internal operators working quickly through dense information. It rewards accuracy and speed through consistent structure, predictable component behavior, and high-clarity states. It should feel like a well-tuned instrument, not a decorative theme.\n\nThis project explicitly rejects a Bootstrap-like, border-heavy, dated look. Borders exist, but they are thin, quiet, and always subordinate to hierarchy.",
+    "northStar": "The API Workbench",
+    "overview": "This system is a compact, friendly work surface for developers and testers who spend long sessions creating requests, calling endpoints, and reading response state. It should feel professional without becoming cold: familiar Ant Design patterns, predictable spacing, and clear controls keep the interface close to the task.\n\nThe visual system is restrained by design. It uses a light, flat/layered interface with thin separators, white work surfaces, and a single violet accent reserved for primary action, selection, and focus. It rejects overly decorative, colorful, or gradient-heavy treatment because API inspection depends on calm reading and quick comparison.",
     "keyCharacteristics": [
-      "Dense by default, readable by design.",
-      "Familiar patterns, no invented affordances.",
-      "State clarity over decoration.",
-      "Restrained accent usage, focus and selection are the signal."
+      "Compact and friendly controls that stay readable under repeated use.",
+      "Functional accent color, never decorative color.",
+      "Familiar product UI patterns: sidebar, header, drawers, tables, forms, and pagination.",
+      "Flat surfaces with layering through borders, spacing, and rare shadow.",
+      "Complete interaction states for dense technical workflows."
     ],
     "rules": [
       {
-        "name": "The Signal-Only Accent Rule",
-        "body": "The brand accent is not decoration. Use it only for primary intent (CTA), selection, focus rings, and semantic emphasis where ambiguity would cost time.",
+        "name": "The Signal-Only Violet Rule",
+        "body": "Focused Violet is used for primary intent, selection, and focus. Never use it as a decorative wash, gradient, hero treatment, or inactive surface color.",
         "section": "colors"
       },
       {
-        "name": "The Small-Type Discipline Rule",
-        "body": "Labels stay small and calm. Use weight and spacing for clarity, never oversized type for authority.",
+        "name": "The Neutral Workbench Rule",
+        "body": "Most of the interface stays neutral so request setup, response details, error states, and table data remain the visual priority.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Display Labels Rule",
+        "body": "Product labels, buttons, and data never use display type. Use Inter, clear weight, and spacing instead.",
         "section": "typography"
       },
       {
-        "name": "The Modal Wins Rule",
-        "body": "When a dialog or sheet is open, the overlay and surface elevation must clearly establish a new interaction layer.",
+        "name": "The Dense Reading Rule",
+        "body": "Body copy can remain compact, but long explanatory text should cap at 65 to 75 characters per line.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-Until-Detached Rule",
+        "body": "Surfaces at rest are flat. Shadows appear only when a component is detached from the document flow or fixed above scrolling content.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do keep accent usage restrained and functional (focus, selection, primary actions).",
-      "Do use thin, quiet borders for separation, not to “decorate” the UI.",
-      "Do ship complete interaction states: hover, focus-visible, active, disabled, loading, error."
+      "Do use Focused Violet only for primary actions, focus, selection, and meaningful state.",
+      "Do keep surfaces light, neutral, and flat unless a component is detached above the page.",
+      "Do use Inter across product UI for a consistent professional feel.",
+      "Do preserve Ant Design interaction states for hover, focus-visible, active, disabled, loading, and error.",
+      "Do use 16px mobile padding and 24px desktop page padding unless a tighter component context requires 12px.",
+      "Do communicate important states with text, icon, shape, or affordance in addition to color."
     ],
     "donts": [
-      "Don't drift into a Bootstrap-like UI (heavy borders, coarse spacing, dated feel).",
-      "Don't use gradient text, decorative glass blur, or “stripe borders” as accents."
+      "Don't make the product overly decorative, colorful, or gradient-heavy.",
+      "Don't use marketing-style SaaS visuals, noisy dashboards, playful ornamentation, or visual treatments that distract from reading request and response details.",
+      "Don't use gradient text, decorative glass blur, or colored side-stripe borders as accents.",
+      "Don't make inactive states full-saturation violet.",
+      "Don't replace familiar product affordances with custom controls unless there is a measurable workflow reason.",
+      "Don't remove keyboard focus states or rely on color alone for validation and selection."
     ]
   }
 }

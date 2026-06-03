@@ -1,0 +1,46 @@
+import type { FormErrors } from '@/shared/types/common'
+import {
+  {{FEATURE}}_VALIDATION_MESSAGES,
+  {{FEATURE}}_VALIDATION_MOCK_TRIGGERS
+} from '../constants/{{feature}}-messages'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import { {{featureCamel}}Db } from './{{feature}}-db'
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const NAME_MAX_LENGTH = 100
+
+export function validate{{Feature}}Payload(
+  data: {{Feature}}Payload,
+  options?: { readonly excludeId?: string }
+): FormErrors | null {
+  const errors: Record<string, string[]> = {}
+  const email = data.email?.trim().toLowerCase()
+  const name = data.name?.trim()
+
+  if (!email) {
+    errors.email = [{{FEATURE}}_VALIDATION_MESSAGES.emailRequired]
+  } else if (email === {{FEATURE}}_VALIDATION_MOCK_TRIGGERS.invalidEmail) {
+    errors.email = [{{FEATURE}}_VALIDATION_MESSAGES.invalidEmail]
+  } else if (!EMAIL_PATTERN.test(email)) {
+    errors.email = [...(errors.email ?? []), {{FEATURE}}_VALIDATION_MESSAGES.invalidEmail]
+  }
+
+  if (
+    email &&
+    {{featureCamel}}Db.{{featurePluralCamel}}.some(
+      (item) => item.email.toLowerCase() === email && item.id !== options?.excludeId
+    )
+  ) {
+    errors.email = [...(errors.email ?? []), {{FEATURE}}_VALIDATION_MESSAGES.emailTaken]
+  }
+
+  if (!name) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.nameRequired]
+  } else if (name === {{FEATURE}}_VALIDATION_MOCK_TRIGGERS.invalidName) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.invalidName]
+  } else if (name.length > NAME_MAX_LENGTH) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.nameTooLong]
+  }
+
+  return Object.keys(errors).length === 0 ? null : errors
+}

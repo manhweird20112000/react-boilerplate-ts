@@ -1,0 +1,15 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { unwrapResponse } from '@/shared/lib/response'
+import { {{FEATURE}}_QUERY_KEYS } from '../constants/{{feature}}-query-key'
+import { get{{Feature}}Repository } from '../services/{{feature}}.factory'
+
+export function useDelete{{Feature}}() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => unwrapResponse(await get{{Feature}}Repository().delete(id)),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: {{FEATURE}}_QUERY_KEYS.lists() })
+    }
+  })
+}

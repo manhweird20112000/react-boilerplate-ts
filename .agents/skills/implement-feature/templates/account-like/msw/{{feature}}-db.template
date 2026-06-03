@@ -1,0 +1,52 @@
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { create{{Feature}}, create{{Feature}}FromDto } from './{{feature}}-factory'
+
+export const {{featureCamel}}Db = {
+  {{featurePluralCamel}}: Array.from({ length: 36 }, (_, index) => create{{Feature}}(index))
+}
+
+const normalize{{Feature}}Data = (data: Partial<{{Feature}}>): Partial<{{Feature}}> => {
+  const normalized = { ...data }
+  if (data.email !== undefined) {
+    normalized.email = data.email.trim().toLowerCase()
+  }
+  if (data.name !== undefined) {
+    normalized.name = data.name.trim()
+  }
+  return normalized
+}
+
+export const add{{Feature}} = (data: Partial<{{Feature}}>): {{Feature}} => {
+  const nextIdNumber =
+    Math.max(
+      0,
+      ...{{featureCamel}}Db.{{featurePluralCamel}}.map((item) => Number(item.id.replace('{{feature}}-', '')))
+    ) + 1
+  const nextId = `{{feature}}-${String(nextIdNumber).padStart(4, '0')}`
+  const item = create{{Feature}}FromDto(nextId, normalize{{Feature}}Data(data))
+  {{featureCamel}}Db.{{featurePluralCamel}}.unshift(item)
+  return item
+}
+
+export const update{{Feature}} = (id: string, data: Partial<{{Feature}}>): {{Feature}} | null => {
+  const index = {{featureCamel}}Db.{{featurePluralCamel}}.findIndex((item) => item.id === id)
+  if (index === -1) {
+    return null
+  }
+  {{featureCamel}}Db.{{featurePluralCamel}}[index] = {
+    ...{{featureCamel}}Db.{{featurePluralCamel}}[index],
+    ...normalize{{Feature}}Data(data),
+    id,
+    updated_at: new Date().toISOString()
+  }
+  return {{featureCamel}}Db.{{featurePluralCamel}}[index]
+}
+
+export const delete{{Feature}} = (id: string): boolean => {
+  const index = {{featureCamel}}Db.{{featurePluralCamel}}.findIndex((item) => item.id === id)
+  if (index === -1) {
+    return false
+  }
+  {{featureCamel}}Db.{{featurePluralCamel}}.splice(index, 1)
+  return true
+}

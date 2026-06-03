@@ -1,0 +1,57 @@
+import type { PaginatedData } from '@/shared/types/common'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+type {{Feature}}QueryParams = Record<string, unknown>
+
+function getStringParam(params: {{Feature}}QueryParams, key: string): string {
+  return String(params[key] ?? '').trim().toLowerCase()
+}
+
+function getPageParam(params: {{Feature}}QueryParams, key: string, fallback: number): number {
+  const value = Number(params[key])
+  return Number.isFinite(value) && value > 0 ? value : fallback
+}
+
+export function filter{{FeaturePlural}}(
+  items: readonly {{Feature}}[],
+  params: {{Feature}}QueryParams = {}
+): readonly {{Feature}}[] {
+  const search = getStringParam(params, 'search')
+  const isEnabled = getStringParam(params, 'is_enabled')
+  const from = getStringParam(params, 'from')
+  const to = getStringParam(params, 'to')
+
+  return items.filter((item) => {
+    const matchesSearch =
+      !search ||
+      item.name.toLowerCase().includes(search) ||
+      item.description.toLowerCase().includes(search)
+    const matchesEnabled = !isEnabled || String(item.is_enabled) === isEnabled
+    const createdAt = item.created_at.slice(0, 10)
+    const matchesFrom = !from || createdAt >= from
+    const matchesTo = !to || createdAt <= to
+
+    return matchesSearch && matchesEnabled && matchesFrom && matchesTo
+  })
+}
+
+export function paginate{{FeaturePlural}}(
+  items: readonly {{Feature}}[],
+  params: {{Feature}}QueryParams = {}
+): PaginatedData<{{Feature}}> {
+  const page = getPageParam(params, 'page', 1)
+  const pageSize = getPageParam(params, 'pageSize', 20)
+  const filtered = [...filter{{FeaturePlural}}(items, params)].sort((a, b) =>
+    b.created_at.localeCompare(a.created_at)
+  )
+  const start = (page - 1) * pageSize
+  const data = filtered.slice(start, start + pageSize)
+
+  return {
+    data,
+    current_page: page,
+    total_page: Math.max(1, Math.ceil(filtered.length / pageSize)),
+    per_page: pageSize,
+    total: filtered.length
+  }
+}

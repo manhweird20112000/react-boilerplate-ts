@@ -1,0 +1,107 @@
+import { Button, Card, Spin, message } from 'antd'
+import { useCallback, useRef, type ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { AdaptiveFormDialog } from '@/shared/ui/adaptive-form-dialog'
+import { extractFormErrors } from '@/shared/lib/form-errors'
+import { getResponseMessage, translateResponseMessage } from '@/shared/lib/response'
+import { use{{Feature}}Detail } from '../hooks/use-{{feature}}-detail'
+import { useUpdate{{Feature}} } from '../hooks/use-update-{{feature}}'
+import type { {{Feature}}FormValues } from '../types/{{feature}}-form.type'
+import { {{Feature}}Form, type {{Feature}}FormHandle } from './{{feature}}-form'
+
+export type Edit{{Feature}}DialogProps = {
+  readonly open: boolean
+  readonly {{featureCamel}}Id: string
+  readonly onClose: () => void
+}
+
+export function Edit{{Feature}}Dialog({
+  open,
+  {{featureCamel}}Id,
+  onClose
+}: Edit{{Feature}}DialogProps): ReactElement {
+  const { t } = useTranslation()
+  const formRef = useRef<{{Feature}}FormHandle>(null)
+  const { data: {{featureCamel}}, isLoading } = use{{Feature}}Detail({{featureCamel}}Id)
+  const update{{Feature}} = useUpdate{{Feature}}({{featureCamel}}Id)
+  const canSubmit = !isLoading && Boolean({{featureCamel}})
+
+  const handleSubmit = useCallback(
+    async (values: {{Feature}}FormValues) => {
+      try {
+        await update{{Feature}}.mutateAsync(values)
+        message.success(t('{{featurePluralCamel}}.messages.updateSuccess'))
+        onClose()
+      } catch (error) {
+        const formErrors = extractFormErrors(error)
+        if (formErrors && formRef.current?.setServerErrors(formErrors)) {
+          throw new Error('submit_failed', { cause: error })
+        }
+        const responseMessage = translateResponseMessage(getResponseMessage(error), t)
+        message.error(responseMessage ?? t('{{featurePluralCamel}}.messages.updateFailed'))
+        throw new Error('submit_failed', { cause: error })
+      }
+    },
+    [onClose, t, update{{Feature}}]
+  )
+
+  const handleOk = useCallback(async () => {
+    if (!canSubmit) {
+      return Promise.reject(new Error('form_not_ready'))
+    }
+    try {
+      const values = await formRef.current!.submit()
+      await handleSubmit(values)
+    } catch {
+      return Promise.reject(new Error('validation_or_submit_failed'))
+    }
+  }, [canSubmit, handleSubmit])
+
+  return (
+    <AdaptiveFormDialog
+      cancelButtonProps={{ disabled: update{{Feature}}.isPending }}
+      cancelText={t('actions.cancel')}
+      closable={!update{{Feature}}.isPending}
+      confirmLoading={update{{Feature}}.isPending}
+      destroyOnClose
+      footer={
+        isLoading
+          ? null
+          : !{{featureCamel}}
+            ? [
+                <Button key="cancel" onClick={onClose}>
+                  {t('actions.cancel')}
+                </Button>
+              ]
+            : undefined
+      }
+      maskClosable={!update{{Feature}}.isPending}
+      okButtonProps={{ disabled: !canSubmit }}
+      okText={t('actions.save')}
+      onClose={onClose}
+      onOk={handleOk}
+      open={open}
+      title={t('{{featurePluralCamel}}.editTitle')}
+    >
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: 24 }}>
+          <Spin />
+        </div>
+      ) : !{{featureCamel}} ? (
+        <Card>{t('{{featurePluralCamel}}.messages.notFound')}</Card>
+      ) : (
+        <{{Feature}}Form
+          key={{{featureCamel}}.id}
+          ref={formRef}
+          defaultValues={{
+            email: {{featureCamel}}.email,
+            name: {{featureCamel}}.name,
+            status: {{featureCamel}}.status,
+            role: {{featureCamel}}.role
+          }}
+        />
+      )}
+    </AdaptiveFormDialog>
+  )
+}

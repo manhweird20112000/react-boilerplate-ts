@@ -1,0 +1,63 @@
+import type { FormErrors, PaginatedData } from '@/shared/types/common'
+import { {{FEATURE}}_SERVICE_MESSAGES } from '../constants/{{feature}}-messages'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+import { query{{FeaturePlural}} } from '../utils/{{feature}}-query'
+import { {{featureCamel}}Db, add{{Feature}}, delete{{Feature}}, update{{Feature}} } from './{{feature}}-db'
+import { validate{{Feature}}Payload } from './{{feature}}-validation'
+
+export type {{Feature}}OperationFailure = {
+  readonly ok: false
+  readonly message: string
+  readonly errors?: FormErrors
+}
+
+export type {{Feature}}OperationSuccess<T> = {
+  readonly ok: true
+  readonly data: T
+}
+
+export type {{Feature}}OperationResult<T> = {{Feature}}OperationSuccess<T> | {{Feature}}OperationFailure
+
+export function list{{Feature}}Records(params: Record<string, unknown> = {}): PaginatedData<{{Feature}}> {
+  return query{{FeaturePlural}}({{featureCamel}}Db.{{featurePluralCamel}}, params)
+}
+
+export function get{{Feature}}Record(id: string): {{Feature}} | null {
+  return {{featureCamel}}Db.{{featurePluralCamel}}.find((entry) => entry.id === id) ?? null
+}
+
+export function create{{Feature}}Record(data: {{Feature}}Payload): {{Feature}}OperationResult<boolean> {
+  const errors = validate{{Feature}}Payload(data)
+  if (errors) {
+    return { ok: false, message: {{FEATURE}}_SERVICE_MESSAGES.validationFailed, errors }
+  }
+  add{{Feature}}(data)
+  return { ok: true, data: true }
+}
+
+export function update{{Feature}}Record(
+  id: string,
+  data: {{Feature}}Payload
+): {{Feature}}OperationResult<boolean> {
+  const exists = {{featureCamel}}Db.{{featurePluralCamel}}.some((entry) => entry.id === id)
+  if (!exists) {
+    return { ok: false, message: {{FEATURE}}_SERVICE_MESSAGES.notFound }
+  }
+  const errors = validate{{Feature}}Payload(data, { excludeId: id })
+  if (errors) {
+    return { ok: false, message: {{FEATURE}}_SERVICE_MESSAGES.validationFailed, errors }
+  }
+  const item = update{{Feature}}(id, data)
+  if (!item) {
+    return { ok: false, message: {{FEATURE}}_SERVICE_MESSAGES.notFound }
+  }
+  return { ok: true, data: true }
+}
+
+export function delete{{Feature}}Record(id: string): {{Feature}}OperationResult<boolean> {
+  if (!delete{{Feature}}(id)) {
+    return { ok: false, message: {{FEATURE}}_SERVICE_MESSAGES.notFound }
+  }
+  return { ok: true, data: true }
+}

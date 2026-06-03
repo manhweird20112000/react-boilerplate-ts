@@ -1,41 +1,7 @@
-import { lazy, Suspense, type ReactElement } from 'react'
+import { Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AuthGuard, GuestGuard } from '~/features/auth/components/guards'
-import { GOOGLE_CALLBACK_ROUTE } from '~/features/auth/constants/admin-auth.paths'
 
-const DefaultLayout = lazy(() =>
-  import('@/shared/layouts/default').then((m) => ({ default: m.DefaultLayout }))
-)
-const ProtectedAppProviders = lazy(() =>
-  import('./protected-app-providers').then((m) => ({ default: m.ProtectedAppProviders }))
-)
-const AuthLayout = lazy(() =>
-  import('~/features/auth/pages/auth-layout').then((m) => ({ default: m.AuthLayout }))
-)
-const LoginPage = lazy(() =>
-  import('~/features/auth/pages/login-page').then((m) => ({ default: m.LoginPage }))
-)
-const RegisterPage = lazy(() =>
-  import('~/features/auth/pages/register-page').then((m) => ({ default: m.RegisterPage }))
-)
-const ForgotPasswordPage = lazy(() =>
-  import('~/features/auth/pages/forgot-password-page').then((m) => ({
-    default: m.ForgotPasswordPage
-  }))
-)
-const GoogleCallbackPage = lazy(() =>
-  import('~/features/auth/pages/google-callback-page').then((m) => ({
-    default: m.GoogleCallbackPage
-  }))
-)
-const WorkbenchPage = lazy(() =>
-  import('@/features/api-workbench').then((m) => ({ default: m.WorkbenchPage }))
-)
-
-// Order feature
-const ListOrderPage = lazy(() =>
-  import('@/features/orders/pages/list.page').then((m) => ({ default: m.ListOrderPage }))
-)
+import { ApiWorkbenchPage } from '@/features/api-workbench'
 
 function ErrorPage({ title }: { readonly title: string }): ReactElement {
   return <div>{title}</div>
@@ -48,42 +14,8 @@ export function AppRoutes(): ReactElement {
   return (
     <Suspense fallback={null}>
       <Routes>
-        <Route path={GOOGLE_CALLBACK_ROUTE} element={<GoogleCallbackPage />} />
-
-        {/* Local-first workbench routes do not require account login. */}
-        <Route
-          element={
-            <ProtectedAppProviders>
-              <DefaultLayout />
-            </ProtectedAppProviders>
-          }
-        >
-          <Route path="/workbench" element={<WorkbenchPage />} />
-          <Route path="/" element={<Navigate to="/workbench" replace />} />
-        </Route>
-
-        {/* Public Auth Routes */}
-        <Route element={<GuestGuard />}>
-          <Route path="/auth" element={<AuthLayout />}>
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          </Route>
-        </Route>
-
-        {/* Protected Routes */}
-        <Route element={<AuthGuard />}>
-          <Route
-            element={
-              <ProtectedAppProviders>
-                <DefaultLayout />
-              </ProtectedAppProviders>
-            }
-          >
-            <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
-            <Route path="/orders" element={<ListOrderPage />} />
-          </Route>
-        </Route>
+        <Route path="/" element={<Navigate to="/workbench" replace />} />
+        <Route path="/workbench" element={<ApiWorkbenchPage />} />
 
         <Route path="/403" element={<ErrorPage title="Forbidden" />} />
         <Route path="/404" element={<ErrorPage title="Not found" />} />

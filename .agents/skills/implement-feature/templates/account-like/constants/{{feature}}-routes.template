@@ -1,0 +1,14 @@
+export const {{FEATURE}}_ROUTES = {
+  list: '/{{featurePlural}}',
+  create: '/{{featurePlural}}/create',
+  edit: (id: string) => `/{{featurePlural}}/${id}/edit`
+} as const
+
+export type {{Feature}}ListModalState =
+  | { readonly modal: 'create' }
+  | { readonly modal: 'edit'; readonly {{featureCamel}}Id: string }
+
+export const {{FEATURE}}_MODAL_STATE = {
+  create: { modal: 'create' } as const,
+  edit: ({{featureCamel}}Id: string) => ({ modal: 'edit', {{featureCamel}}Id }) as const
+} as const

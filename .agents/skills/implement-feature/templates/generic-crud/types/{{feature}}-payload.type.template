@@ -1,0 +1,3 @@
+import type { {{Feature}} } from './{{feature}}.type'
+
+export type {{Feature}}Payload = Partial<Pick<{{Feature}}, 'name' | 'description' | 'is_enabled'>>

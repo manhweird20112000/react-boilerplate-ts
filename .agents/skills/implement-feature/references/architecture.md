@@ -1,82 +1,36 @@
-# Frontend Feature Architecture
+# Feature Architecture
 
-Use feature-based architecture
+Layer responsibilities (types, constants, services, hooks, components, pages, utils, msw): see `codebase-folder-structure`.
 
-Each feature owns its own:
+This file documents the **dependency direction** that scaffolded features must respect.
 
-- types
-- constants
-- services
-- hooks
-- components
-- pages
-- utils
-- public exports
-
-Feature-specific code must stay inside the feature folder.
-
-Shared reusable code may be imported from:
+## Allowed direction
 
 ```txt
-src/shared/
+pages       → hooks
+pages       → components
+pages       → utils
+hooks       → services
+hooks       → constants
+services    → api client (infra)
+services    → types
+components  → types
+utils       → types
 ```
 
-## Layer
-
-### types/
-
-Contains TypeScript types and interfaces only.
-
-### constants/
-
-Contains stable constants:
-
-- query keys
-- routes
-- options
-- labels
-
-### services/
-
-Contains API calls only.
-
-### hooks/
-
-Contains data-fetching and mutation logic.
-
-### components/
-
-Contains UI components.
-
-### pages/
-
-Contains route-level composition.
-
-### utils/
-
-Contains mapping and transformation logic.
-
-### Allowed Dependency Direction
+## Forbidden direction
 
 ```txt
-pages -> hooks
-pages -> components
-pages -> utils
-hooks -> services
-hooks -> constants
-services -> api client
-services -> types
-components -> types
-utils -> types
+services   → hooks
+services   → components
+hooks      → components
+components → services
+components → api client
+types      → runtime logic
 ```
 
-### Forbidden Dependency Direction
+## Notes
 
-```txt
-services -> hooks
-services -> components
-hooks -> components
-components -> services
-components -> api client
-types -> runtime logic
-```
+- Feature-specific code stays inside its feature folder. Cross-feature reuse goes through `shared/` or a typed contract.
+- Hooks orchestrate; they do not own domain rules. Model complex rules before scaffolding UI.
+- Mutation hooks must invalidate the right query keys; query keys live in `constants/`.

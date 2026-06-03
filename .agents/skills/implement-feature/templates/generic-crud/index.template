@@ -1,0 +1,3 @@
+export { List{{Feature}}Page } from './pages/list-{{feature}}.page'
+export { {{FEATURE}}_ROUTES } from './constants/{{feature}}-routes'
+export type { {{Feature}} } from './types/{{feature}}.type'

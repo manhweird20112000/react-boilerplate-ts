@@ -1,0 +1,81 @@
+import { Col, Input, Select } from 'antd'
+import type { Dayjs } from 'dayjs'
+import { lazy, Suspense, type ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+
+const AdaptiveRangePicker = lazy(() =>
+  import('@/shared/ui/adaptive-range-picker').then((m) => ({ default: m.AdaptiveRangePicker }))
+)
+
+export type {{Feature}}ListFiltersProps = {
+  readonly search: string
+  readonly status: string | undefined
+  readonly role: string | undefined
+  readonly dateRange: [Dayjs | null, Dayjs | null] | null
+  readonly onSearchChange: (value: string) => void
+  readonly onStatusChange: (value: string | undefined) => void
+  readonly onRoleChange: (value: string | undefined) => void
+  readonly onDateRangeChange: (dateRange: [Dayjs | null, Dayjs | null] | null) => void
+}
+
+export function {{Feature}}ListFilters({
+  search,
+  status,
+  role,
+  dateRange,
+  onSearchChange,
+  onStatusChange,
+  onRoleChange,
+  onDateRangeChange
+}: {{Feature}}ListFiltersProps): ReactElement {
+  const { t } = useTranslation()
+  return (
+    <>
+      <Col xs={24} md={8} lg={6}>
+        <Input.Search
+          allowClear
+          onChange={(event) => onSearchChange(event.target.value)}
+          onSearch={onSearchChange}
+          placeholder={t('{{featurePluralCamel}}.filters.searchPlaceholder')}
+          value={search}
+        />
+      </Col>
+      <Col xs={24} md={6} lg={4}>
+        <Select
+          allowClear
+          onChange={onStatusChange}
+          options={[
+            { label: t('{{featurePluralCamel}}.status.active'), value: 'active' },
+            { label: t('{{featurePluralCamel}}.status.inactive'), value: 'inactive' }
+          ]}
+          placeholder={t('{{featurePluralCamel}}.fields.status')}
+          style={{ width: '100%' }}
+          value={status}
+        />
+      </Col>
+      <Col xs={24} md={6} lg={4}>
+        <Select
+          allowClear
+          onChange={onRoleChange}
+          options={[
+            { label: t('{{featurePluralCamel}}.role.admin'), value: 'admin' },
+            { label: t('{{featurePluralCamel}}.role.staff'), value: 'staff' }
+          ]}
+          placeholder={t('{{featurePluralCamel}}.fields.role')}
+          style={{ width: '100%' }}
+          value={role}
+        />
+      </Col>
+      <Col xs={24} md={6} lg={5}>
+        <Suspense fallback={<div style={{ height: 32 }} />}>
+          <AdaptiveRangePicker
+            format="YYYY-MM-DD"
+            onChange={onDateRangeChange}
+            style={{ width: '100%' }}
+            value={dateRange}
+          />
+        </Suspense>
+      </Col>
+    </>
+  )
+}

@@ -1,0 +1,40 @@
+import type { FormErrors } from '@/shared/types/common'
+import {
+  {{FEATURE}}_VALIDATION_MESSAGES,
+  {{FEATURE}}_VALIDATION_MOCK_TRIGGERS
+} from '../constants/{{feature}}-messages'
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import { {{featureCamel}}Db } from './{{feature}}-db'
+
+const NAME_MAX_LENGTH = 100
+
+export function validate{{Feature}}Payload(
+  data: {{Feature}}Payload,
+  options?: { readonly excludeId?: string }
+): FormErrors | null {
+  const errors: Record<string, string[]> = {}
+  const name = data.name?.trim()
+
+  if (!name) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.nameRequired]
+  } else if (name === {{FEATURE}}_VALIDATION_MOCK_TRIGGERS.invalidName) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.invalidName]
+  } else if (name.length > NAME_MAX_LENGTH) {
+    errors.name = [{{FEATURE}}_VALIDATION_MESSAGES.nameTooLong]
+  }
+
+  if (
+    name &&
+    {{featureCamel}}Db.{{featurePluralCamel}}.some(
+      (item) => item.name.toLowerCase() === name.toLowerCase() && item.id !== options?.excludeId
+    )
+  ) {
+    errors.name = [...(errors.name ?? []), {{FEATURE}}_VALIDATION_MESSAGES.nameTaken]
+  }
+
+  if (Object.keys(errors).length === 0) {
+    return null
+  }
+
+  return errors
+}

@@ -1,0 +1,31 @@
+import type { {{Feature}}Repository } from './{{feature}}.repository'
+import { {{Feature}}RepoImpl } from './http-{{feature}}.repository.impl'
+import { Mock{{Feature}}RepositoryImpl } from './mock-{{feature}}.repository.impl'
+
+class {{Feature}}RepositoryFactory {
+  private static instance: {{Feature}}RepositoryFactory
+
+  private constructor() {}
+
+  public static getInstance(): {{Feature}}RepositoryFactory {
+    if (!{{Feature}}RepositoryFactory.instance) {
+      {{Feature}}RepositoryFactory.instance = new {{Feature}}RepositoryFactory()
+    }
+    return {{Feature}}RepositoryFactory.instance
+  }
+
+  public createRepository(): {{Feature}}Repository {
+    const isMock = import.meta.env.VITE_USE_MOCK === 'true'
+    const isMsw = import.meta.env.VITE_USE_MSW === 'true'
+    if (isMsw || !isMock) {
+      return new {{Feature}}RepoImpl()
+    }
+    return new Mock{{Feature}}RepositoryImpl()
+  }
+}
+
+export const {{featureCamel}}RepositoryFactory = {{Feature}}RepositoryFactory.getInstance()
+
+export function get{{Feature}}Repository(): {{Feature}}Repository {
+  return {{featureCamel}}RepositoryFactory.createRepository()
+}

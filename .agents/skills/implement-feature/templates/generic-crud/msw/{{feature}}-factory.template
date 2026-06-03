@@ -1,0 +1,35 @@
+import { faker } from '@faker-js/faker'
+
+import type { {{Feature}}Payload } from '../types/{{feature}}-payload.type'
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+function toIso(date: Date): string {
+  return date.toISOString()
+}
+
+export function createMock{{Feature}}(data: Partial<{{Feature}}> = {}): {{Feature}} {
+  const createdAt = data.created_at ? new Date(data.created_at) : faker.date.recent({ days: 30 })
+  const updatedAt = data.updated_at ? new Date(data.updated_at) : createdAt
+
+  return {
+    id: data.id ?? faker.string.uuid(),
+    name: data.name ?? faker.lorem.words(3),
+    description: data.description ?? faker.lorem.sentence(),
+    is_enabled: data.is_enabled ?? faker.datatype.boolean(),
+    created_at: toIso(createdAt),
+    updated_at: toIso(updatedAt)
+  }
+}
+
+export function create{{Feature}}FromPayload(data: {{Feature}}Payload): {{Feature}} {
+  const now = new Date().toISOString()
+
+  return {
+    id: faker.string.uuid(),
+    name: data.name?.trim() ?? 'New {{Feature}}',
+    description: data.description?.trim() ?? '',
+    is_enabled: data.is_enabled ?? true,
+    created_at: now,
+    updated_at: now
+  }
+}

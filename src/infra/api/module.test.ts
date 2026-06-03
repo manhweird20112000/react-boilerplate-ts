@@ -52,7 +52,8 @@ describe('HttpModule', () => {
   it('should initialize with baseURL and timeout', () => {
     expect(axios.create).toHaveBeenCalledWith({
       baseURL: 'https://api.example.com',
-      timeout: 50000
+      timeout: 50000,
+      withCredentials: true
     })
   })
 

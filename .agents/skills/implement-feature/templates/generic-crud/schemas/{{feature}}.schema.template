@@ -1,0 +1,28 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+
+import type { {{Feature}}FormValues } from '../types/{{feature}}-form.type'
+
+export function use{{Feature}}Schema() {
+  const { t } = useTranslation()
+
+  return useMemo(
+    () =>
+      z.object({
+        name: z
+          .string()
+          .trim()
+          .min(1, t('validation.required', { _field_: t('{{featurePluralCamel}}.fields.name') }))
+          .max(100, t('validation.max', { _field_: t('{{featurePluralCamel}}.fields.name'), _length_: 100 })),
+        description: z
+          .string()
+          .trim()
+          .max(500, t('validation.max', { _field_: t('{{featurePluralCamel}}.fields.description'), _length_: 500 })),
+        is_enabled: z.boolean()
+      }) satisfies z.ZodType<{{Feature}}FormValues>,
+    [t]
+  )
+}
+
+export type {{Feature}}SchemaValues = z.infer<ReturnType<typeof use{{Feature}}Schema>>

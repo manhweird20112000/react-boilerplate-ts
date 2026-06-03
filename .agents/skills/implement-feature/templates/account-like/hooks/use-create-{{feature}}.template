@@ -1,0 +1,17 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { unwrapResponse } from '@/shared/lib/response'
+import { {{FEATURE}}_QUERY_KEYS } from '../constants/{{feature}}-query-key'
+import { get{{Feature}}Repository } from '../services/{{feature}}.factory'
+import type { {{Feature}}FormValues } from '../types/{{feature}}-form.type'
+
+export function useCreate{{Feature}}() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (data: {{Feature}}FormValues) =>
+      unwrapResponse(await get{{Feature}}Repository().create(data)),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: {{FEATURE}}_QUERY_KEYS.lists() })
+    }
+  })
+}

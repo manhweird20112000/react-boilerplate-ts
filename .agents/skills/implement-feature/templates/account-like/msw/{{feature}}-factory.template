@@ -1,0 +1,32 @@
+import { faker } from '@faker-js/faker'
+
+import type { {{Feature}} } from '../types/{{feature}}.type'
+
+const toIso = (date: Date): string => date.toISOString()
+
+export const create{{Feature}} = (index = 0): {{Feature}} => {
+  const createdAt = faker.date.recent({ days: 120 })
+  const updatedAt = faker.date.between({ from: createdAt, to: new Date() })
+  return {
+    id: `{{feature}}-${String(index + 1).padStart(4, '0')}`,
+    email: faker.internet.email().toLowerCase(),
+    name: faker.person.fullName(),
+    status: faker.helpers.arrayElement(['active', 'inactive']),
+    role: faker.helpers.arrayElement(['admin', 'staff']),
+    created_at: toIso(createdAt),
+    updated_at: toIso(updatedAt)
+  }
+}
+
+export const create{{Feature}}FromDto = (id: string, data: Partial<{{Feature}}>): {{Feature}} => {
+  const now = new Date().toISOString()
+  return {
+    id,
+    email: data.email ?? 'new@example.com',
+    name: data.name ?? 'New {{Feature}}',
+    status: data.status ?? 'active',
+    role: data.role ?? 'staff',
+    created_at: data.created_at ?? now,
+    updated_at: data.updated_at ?? now
+  }
+}

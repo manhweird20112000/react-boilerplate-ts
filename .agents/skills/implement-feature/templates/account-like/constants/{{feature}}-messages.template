@@ -1,0 +1,23 @@
+export const {{FEATURE}}_SERVICE_MESSAGES = {
+  listSuccess: '{{FeaturePlural}} fetched',
+  getSuccess: '{{Feature}} fetched',
+  createSuccess: '{{featurePluralCamel}}.messages.createSuccess',
+  updateSuccess: '{{featurePluralCamel}}.messages.updateSuccess',
+  deleteSuccess: '{{featurePluralCamel}}.messages.deleteSuccess',
+  notFound: '{{featurePluralCamel}}.messages.notFound',
+  validationFailed: '{{featurePluralCamel}}.messages.validationFailed'
+} as const
+
+export const {{FEATURE}}_VALIDATION_MOCK_TRIGGERS = {
+  invalidEmail: 'invalid@example.com',
+  invalidName: 'error'
+} as const
+
+export const {{FEATURE}}_VALIDATION_MESSAGES = {
+  emailRequired: '{{featurePluralCamel}}.validation.emailRequired',
+  nameRequired: '{{featurePluralCamel}}.validation.nameRequired',
+  nameTooLong: '{{featurePluralCamel}}.validation.nameTooLong',
+  invalidEmail: '{{featurePluralCamel}}.validation.invalidEmail',
+  invalidName: '{{featurePluralCamel}}.validation.invalidName',
+  emailTaken: '{{featurePluralCamel}}.validation.emailTaken'
+} as const

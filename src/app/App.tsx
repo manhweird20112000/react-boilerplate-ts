@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect, useState, type ReactElement } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
+import { TooltipProvider } from '@/shared/components/ui/tooltip'
+
 import { AppRoutes } from './routes'
-import { AuthProvider } from '~/features/auth/hooks/auth-provider'
 
 const LazyToaster = lazy(() => import('sonner').then((m) => ({ default: m.Toaster })))
 
@@ -42,10 +43,10 @@ function IdleToaster(): ReactElement | null {
 function App(): ReactElement {
   return (
     <BrowserRouter>
-      <AuthProvider>
+      <TooltipProvider>
         <AppRoutes />
         <IdleToaster />
-      </AuthProvider>
+      </TooltipProvider>
     </BrowserRouter>
   )
 }

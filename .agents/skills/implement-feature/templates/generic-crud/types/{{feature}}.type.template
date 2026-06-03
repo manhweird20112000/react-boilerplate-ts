@@ -1,0 +1,8 @@
+export interface {{Feature}} {
+  id: string
+  name: string
+  description: string
+  is_enabled: boolean
+  created_at: string
+  updated_at: string
+}

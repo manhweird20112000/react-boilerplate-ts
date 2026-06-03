@@ -1,0 +1,13 @@
+export type {{Feature}}Status = 'active' | 'inactive'
+
+export type {{Feature}}Role = 'admin' | 'staff'
+
+export interface {{Feature}} {
+  id: string
+  email: string
+  name: string
+  status: {{Feature}}Status
+  role: {{Feature}}Role
+  created_at: string
+  updated_at: string
+}

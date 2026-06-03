@@ -1,0 +1,7 @@
+export const {{FEATURE}}_QUERY_KEYS = {
+  all: ['{{featurePlural}}'] as const,
+  lists: () => [...{{FEATURE}}_QUERY_KEYS.all, 'list'] as const,
+  list: (params: Record<string, unknown>) => [...{{FEATURE}}_QUERY_KEYS.lists(), params] as const,
+  details: () => [...{{FEATURE}}_QUERY_KEYS.all, 'detail'] as const,
+  detail: (id: string) => [...{{FEATURE}}_QUERY_KEYS.details(), id] as const
+}

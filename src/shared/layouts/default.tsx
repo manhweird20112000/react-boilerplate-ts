@@ -1,4 +1,5 @@
 import {
+  ApiOutlined,
   DashboardOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -18,6 +19,11 @@ const menuItems: MenuItem[] = [
     key: '/dashboard',
     icon: <DashboardOutlined />,
     label: 'Dashboard'
+  },
+  {
+    key: '/workbench',
+    icon: <ApiOutlined />,
+    label: 'Workbench'
   },
   {
     key: '/orders',
@@ -165,7 +171,11 @@ export function DefaultLayout() {
           />
 
           <Typography.Title level={4} style={{ margin: 0 }}>
-            {selectedKeys[0] === '/orders' ? 'Orders' : 'Dashboard'}
+            {selectedKeys[0] === '/orders'
+              ? 'Orders'
+              : selectedKeys[0] === '/workbench'
+                ? 'Workbench'
+                : 'Dashboard'}
           </Typography.Title>
 
           <UserMenu />

@@ -1,3 +1,4 @@
+export { WorkbenchPage } from './pages/workbench-page'
 export * from './schemas'
 export * from './services'
 export * from './types'

@@ -28,6 +28,15 @@ export const UserMenu: React.FC = () => {
     }
   ]
 
+  if (!user) {
+    return (
+      <Space style={{ marginInlineStart: 'auto' }}>
+        <Avatar icon={<UserOutlined />} />
+        <Typography.Text type="secondary">Local mode</Typography.Text>
+      </Space>
+    )
+  }
+
   return (
     <Dropdown menu={{ items: menuItems }} placement="bottomRight" trigger={['click']}>
       <Space style={{ cursor: 'pointer', marginInlineStart: 'auto' }}>

@@ -28,6 +28,9 @@ const GoogleCallbackPage = lazy(() =>
     default: m.GoogleCallbackPage
   }))
 )
+const WorkbenchPage = lazy(() =>
+  import('@/features/api-workbench').then((m) => ({ default: m.WorkbenchPage }))
+)
 
 // Order feature
 const ListOrderPage = lazy(() =>
@@ -46,6 +49,18 @@ export function AppRoutes(): ReactElement {
     <Suspense fallback={null}>
       <Routes>
         <Route path={GOOGLE_CALLBACK_ROUTE} element={<GoogleCallbackPage />} />
+
+        {/* Local-first workbench routes do not require account login. */}
+        <Route
+          element={
+            <ProtectedAppProviders>
+              <DefaultLayout />
+            </ProtectedAppProviders>
+          }
+        >
+          <Route path="/workbench" element={<WorkbenchPage />} />
+          <Route path="/" element={<Navigate to="/workbench" replace />} />
+        </Route>
 
         {/* Public Auth Routes */}
         <Route element={<GuestGuard />}>
@@ -67,7 +82,6 @@ export function AppRoutes(): ReactElement {
           >
             <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
             <Route path="/orders" element={<ListOrderPage />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Route>
 

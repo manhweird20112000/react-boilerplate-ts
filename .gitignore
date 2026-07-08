@@ -32,6 +32,7 @@ lerna-debug.log*
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.playwright-mcp/
 
 # IDE & Editor
 .vscode/*

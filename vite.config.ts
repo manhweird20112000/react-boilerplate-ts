@@ -28,14 +28,6 @@ function resolveManualChunk(moduleId: string): string | undefined {
     return undefined
   }
 
-  if (
-    packageName === '@reduxjs/toolkit' ||
-    packageName === 'redux-saga' ||
-    packageName === 'react-redux'
-  ) {
-    return 'redux-vendor'
-  }
-
   if (packageName === 'react-router' || packageName === 'react-router-dom') {
     return 'router-vendor'
   }
@@ -95,7 +87,7 @@ export default defineConfig(({ mode }) => {
       host: true
     },
     optimizeDeps: {
-      include: ['@reduxjs/toolkit', 'react', 'react-dom', 'react-router-dom']
+      include: ['react', 'react-dom', 'react-router-dom']
     },
     test: {
       environment: 'happy-dom',
@@ -108,7 +100,7 @@ export default defineConfig(({ mode }) => {
           'node_modules/**',
           'src/shared/utils/mock-data/**',
           'src/tests/**',
-          'src/mocks/**',
+          'src/**/msw/**',
           'src/routes/**',
           'src/store/**'
         ],

@@ -1,7 +1,0 @@
-import { n as e } from './chunk-BneVvdWh.js'
-import { O as t, d as n, f as r, k as i, l as a, u as o } from './iframe-SXVsTQNR.js'
-var s
-e(() => {
-  ;(n(), o(), i(), (s = (0, t(r(), 1).default)(2)(async (e, t) => (e === !1 ? t : a(t)))))
-})()
-export { s as formatter }

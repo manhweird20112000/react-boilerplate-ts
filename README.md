@@ -137,7 +137,6 @@ GitHub Actions workflows:
 | -------- | ------- | ------- |
 | `ci.yml` | push/PR to `main`/`master` | ESLint (`src`), unit tests, Vite build, Docker build smoke test |
 | `docker-deploy.yml` | push to `main`/`master`, tags `v*` | Build and push image to GitHub Container Registry |
-| `playwright.yml` | push/PR to `main`/`master` | E2E tests |
 
 ### Deploy image from GHCR
 

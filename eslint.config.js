@@ -8,13 +8,11 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores([
     'dist',
-    'storybook-static',
     'public/mockServiceWorker.js',
     'node_modules',
     '.agents/**',
     '.augment/**',
-    'coverage/**',
-    'playwright-report/**'
+    'coverage/**'
   ]),
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -41,7 +39,7 @@ export default defineConfig([
     }
   },
   {
-    files: ['**/*.{test,spec}.{ts,tsx}', 'tests/**/*.ts', 'src/tests/**/*.ts'],
+    files: ['**/*.{test,spec}.{ts,tsx}', 'src/tests/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'warn',

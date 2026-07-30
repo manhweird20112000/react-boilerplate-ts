@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ReactElement } from 'react'
+import { Component, lazy, Suspense, useEffect, useState, type ErrorInfo, type ReactElement, type ReactNode } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { AppRoutes } from './routes'
@@ -10,6 +10,33 @@ const LazyToaster = lazy(() => import('sonner').then((m) => ({ default: m.Toaste
 type IdleWindow = Window & {
   requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
   cancelIdleCallback?: (handle: number) => void
+}
+
+type AppErrorBoundaryProps = {
+  readonly children: ReactNode
+}
+
+type AppErrorBoundaryState = {
+  readonly hasError: boolean
+}
+
+class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
+  public state: AppErrorBoundaryState = { hasError: false }
+
+  public static getDerivedStateFromError(): AppErrorBoundaryState {
+    return { hasError: true }
+  }
+
+  public componentDidCatch(error: Error, info: ErrorInfo): void {
+    console.error('App render failed', error, info)
+  }
+
+  public render(): ReactNode {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>
+    }
+    return this.props.children
+  }
 }
 
 function IdleToaster(): ReactElement | null {
@@ -43,9 +70,11 @@ function IdleToaster(): ReactElement | null {
 function App(): ReactElement {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <AppErrorBoundary>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </AppErrorBoundary>
       <IdleToaster />
     </BrowserRouter>
   )

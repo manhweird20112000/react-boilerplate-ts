@@ -68,6 +68,15 @@ describe('StorageService', () => {
       LocalStorage.clearStorage()
       expect(localStorage.getItem('test-key')).toBeNull()
     })
+
+    it('should return null when web storage throws', () => {
+      const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('blocked')
+      })
+      const value = LocalStorage.getStorage('test-key')
+      expect(value).toBeNull()
+      getItemSpy.mockRestore()
+    })
   })
 
   describe('SessionStorage', () => {

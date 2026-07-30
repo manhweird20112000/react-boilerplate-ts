@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { GuestGuard } from '~/features/auth/components/guards'
+import { Spin } from 'antd'
+import { AuthGuard, GuestGuard } from '~/features/auth/components/guards'
 
 const DefaultLayout = lazy(() =>
   import('@/shared/layouts/default').then((m) => ({ default: m.DefaultLayout }))
@@ -32,12 +33,22 @@ function ErrorPage({ title }: { readonly title: string }): ReactElement {
   return <div>{title}</div>
 }
 
+function RouteFallback(): ReactElement {
+  return (
+    <div
+      style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
+      <Spin size="large" />
+    </div>
+  )
+}
+
 /**
  * Application route tree; lazy-loaded feature pages stay in their modules.
  */
 export function AppRoutes(): ReactElement {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<RouteFallback />}>
       <Routes>
         {/* Public Auth Routes */}
         <Route element={<GuestGuard />}>
@@ -49,22 +60,24 @@ export function AppRoutes(): ReactElement {
         </Route>
 
         {/* Protected Routes */}
-        <Route
-          element={
-            <ProtectedAppProviders>
-              <DefaultLayout />
-            </ProtectedAppProviders>
-          }
-        >
-          <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
-          <Route path="/orders" element={<ListOrderPage />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<AuthGuard />}>
+          <Route
+            element={
+              <ProtectedAppProviders>
+                <DefaultLayout />
+              </ProtectedAppProviders>
+            }
+          >
+            <Route path="/dashboard" element={<div>Dashboard (Placeholder)</div>} />
+            <Route path="/orders" element={<ListOrderPage />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Route>
         </Route>
 
         <Route path="/403" element={<ErrorPage title="Forbidden" />} />
         <Route path="/404" element={<ErrorPage title="Not found" />} />
         <Route path="/500" element={<ErrorPage title="Server error" />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
     </Suspense>
   )

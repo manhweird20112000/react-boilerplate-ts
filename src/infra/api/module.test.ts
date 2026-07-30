@@ -49,10 +49,11 @@ describe('HttpModule', () => {
     mockInstance = module.getInstance()
   })
 
-  it('should initialize with baseURL and timeout', () => {
+  it('should initialize with baseURL, timeout, and credentials', () => {
     expect(axios.create).toHaveBeenCalledWith({
       baseURL: 'https://api.example.com',
-      timeout: 50000
+      timeout: 50000,
+      withCredentials: true
     })
   })
 
@@ -110,6 +111,48 @@ describe('HttpModule', () => {
       expect(originalRequest._retry).toBe(true)
     })
 
+    it('should share one refresh across concurrent 401 responses', async () => {
+      let resolveRefresh: (() => void) | undefined
+      const refreshTokenHandler = vi.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveRefresh = resolve
+          })
+      )
+      module.setRefreshTokenHandler(refreshTokenHandler)
+      const createUnauthorizedError = (url: string) => ({
+        response: { status: 401 },
+        config: { url, _retry: false, headers: { delete: vi.fn() } }
+      })
+      vi.mocked(mockInstance).mockResolvedValue({ data: 'refreshed' })
+
+      const firstRequest = responseErrorInterceptor(createUnauthorizedError('/first'))
+      const secondRequest = responseErrorInterceptor(createUnauthorizedError('/second'))
+      const thirdRequest = responseErrorInterceptor(createUnauthorizedError('/third'))
+
+      expect(refreshTokenHandler).toHaveBeenCalledTimes(1)
+      resolveRefresh?.()
+      await expect(Promise.all([firstRequest, secondRequest, thirdRequest])).resolves.toEqual([
+        { data: 'refreshed' },
+        { data: 'refreshed' },
+        { data: 'refreshed' }
+      ])
+      expect(mockInstance).toHaveBeenCalledTimes(3)
+    })
+
+    it('should not refresh token on auth endpoint 401', async () => {
+      const refreshTokenHandler = vi.fn()
+      module.setRefreshTokenHandler(refreshTokenHandler)
+
+      const error = {
+        response: { status: 401 },
+        config: { url: '/auth/login', _retry: false }
+      } as any
+
+      await expect(responseErrorInterceptor(error)).rejects.toEqual(error)
+      expect(refreshTokenHandler).not.toHaveBeenCalled()
+    })
+
     it('should not refresh token if status is not 401', async () => {
       const refreshTokenHandler = vi.fn()
       module.setRefreshTokenHandler(refreshTokenHandler)
@@ -123,29 +166,17 @@ describe('HttpModule', () => {
       expect(refreshTokenHandler).not.toHaveBeenCalled()
     })
 
-    it('should redirect to error pages for GET requests', async () => {
-      // Mock window.location
-      const originalLocation = window.location
+    it('should reject GET errors without hard navigation', async () => {
       const locationMock = { href: '' }
       vi.stubGlobal('location', locationMock)
 
-      const testCases = [
-        { status: 403, expected: '/403' },
-        { status: 404, expected: '/404' },
-        { status: 500, expected: '/500' }
-      ]
+      const error = {
+        response: { status: 404 },
+        config: { method: 'get', url: '/data' }
+      } as any
 
-      for (const { status, expected } of testCases) {
-        const error = {
-          response: { status },
-          config: { method: 'get', url: '/data' }
-        } as any
-
-        await expect(responseErrorInterceptor(error)).rejects.toEqual(error)
-        expect(window.location.href).toBe(expected)
-      }
-
-      vi.stubGlobal('location', originalLocation)
+      await expect(responseErrorInterceptor(error)).rejects.toEqual(error)
+      expect(window.location.href).toBe('')
     })
   })
 })

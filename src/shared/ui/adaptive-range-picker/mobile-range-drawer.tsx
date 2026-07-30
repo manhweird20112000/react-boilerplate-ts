@@ -52,12 +52,6 @@ export function MobileRangeDrawer({
   const [draftRange, setDraftRange] = useState<DateRange | undefined>(() => toDateRange(value))
 
   useEffect(() => {
-    if (!open) {
-      setDraftRange(toDateRange(value))
-    }
-  }, [open, value])
-
-  useEffect(() => {
     document.body.classList.toggle(BODY_DRAWER_OPEN_CLASS, open)
 
     return () => {

@@ -1,4 +1,5 @@
 import { ConfigProvider, theme, App } from 'antd'
+import viVN from 'antd/locale/vi_VN'
 import { StyleProvider } from '@ant-design/cssinjs'
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
@@ -14,6 +15,7 @@ export function AntdProvider(props: AntdProviderProps): ReactElement {
   return (
     <StyleProvider hashPriority="high">
       <ConfigProvider
+        locale={viVN}
         theme={{
           algorithm: theme.defaultAlgorithm,
           token: {

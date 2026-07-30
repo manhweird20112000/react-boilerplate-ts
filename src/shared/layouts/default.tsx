@@ -31,7 +31,8 @@ export function DefaultLayout() {
   const screens = Grid.useBreakpoint()
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const isMobile = screens.lg === false
+  // Treat unset breakpoint as mobile to avoid desktop Sider flash on first paint
+  const isMobile = !screens.lg
 
   const selectedKeys = useMemo(() => {
     const activeItem = menuItems.find(

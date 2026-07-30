@@ -5,6 +5,13 @@ import axios, {
   type InternalAxiosRequestConfig
 } from 'axios'
 
+const AUTH_NO_REFRESH_PATHS = [
+  '/auth/token-refresh',
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password'
+] as const
+
 function isFormData(value: unknown): value is FormData {
   return typeof FormData !== 'undefined' && value instanceof FormData
 }
@@ -33,22 +40,25 @@ function deleteAuthorizationHeader(config: InternalAxiosRequestConfig): void {
   delete (config.headers as Record<string, unknown>)['Authorization']
 }
 
+function isAuthNoRefreshUrl(url: string | undefined): boolean {
+  if (!url) {
+    return false
+  }
+  return AUTH_NO_REFRESH_PATHS.some((path) => url.includes(path))
+}
+
 export type RefreshTokenHandler = () => Promise<void>
 
 class HttpModule {
   private readonly instance: AxiosInstance
   private refreshTokenHandler: RefreshTokenHandler | null = null
-  private isRefreshing = false
-  private failedQueue: Array<{
-    resolve: () => void
-    reject: (error: unknown) => void
-    config: InternalAxiosRequestConfig & { _retry?: boolean }
-  }> = []
+  private refreshPromise: Promise<void> | null = null
 
   constructor(baseURL: string, timeout: number = 50000) {
     this.instance = axios.create({
       baseURL,
-      timeout
+      timeout,
+      withCredentials: true
     })
 
     this.instance.interceptors.request.use(
@@ -70,51 +80,19 @@ class HttpModule {
       async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-        // If error is 401 and we have a refresh handler and we haven't retried yet
         if (
           error.response?.status === 401 &&
           this.refreshTokenHandler &&
           !originalRequest._retry &&
-          !originalRequest.url?.includes('/auth/token-refresh') // Don't refresh on refresh endpoint failure
+          !isAuthNoRefreshUrl(originalRequest.url)
         ) {
-          if (this.isRefreshing) {
-            originalRequest._retry = true
-            return new Promise<void>((resolve, reject) => {
-              this.failedQueue.push({ resolve, reject, config: originalRequest })
-            })
-              .then(() => {
-                deleteAuthorizationHeader(originalRequest)
-                return this.instance(originalRequest)
-              })
-              .catch((err) => {
-                return Promise.reject(err)
-              })
-          }
-
           originalRequest._retry = true
-          this.isRefreshing = true
-
           try {
-            await this.refreshTokenHandler()
-            this.processQueue(null)
+            await this.executeRefresh()
             deleteAuthorizationHeader(originalRequest)
             return this.instance(originalRequest)
           } catch (refreshError) {
-            this.processQueue(refreshError as Error)
             return Promise.reject(refreshError)
-          } finally {
-            this.isRefreshing = false
-          }
-        }
-
-        if (originalRequest?.method?.toLowerCase() === 'get') {
-          const status = error.response?.status
-          if (status === 403) {
-            window.location.href = '/403'
-          } else if (status === 404) {
-            window.location.href = '/404'
-          } else if (status && status >= 500) {
-            window.location.href = '/500'
           }
         }
 
@@ -127,16 +105,18 @@ class HttpModule {
     this.refreshTokenHandler = handler
   }
 
-  private processQueue(error: Error | null): void {
-    this.failedQueue.forEach((prom) => {
-      if (error) {
-        prom.reject(error)
-      } else {
-        deleteAuthorizationHeader(prom.config)
-        prom.resolve()
-      }
+  private executeRefresh(): Promise<void> {
+    if (this.refreshPromise) {
+      return this.refreshPromise
+    }
+    const handler: RefreshTokenHandler | null = this.refreshTokenHandler
+    if (!handler) {
+      return Promise.reject(new Error('Refresh token handler is not configured'))
+    }
+    this.refreshPromise = handler().finally(() => {
+      this.refreshPromise = null
     })
-    this.failedQueue = []
+    return this.refreshPromise
   }
 
   getInstance(): AxiosInstance {

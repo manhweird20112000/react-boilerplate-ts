@@ -47,11 +47,23 @@ export const PageLayout = ({
     <Row gutter={[16, 16]}>
       {filters}
       {!isMobile && isFilterDirty ? (
-        <Col xs={24} md="auto">
-          <Button block={isMobile} color="default" onClick={handleResetFilters} variant="filled">
-            Reset
-          </Button>
-        </Col>
+        <>
+          <Col xs={24} md="auto">
+            <Button block={isMobile} color="default" onClick={handleResetFilters} variant="filled">
+              Reset
+            </Button>
+          </Col>
+          <Col xs={24} md="auto">
+            <Button
+              block={isMobile}
+              icon={<SearchOutlined />}
+              onClick={handleSearch}
+              type="primary"
+            >
+              Apply
+            </Button>
+          </Col>
+        </>
       ) : null}
     </Row>
   )

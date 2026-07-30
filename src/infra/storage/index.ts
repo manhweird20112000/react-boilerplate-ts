@@ -2,14 +2,46 @@ import Cookies from 'js-cookie'
 
 type StorageType = 'cookie' | 'storage' | 'session'
 
-abstract class IStorageAdapter {
+abstract class StorageAdapter {
   abstract getStorage(key: string): string | null
   abstract deleteStorage(key: string): void
   abstract setStorage(key: string, value: string): void
   abstract clearStorage(): void
 }
 
-class StorageService implements IStorageAdapter {
+function readWebStorage(storage: Storage, key: string): string | null {
+  try {
+    return storage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeWebStorage(storage: Storage, key: string, value: string): void {
+  try {
+    storage.setItem(key, value)
+  } catch {
+    // Private mode / quota / disabled storage
+  }
+}
+
+function removeWebStorage(storage: Storage, key: string): void {
+  try {
+    storage.removeItem(key)
+  } catch {
+    // Private mode / disabled storage
+  }
+}
+
+function clearWebStorage(storage: Storage): void {
+  try {
+    storage.clear()
+  } catch {
+    // Private mode / disabled storage
+  }
+}
+
+class StorageService implements StorageAdapter {
   private readonly type: StorageType = 'cookie'
 
   constructor(type: StorageType) {
@@ -21,9 +53,9 @@ class StorageService implements IStorageAdapter {
       case 'cookie':
         return Cookies.get(key) || null
       case 'storage':
-        return localStorage.getItem(key)
+        return readWebStorage(localStorage, key)
       case 'session':
-        return sessionStorage.getItem(key)
+        return readWebStorage(sessionStorage, key)
     }
   }
 
@@ -33,10 +65,10 @@ class StorageService implements IStorageAdapter {
         Cookies.remove(key)
         break
       case 'storage':
-        localStorage.removeItem(key)
+        removeWebStorage(localStorage, key)
         break
       case 'session':
-        sessionStorage.removeItem(key)
+        removeWebStorage(sessionStorage, key)
         break
     }
   }
@@ -47,21 +79,24 @@ class StorageService implements IStorageAdapter {
         Cookies.set(key, value)
         break
       case 'storage':
-        localStorage.setItem(key, value)
+        writeWebStorage(localStorage, key, value)
         break
       case 'session':
-        sessionStorage.setItem(key, value)
+        writeWebStorage(sessionStorage, key, value)
         break
     }
   }
 
   clearStorage(): void {
     switch (this.type) {
+      case 'cookie':
+        // js-cookie cannot enumerate all cookies; clear by known keys at call sites
+        break
       case 'storage':
-        localStorage.clear()
+        clearWebStorage(localStorage)
         break
       case 'session':
-        sessionStorage.clear()
+        clearWebStorage(sessionStorage)
         break
     }
   }

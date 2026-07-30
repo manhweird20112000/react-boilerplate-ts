@@ -2,8 +2,6 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import HttpModule, { type RefreshTokenHandler } from './module'
 import { IHttpAdapter } from './http-adapter'
-import { NetworkRetryPolicy } from './retry/network-retry-policy'
-import { RetryingHttpAdapter } from './retry/retrying-http-adapter'
 
 const DEFAULT_API_URL = ''
 
@@ -68,7 +66,4 @@ class AxiosHttpAdapter implements IHttpAdapter<AxiosInstance> {
   }
 }
 
-const httpAxiosService: AxiosHttpAdapter = new AxiosHttpAdapter()
-const retryPolicy: NetworkRetryPolicy = new NetworkRetryPolicy()
-
-export const HttpService = new RetryingHttpAdapter(httpAxiosService, retryPolicy)
+export const HttpService: IHttpAdapter<AxiosInstance> = new AxiosHttpAdapter()

@@ -18,57 +18,6 @@ function resolvePortFromEnv(raw: string | undefined, fallback: number): number {
   return parsed
 }
 
-/**
- * Splits stable framework dependencies into separate chunks for caching.
- */
-function resolveManualChunk(moduleId: string): string | undefined {
-  const packageName = resolveNodeModulePackageName(moduleId)
-
-  if (!packageName) {
-    return undefined
-  }
-
-  if (packageName === 'react-router' || packageName === 'react-router-dom') {
-    return 'router-vendor'
-  }
-
-  if (packageName === 'react' || packageName === 'react-dom' || packageName === 'scheduler') {
-    return 'react-vendor'
-  }
-
-  return undefined
-}
-
-function resolveNodeModulePackageName(moduleId: string): string | undefined {
-  const normalizedModuleId = normalizeModuleId(moduleId)
-  const nodeModulesMarker = '/node_modules/'
-  const nodeModulesIndex = normalizedModuleId.lastIndexOf(nodeModulesMarker)
-
-  if (nodeModulesIndex === -1) {
-    return undefined
-  }
-
-  const packagePath = normalizedModuleId.slice(nodeModulesIndex + nodeModulesMarker.length)
-  const packagePathParts = packagePath.split('/')
-  const scopeOrName = packagePathParts[0]
-
-  if (!scopeOrName) {
-    return undefined
-  }
-
-  if (scopeOrName.startsWith('@')) {
-    const scopedPackageName = packagePathParts[1]
-
-    return scopedPackageName ? `${scopeOrName}/${scopedPackageName}` : undefined
-  }
-
-  return scopeOrName
-}
-
-function normalizeModuleId(moduleId: string): string {
-  return moduleId.replaceAll('\\', '/')
-}
-
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, projectRoot, '')
@@ -119,7 +68,27 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true,
       rollupOptions: {
         output: {
-          manualChunks: resolveManualChunk
+          // Vite 8 / Rolldown: prefer codeSplitting.groups over deprecated manualChunks.
+          // Higher priority claims React before antd can pull it in recursively.
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react-vendor',
+                test: /node_modules[\\/](?:react-dom|scheduler|react)[\\/]/,
+                priority: 30
+              },
+              {
+                name: 'router-vendor',
+                test: /node_modules[\\/]react-router(?:-dom)?[\\/]/,
+                priority: 20
+              },
+              {
+                name: 'antd-vendor',
+                test: /node_modules[\\/](?:antd|@ant-design[\\/](?:cssinjs|icons))[\\/]/,
+                priority: 10
+              }
+            ]
+          }
         }
       }
     },

@@ -1,9 +1,16 @@
-import { Component, lazy, Suspense, useEffect, useState, type ErrorInfo, type ReactElement, type ReactNode } from 'react'
+import {
+  Component,
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  type ErrorInfo,
+  type ReactElement,
+  type ReactNode
+} from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { AppRoutes } from './routes'
-
-import { AuthProvider } from '~/features/auth/hooks/auth-provider'
 
 const LazyToaster = lazy(() => import('sonner').then((m) => ({ default: m.Toaster })))
 
@@ -71,9 +78,7 @@ function App(): ReactElement {
   return (
     <BrowserRouter>
       <AppErrorBoundary>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
+        <AppRoutes />
       </AppErrorBoundary>
       <IdleToaster />
     </BrowserRouter>

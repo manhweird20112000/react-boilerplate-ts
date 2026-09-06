@@ -1,5 +1,0 @@
-export type {{Feature}}FormValues = {
-  name: string
-  description: string
-  is_enabled: boolean
-}

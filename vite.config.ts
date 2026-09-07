@@ -69,7 +69,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           // Vite 8 / Rolldown: prefer codeSplitting.groups over deprecated manualChunks.
-          // Higher priority claims React before antd can pull it in recursively.
           codeSplitting: {
             groups: [
               {
@@ -81,11 +80,6 @@ export default defineConfig(({ mode }) => {
                 name: 'router-vendor',
                 test: /node_modules[\\/]react-router(?:-dom)?[\\/]/,
                 priority: 20
-              },
-              {
-                name: 'antd-vendor',
-                test: /node_modules[\\/](?:antd|@ant-design[\\/](?:cssinjs|icons))[\\/]/,
-                priority: 10
               }
             ]
           }

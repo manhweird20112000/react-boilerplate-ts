@@ -1,26 +1,23 @@
-import {
-  DashboardOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  ShoppingCartOutlined
-} from '@ant-design/icons'
-import { Button, Drawer, Grid, Layout, Menu, Space, Typography, type MenuProps } from 'antd'
 import { useMemo, useState, type CSSProperties } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
-const { Header, Content, Sider } = Layout
+import { useIsMobile } from '@/shared/hooks/use-mobile'
 
-type MenuItem = Required<MenuProps>['items'][number]
+type MenuItem = {
+  readonly key: string
+  readonly icon: string
+  readonly label: string
+}
 
 const menuItems: MenuItem[] = [
   {
     key: '/dashboard',
-    icon: <DashboardOutlined />,
+    icon: 'D',
     label: 'Dashboard'
   },
   {
     key: '/orders',
-    icon: <ShoppingCartOutlined />,
+    icon: 'O',
     label: 'Orders'
   }
 ]
@@ -28,16 +25,12 @@ const menuItems: MenuItem[] = [
 export function DefaultLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const screens = Grid.useBreakpoint()
+  const isMobile = useIsMobile()
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  // Treat unset breakpoint as mobile to avoid desktop Sider flash on first paint
-  const isMobile = !screens.lg
 
   const selectedKeys = useMemo(() => {
-    const activeItem = menuItems.find(
-      (item) => typeof item?.key === 'string' && location.pathname.startsWith(item.key)
-    )
+    const activeItem = menuItems.find((item) => location.pathname.startsWith(item.key))
 
     return activeItem?.key ? [String(activeItem.key)] : ['/dashboard']
   }, [location.pathname])
@@ -54,7 +47,7 @@ export function DefaultLayout() {
 
   const siderWidth = isMobile ? '0px' : collapsed ? '80px' : '240px'
 
-  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+  const handleMenuClick = (key: string) => {
     void navigate(key)
     setDrawerOpen(false)
   }
@@ -62,72 +55,73 @@ export function DefaultLayout() {
   const renderMenuContent = (showBrand = true) => (
     <>
       {showBrand ? (
-        <Space
-          align="center"
-          size={12}
-          style={{
-            height: 64,
-            paddingInline: collapsed && !isMobile ? 16 : 24,
-            width: '100%'
-          }}
-        >
-          <Typography.Text
-            strong
-            style={{ fontSize: collapsed && !isMobile ? 18 : 20, whiteSpace: 'nowrap' }}
-          >
+        <div className="flex h-16 w-full items-center px-6 font-semibold">
+          <span className="whitespace-nowrap text-xl">
             {collapsed && !isMobile ? 'RB' : 'React Base'}
-          </Typography.Text>
-        </Space>
+          </span>
+        </div>
       ) : null}
 
-      <Menu
-        items={menuItems}
-        mode="inline"
-        onClick={handleMenuClick}
-        selectedKeys={selectedKeys}
-        style={{ borderInlineEnd: 0 }}
-      />
+      <nav className="px-2">
+        {menuItems.map((item) => {
+          const selected = selectedKeys.includes(item.key)
+
+          return (
+            <button
+              className={`flex min-h-10 w-full items-center gap-3 rounded-md px-3 text-left text-sm transition ${
+                selected ? 'bg-[#f1edff] text-[#6f43fd]' : 'text-gray-700 hover:bg-gray-100'
+              } ${collapsed && !isMobile ? 'justify-center' : ''}`}
+              key={item.key}
+              onClick={() => handleMenuClick(item.key)}
+              type="button"
+            >
+              <span aria-hidden="true" className="font-semibold">
+                {item.icon}
+              </span>
+              {collapsed && !isMobile ? null : <span>{item.label}</span>}
+            </button>
+          )
+        })}
+      </nav>
     </>
   )
 
   return (
-    <Layout hasSider={!isMobile} style={{ minHeight: '100dvh', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100dvh', overflowX: 'hidden' }}>
       {isMobile ? (
-        <Drawer
-          closable
-          onClose={() => setDrawerOpen(false)}
-          open={drawerOpen}
-          placement="left"
-          title="React Base"
-          styles={{
-            body: { padding: 0 }
-          }}
-          size={280}
-        >
-          {renderMenuContent(false)}
-        </Drawer>
+        drawerOpen ? (
+          <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true">
+            <button
+              aria-label="Close sidebar menu"
+              className="absolute inset-0 h-full w-full bg-black/30"
+              onClick={() => setDrawerOpen(false)}
+              type="button"
+            />
+            <aside className="absolute inset-y-0 left-0 w-[280px] bg-white shadow-xl">
+              <div className="flex h-16 items-center border-b border-gray-200 px-6 font-semibold">
+                React Base
+              </div>
+              {renderMenuContent(false)}
+            </aside>
+          </div>
+        ) : null
       ) : (
-        <Sider
-          collapsed={collapsed}
-          collapsible
-          onCollapse={setCollapsed}
+        <aside
           style={siderStyle}
-          theme="light"
-          trigger={null}
-          width={240}
+          className={collapsed ? 'w-20 transition-[width]' : 'w-60 transition-[width]'}
         >
           {renderMenuContent()}
-        </Sider>
+        </aside>
       )}
 
-      <Layout
+      <div
         style={{
           marginInlineStart: siderWidth,
           minHeight: '100dvh',
           transition: 'margin-inline-start 0.2s'
         }}
       >
-        <Header
+        <header
           style={{
             alignItems: 'center',
             background: '#fff',
@@ -144,7 +138,7 @@ export function DefaultLayout() {
             zIndex: 90
           }}
         >
-          <Button
+          <button
             aria-label={
               isMobile
                 ? 'Open sidebar menu'
@@ -152,7 +146,7 @@ export function DefaultLayout() {
                   ? 'Open sidebar menu'
                   : 'Collapse sidebar menu'
             }
-            icon={isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            className="flex h-9 w-9 items-center justify-center rounded-md text-xl text-gray-700 transition hover:bg-gray-100"
             onClick={() => {
               if (isMobile) {
                 setDrawerOpen(true)
@@ -161,27 +155,30 @@ export function DefaultLayout() {
 
               setCollapsed((value) => !value)
             }}
-            type="text"
-          />
+            type="button"
+          >
+            {isMobile || collapsed ? '>' : '<'}
+          </button>
 
-          <Typography.Title level={4} style={{ margin: 0 }}>
+          <h1 className="m-0 text-xl font-semibold">
             {selectedKeys[0] === '/orders' ? 'Orders' : 'Dashboard'}
-          </Typography.Title>
-        </Header>
+          </h1>
+        </header>
 
-        <Content
-          style={{
-            '--layout-content-padding': isMobile ? '16px' : '24px',
-            '--layout-sider-width': siderWidth,
-            minHeight: 'calc(100dvh - 64px)',
-            marginBlockStart: 64,
-            padding: isMobile ? 16 : 24
-          } as CSSProperties &
-            Record<'--layout-content-padding' | '--layout-sider-width', string>}
+        <main
+          style={
+            {
+              '--layout-content-padding': isMobile ? '16px' : '24px',
+              '--layout-sider-width': siderWidth,
+              minHeight: 'calc(100dvh - 64px)',
+              marginBlockStart: 64,
+              padding: isMobile ? 16 : 24
+            } as CSSProperties & Record<'--layout-content-padding' | '--layout-sider-width', string>
+          }
         >
           <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
+        </main>
+      </div>
+    </div>
   )
 }

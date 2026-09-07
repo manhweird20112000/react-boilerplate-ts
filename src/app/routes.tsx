@@ -1,7 +1,5 @@
 import { Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { Spin } from 'antd'
-import { DashboardPage } from '@/features'
 
 function ErrorPage({ title }: { readonly title: string }): ReactElement {
   return <div>{title}</div>
@@ -12,7 +10,7 @@ function RouteFallback(): ReactElement {
     <div
       style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
     >
-      <Spin size="large" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[#6f43fd]" />
     </div>
   )
 }
@@ -27,7 +25,7 @@ export function AppRoutes(): ReactElement {
         {/* Public Auth Routes */}
 
         {/* Protected Routes */}
-        <Route path="/" element={<DashboardPage />} />
+
         <Route path="/403" element={<ErrorPage title="Forbidden" />} />
         <Route path="/404" element={<ErrorPage title="Not found" />} />
         <Route path="/500" element={<ErrorPage title="Server error" />} />

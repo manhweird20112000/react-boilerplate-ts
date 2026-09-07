@@ -1,7 +1,6 @@
-import { SearchOutlined, FilterOutlined } from '@ant-design/icons'
-import { Grid, Row, Col, Button, Typography, Flex, Drawer, Pagination, theme } from 'antd'
 import { useState, type CSSProperties, type ReactNode } from 'react'
-import { Content } from 'antd/es/layout/layout'
+
+import { useIsMobile } from '@/shared/hooks/use-mobile'
 
 interface Props {
   heading?: string | ReactNode
@@ -28,9 +27,7 @@ export const PageLayout = ({
   onSearch,
   onResetFilters
 }: Props) => {
-  const screens = Grid.useBreakpoint()
-  const { token } = theme.useToken()
-  const isMobile = screens.md === false
+  const isMobile = useIsMobile()
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
 
   const handleResetFilters = () => {
@@ -44,33 +41,36 @@ export const PageLayout = ({
   }
 
   const filterFields = (
-    <Row gutter={[16, 16]}>
+    <div className="flex flex-wrap gap-4">
       {filters}
       {!isMobile && isFilterDirty ? (
         <>
-          <Col xs={24} md="auto">
-            <Button block={isMobile} color="default" onClick={handleResetFilters} variant="filled">
+          <div className="w-full md:w-auto">
+            <button
+              className="min-h-9 w-full rounded-md bg-gray-100 px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
+              onClick={handleResetFilters}
+              type="button"
+            >
               Reset
-            </Button>
-          </Col>
-          <Col xs={24} md="auto">
-            <Button
-              block={isMobile}
-              icon={<SearchOutlined />}
+            </button>
+          </div>
+          <div className="w-full md:w-auto">
+            <button
+              className="min-h-9 w-full rounded-md bg-[#6f43fd] px-3 text-sm font-medium text-white transition hover:bg-[#5f35e8]"
               onClick={handleSearch}
-              type="primary"
+              type="button"
             >
               Apply
-            </Button>
-          </Col>
+            </button>
+          </div>
         </>
       ) : null}
-    </Row>
+    </div>
   )
 
   const paginationBarStyle: CSSProperties = {
-    background: token.colorBgContainer,
-    borderTop: `1px solid ${token.colorBorderSecondary}`,
+    background: '#fff',
+    borderTop: '1px solid #e5e7eb',
     bottom: 0,
     boxShadow: '0 -6px 16px rgba(0, 0, 0, 0.04)',
     left: 'var(--layout-sider-width, 0px)',
@@ -81,8 +81,11 @@ export const PageLayout = ({
     zIndex: 20
   }
 
+  const totalPages = pagination ? Math.max(1, Math.ceil(pagination.total / pagination.pageSize)) : 1
+  const goToPage = (page: number) => pagination?.onChange(Math.min(totalPages, Math.max(1, page)))
+
   return (
-    <Content
+    <main
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -91,94 +94,100 @@ export const PageLayout = ({
         padding: 'var(--layout-content-padding, 24px) var(--layout-content-padding, 24px) 88px'
       }}
     >
-      <Row align="middle" gutter={[16, 16]}>
-        <Col xs={24} md={10}>
+      <div className="grid items-center gap-4 md:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+        <div>
           {typeof heading === 'string' ? (
-            <Typography.Title level={4} style={{ margin: 0 }}>
-              {heading}
-            </Typography.Title>
+            <h2 className="m-0 text-xl font-semibold">{heading}</h2>
           ) : (
             heading
           )}
-        </Col>
-        <Col xs={24} md={14}>
-          <Flex
-            align={isMobile ? 'stretch' : 'center'}
-            gap="small"
-            justify={isMobile ? 'start' : 'end'}
-            style={isMobile ? { width: '100%' } : undefined}
-            vertical={isMobile}
-            wrap={!isMobile}
-          >
-            {actions}
-          </Flex>
-        </Col>
-      </Row>
+        </div>
+        <div className="flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:justify-end">
+          {actions}
+        </div>
+      </div>
 
       {isMobile ? (
         <>
-          <Flex style={{ marginBlock: 16 }}>
-            <Button
-              block
-              color="default"
-              icon={<FilterOutlined />}
+          <div className="my-4">
+            <button
+              className="min-h-10 w-full rounded-md bg-gray-100 px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
               onClick={() => setFilterDrawerOpen(true)}
-              variant="filled"
+              type="button"
             >
               Filters
-            </Button>
-          </Flex>
+            </button>
+          </div>
 
-          <Drawer
-            onClose={() => setFilterDrawerOpen(false)}
-            open={filterDrawerOpen}
-            placement="bottom"
-            size="min(82dvh, 640px)"
-            title="Filters"
-            footer={
-              <Flex gap={8}>
-                {isFilterDirty ? (
-                  <Button block color="default" onClick={handleResetFilters} variant="filled">
-                    Reset
-                  </Button>
-                ) : null}
-                <Button block icon={<SearchOutlined />} onClick={handleSearch} type="primary">
-                  Apply
-                </Button>
-              </Flex>
-            }
-            styles={{
-              body: { paddingBottom: 16 },
-              footer: { padding: 16 }
-            }}
-          >
-            {filterDrawerOpen ? filterFields : null}
-          </Drawer>
+          {filterDrawerOpen ? (
+            <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
+              <button
+                aria-label="Close filters"
+                className="absolute inset-0 h-full w-full bg-black/30"
+                onClick={() => setFilterDrawerOpen(false)}
+                type="button"
+              />
+              <div className="absolute inset-x-0 bottom-0 max-h-[min(82dvh,640px)] rounded-t-lg bg-white shadow-2xl">
+                <div className="border-b border-gray-200 px-4 py-3 text-base font-semibold">
+                  Filters
+                </div>
+                <div className="overflow-auto p-4 pb-6">{filterFields}</div>
+                <div className="flex gap-2 border-t border-gray-200 p-4">
+                  {isFilterDirty ? (
+                    <button
+                      className="min-h-10 flex-1 rounded-md bg-gray-100 px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
+                      onClick={handleResetFilters}
+                      type="button"
+                    >
+                      Reset
+                    </button>
+                  ) : null}
+                  <button
+                    className="min-h-10 flex-1 rounded-md bg-[#6f43fd] px-3 text-sm font-medium text-white transition hover:bg-[#5f35e8]"
+                    onClick={handleSearch}
+                    type="button"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </>
       ) : (
-        <Flex vertical style={{ marginBlock: 24 }}>
-          {filterFields}
-        </Flex>
+        <div className="my-6">{filterFields}</div>
       )}
 
-      <Row style={{ minWidth: 0, width: '100%' }}>{content}</Row>
+      <div style={{ minWidth: 0, width: '100%' }}>{content}</div>
 
       {pagination ? (
-        <Flex justify={isMobile ? 'center' : 'end'} style={paginationBarStyle}>
-          <Pagination
-            current={pagination.current}
-            onChange={pagination.onChange}
-            pageSize={pagination.pageSize}
-            responsive
-            showLessItems={isMobile}
-            showQuickJumper={!isMobile}
-            showSizeChanger={!isMobile}
-            simple={isMobile ? { readOnly: true } : false}
-            size={isMobile ? 'small' : 'medium'}
-            total={pagination.total}
-          />
-        </Flex>
+        <div
+          className={`flex ${isMobile ? 'justify-center' : 'justify-end'}`}
+          style={paginationBarStyle}
+        >
+          <div className="flex items-center gap-2 text-sm">
+            <button
+              className="min-h-9 rounded-md border border-gray-300 px-3 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={pagination.current <= 1}
+              onClick={() => goToPage(pagination.current - 1)}
+              type="button"
+            >
+              Previous
+            </button>
+            <span className="min-w-20 text-center text-gray-700">
+              {pagination.current} / {totalPages}
+            </span>
+            <button
+              className="min-h-9 rounded-md border border-gray-300 px-3 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={pagination.current >= totalPages}
+              onClick={() => goToPage(pagination.current + 1)}
+              type="button"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       ) : null}
-    </Content>
+    </main>
   )
 }

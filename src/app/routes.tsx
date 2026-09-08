@@ -1,3 +1,4 @@
+import { DashboardPage } from '@/features/dashboard/pages'
 import { Suspense, type ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
@@ -23,6 +24,7 @@ export function AppRoutes(): ReactElement {
     <Suspense fallback={<RouteFallback />}>
       <Routes>
         {/* Public Auth Routes */}
+        <Route path="/" element={<DashboardPage />} />
 
         {/* Protected Routes */}
 
